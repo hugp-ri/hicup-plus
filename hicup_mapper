@@ -42,9 +42,11 @@ use Data::Dumper;
 my %config = (
     bowtie    => '',
     bowtie2   => '',
+    dragen    => '',
     config    => '',
-    example   => '',
+    hisat2    => '',
     datestamp => '',
+    example   => '',
     format    => '',
     index     => '',
     ligation  => '',
@@ -61,7 +63,9 @@ my %config = (
 my $config_result = GetOptions(
     "bowtie=s"    => \$config{bowtie},
     "bowtie2=s"   => \$config{bowtie2},
+    "dragen=s"   => \$config{dragen},
     "datestamp=s" => \$config{datestamp},
+    "hisat2=s"   => \$config{hisat2},
     "example"     => \$config{example},
     "config=s"    => \$config{config},
     "format=s"    => \$config{format},
