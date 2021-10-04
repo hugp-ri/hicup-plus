@@ -858,10 +858,12 @@ COMMAND LINE OPTIONS
 
 --bowtie         Specify the path to Bowtie
 --bowtie2        Specify the path to Bowtie 2
+--dragen         Specify the path to DRAGEN
 --config         Specify the configuration file
 --format         Specify FASTQ format
                  Options: Sanger, Solexa_Illumina_1.0, Illumina_1.3, Illumina_1.5
 --help           Print help message and exit
+--hisat2         Specify the path to HISAT 2
 --index          Path to the relevant reference genome Bowtie/Bowtie2 indices
 --outdir         Directory to write output files
 --quiet          Suppress progress reports (except warnings)

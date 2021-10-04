@@ -286,7 +286,7 @@ sub check_no_duplicate_filename {
 sub checkAligner {
 
     my $configRef     = $_[0];
-    my @aligners      = ( 'bowtie', 'bowtie2' );    #List of aligners used by HiCUP
+    my @aligners      = ( 'bowtie', 'bowtie2', 'dragen', 'hisat2' );    #List of aligners used by HiCUP
     my $parameters_ok = 1;
 
     #Check which aligner specified
@@ -301,7 +301,7 @@ sub checkAligner {
 
     #Validate user input
     if ( $aligner_count > 1 ) {    #Too many aligners specified (i.e. more than 1)
-        warn "Please only specify only one aligner: either --bowtie or --bowtie2.\n";
+        warn "Please only specify only one aligner: either --bowtie --bowtie2 --dragen or --hisat2.\n";
         $parameters_ok = 0;
     }
 
@@ -616,7 +616,7 @@ sub quality_checker {
 #Subroutine: determineAlignerFormat
 #Receives the FASTQ format and the aligner and determines the aligner-specific format flag
 #Input values are Sanger, Solexa_Illumina_1.0, Illumina_1.3, Illumina_1.5 for the FASTQ fromat
-#and bowtie or bowtie2 for the aligner
+#and bowtie, bowtie2, dragen, or hisat2 for the aligner
 #If only the FASTQ format is specified 'NO_ALIGNER' will be returned, so the subroutine can
 #be used to check whether the FASTQ format is valid.
 sub determineAlignerFormat {
@@ -651,6 +651,32 @@ sub determineAlignerFormat {
             return 'phred33';
         } elsif ( $fastqFormat eq 'SOLEXA_ILLUMINA_1.0' ) {
             return 'solexa-quals';
+        } elsif ( $fastqFormat eq 'ILLUMINA_1.3' ) {
+            return 'phred64';
+        } elsif ( $fastqFormat eq 'ILLUMINA_1.5' ) {
+            return 'phred64';
+        }
+    }
+
+    #--fastq-offset arg
+    if ( $aligner eq 'dragen' ) {
+        if ( $fastqFormat eq 'SANGER' ) {
+            return '33';
+        } elsif ( $fastqFormat eq 'SOLEXA_ILLUMINA_1.0' ) {
+            return '64';
+        } elsif ( $fastqFormat eq 'ILLUMINA_1.3' ) {
+            return '64';
+        } elsif ( $fastqFormat eq 'ILLUMINA_1.5' ) {
+            return '64';
+        }
+    }
+
+    #--phred33 or --phred64
+    if ( $aligner eq 'hisat2' ) {
+        if ( $fastqFormat eq 'SANGER' ) {
+            return 'phred33';
+        } elsif ( $fastqFormat eq 'SOLEXA_ILLUMINA_1.0' ) {
+            return 'phred64';
         } elsif ( $fastqFormat eq 'ILLUMINA_1.3' ) {
             return 'phred64';
         } elsif ( $fastqFormat eq 'ILLUMINA_1.5' ) {
