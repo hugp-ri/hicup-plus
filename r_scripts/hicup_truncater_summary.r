@@ -39,10 +39,10 @@ if(length(data) > 0){
     percTruncated <- line[,4]
     avTruncated <- line[,7]
 
-    outputfilename=paste(file, "truncation_barchart.svg", sep = ".")
+    outputfilename=paste(file, "truncation_barchart.pdf", sep = ".")
     outputfilename=paste(outdir, outputfilename, sep = "")
     
-    svg(file=outputfilename)
+    pdf(file=outputfilename)
     
     graphTitle <- paste( file, " Truncation Results\n","Percent truncated: ", percTruncated, 
                         "\nAverage length truncated read(bp): ", avTruncated,  sep = "")

@@ -41,9 +41,9 @@ if(length(data) > 0){
     paired <- line[,11]
     percPaired <- line[12]
 
-    outputfilename=paste(file,"mapper_barchart.svg", sep = ".")
+    outputfilename=paste(file,"mapper_barchart.pdf", sep = ".")
     outputfilename=paste(outdir, outputfilename, sep = "")
-    svg(file=outputfilename)
+    pdf(file=outputfilename)
     
     graphTitle <- paste( file, " Mapping Results\n","Percent paired: ", percPaired,  sep = "")
 

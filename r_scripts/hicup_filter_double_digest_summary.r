@@ -50,12 +50,12 @@ if(length(data) > 0){
     percValid <- round( (100 * valid / total), 2)
     
     #outputfilename <- paste(outdir, fileInSummary, sep="")
-    #outputfilename <- paste(fileInSummary, "filter_piechart.svg", sep = ".")
+    #outputfilename <- paste(fileInSummary, "filter_piechart.pdf", sep = ".")
     #outputfilename <- paste(outdir, outputfilename, sep = "")
 
     outputfilename=paste(outdir, file, outSuffix, sep = "")
 
-    svg(file=outputfilename)
+    pdf(file=outputfilename)
     
     pieTitle <- paste( "Filter results\n", file, "\nValid ditags: ", valid,
                        "\nPercent valid: ", percValid, "%",  sep = "")

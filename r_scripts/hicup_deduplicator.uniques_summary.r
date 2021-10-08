@@ -42,7 +42,7 @@ if(length(data) > 0){
     
     outputfilename <- paste(outdir, fileInSummary, sep="")
     outputfilename <- paste(outputfilename, outSuffix, sep = "")
-    svg(file=outputfilename)
+    pdf(file=outputfilename)
     
     graphTitle <- paste( fileInSummary, "\nDitag De-duplication results","\nUnique di-tags: ", percUniques, "%", sep = "")
 

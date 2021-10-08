@@ -32,9 +32,9 @@ data <- read.delim(file, header=FALSE, skip=1)
 if(length(data) > 0){
 
 	outputfilename <- basename(file)
-	outputfilename <- paste(outputfilename, "svg", sep = ".")
+	outputfilename <- paste(outputfilename, "pdf", sep = ".")
 	outputfilename <- paste(outdir, outputfilename, sep = "")
-	svg(file=outputfilename)
+	pdf(file=outputfilename)
 
 	data <- read.delim(file, header=FALSE, skip=0) 
 
