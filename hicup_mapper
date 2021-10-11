@@ -330,7 +330,7 @@ sub map_file {
 
     if ( $config{bowtie} ne '' ) {
         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie} -m 1 -n 1 --best --$config{format} -p 1 --chunkmbs 512 $config{index} --sam - $outputfile" );
-    } else {
+    } elsif ( $config{bowtie2} ne '') {
 		#TODO
 		if ( $config{zip} and $config{samtools} ) {
 			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
@@ -341,7 +341,12 @@ sub map_file {
 		} else {
 			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
 		}
-	}
+    } elsif ( $config{hisat2} ne '') {
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{hisat2} -x $config{index} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
+    } else {
+        print("Must path for specify at least one aligner: bowtie, bowtie2, dragen, or hisat2 in configuration");
+        exit(1);
+    }
 
     unless ($oid) {
         die "Failed to launch aligner";
