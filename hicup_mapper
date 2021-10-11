@@ -341,6 +341,11 @@ sub map_file {
 		} else {
 			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
 		}
+    } elsif ( $config{dragen} ne '') {
+         my $index_directory = dirname( $config{index} );
+         my $output_directory  = dirname ( $outputfile );
+         my $output_prefix = basename( $outputfile, ".sam")
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{dragen} -r $index_directory --output-format SAM --enable-map-align true --enable-map-align--output true --threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix -S $output_directory" );
     } elsif ( $config{hisat2} ne '') {
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{hisat2} -x $config{index} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
     } else {
