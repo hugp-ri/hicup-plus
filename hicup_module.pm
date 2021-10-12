@@ -398,6 +398,10 @@ sub checkAlignerIndices {
             @index_suffixes = ( '.1.ebwt', '.2.ebwt', '.3.ebwt', '.4.ebwt', '.rev.1.ebwt', '.rev.2.ebwt' );
         } elsif ( $$configRef{aligner} eq 'bowtie2' ) {
             @index_suffixes = ( '.1.bt2', '.2.bt2', '.3.bt2', '.4.bt2', '.rev.1.bt2', '.rev.2.bt2' );
+        } elsif ( $$configRef{aligner} eq 'dragen' ) {
+            @index_suffixes = ( '.cfg', '.cfg.bin', '_stats.txt' );
+        } elsif ( $$configRef{aligner} eq 'hisat2' ) {
+            @index_suffixes = ( '.1.ht2', '.2.ht2', '.3.ht2', '.4.ht2', '.5.ht2', '.6.ht2' );
         }
 
         foreach my $suffix (@index_suffixes) {
@@ -407,8 +411,9 @@ sub checkAlignerIndices {
                 $parameters_ok = 0;
             }
         }
+
     } else {
-        warn "Please specify alinger indices (--index)\n";
+        warn "Please specify aligner indices (--index)\n";
         $parameters_ok = 0;
     }
     return $parameters_ok;

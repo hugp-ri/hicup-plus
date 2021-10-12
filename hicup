@@ -293,6 +293,8 @@ close DIGEST;
 $config{ambiguous} = "--ambiguous"                if ( $config{ambiguous} ne '' );
 $config{bowtie}    = "--bowtie $config{bowtie}"   if ( $config{bowtie} ne '' );
 $config{bowtie2}   = "--bowtie2 $config{bowtie2}" if ( $config{bowtie2} ne '' );
+$config{dragen}    = "--dragen $config{dragen}"   if ( $config{dragen} ne '' );
+$config{hisat2}    = "--hisat2 $config{hisat2}"   if ( $config{hisat2} ne '' );
 my $datestamp_flag = "--datestamp $config{datestamp}";    #Enables all summary files to have same datestamp
 $config{digest} = "--digest $config{digest}" if ( $config{digest} ne '' );
 $config{format} = "--format $config{format}" if ( $config{format} ne '' );
@@ -354,11 +356,11 @@ $filenames_string = filename_string_generator(%truncater_outputfiles_paired);
 
 if ( $config{zip} ) {
     !system(
-"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $config{zip} $filenames_string"
+"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $config{zip} $filenames_string"
     ) or die "Can't run hicup_mapper\n.";
 } else {
     !system(
-"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $filenames_string"
+"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{ambiguous} $config{hisat2} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $filenames_string"
     ) or die "Can't run hicup_mapper\n.";
 }
 

@@ -329,8 +329,10 @@ sub map_file {
     my $oid;
 
     if ( $config{bowtie} ne '' ) {
+        print "running bowtie...\n";
         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie} -m 1 -n 1 --best --$config{format} -p 1 --chunkmbs 512 $config{index} --sam - $outputfile" );
-    } elsif ( $config{bowtie2} ne '') {
+    } elsif ( $config{bowtie2} ne '' ) {
+        print "running bowtie2...\n";
 		#TODO
 		if ( $config{zip} and $config{samtools} ) {
 			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
@@ -341,12 +343,14 @@ sub map_file {
 		} else {
 			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
 		}
-    } elsif ( $config{dragen} ne '') {
+    } elsif ( $config{dragen} ne '' ) {
+         print "running dragen...\n";
          my $index_directory = dirname( $config{index} );
          my $output_directory  = dirname ( $outputfile );
-         my $output_prefix = basename( $outputfile, ".sam")
+         my $output_prefix = basename( $outputfile, ".sam");
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{dragen} -r $index_directory --output-format SAM --enable-map-align true --enable-map-align--output true --threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix -S $output_directory" );
-    } elsif ( $config{hisat2} ne '') {
+    } elsif ( $config{hisat2} ne '' ) {
+         print "running hisat2...\n";
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{hisat2} -x $config{index} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
     } else {
         print("Must path for specify at least one aligner: bowtie, bowtie2, dragen, or hisat2 in configuration");
