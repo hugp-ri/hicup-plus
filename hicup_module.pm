@@ -286,12 +286,13 @@ sub check_no_duplicate_filename {
 sub checkAligner {
 
     my $configRef     = $_[0];
-    my @aligners      = ( 'bowtie', 'bowtie2', 'dragen', 'hisat2' );    #List of aligners used by HiCUP
+    my @aligners      = ( 'dragen', 'hisat2', 'bowtie2', 'bowtie' );    #List of aligners used by HiCUP (in order of priority)
     my $parameters_ok = 1;
 
     #Check which aligner specified
     my $found_aligner_flag = 0;
     my $aligner_count      = 0;
+
     foreach my $aligner_name (@aligners) {
         if ( hasval( $$configRef{$aligner_name} ) ) {
             $$configRef{aligner} = $aligner_name;
@@ -401,7 +402,7 @@ sub checkAlignerIndices {
         } elsif ( $$configRef{aligner} eq 'dragen' ) {
             @index_suffixes = ( '.cfg', '.cfg.bin', '_stats.txt' );
         } elsif ( $$configRef{aligner} eq 'hisat2' ) {
-            @index_suffixes = ( '.1.ht2', '.2.ht2', '.3.ht2', '.4.ht2', '.5.ht2', '.6.ht2' );
+            @index_suffixes = ( '.1.ht2', '.2.ht2', '.3.ht2', '.4.ht2' );
         }
 
         foreach my $suffix (@index_suffixes) {
