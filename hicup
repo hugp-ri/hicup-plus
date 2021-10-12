@@ -356,11 +356,11 @@ $filenames_string = filename_string_generator(%truncater_outputfiles_paired);
 
 if ( $config{zip} ) {
     !system(
-"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $config{zip} $filenames_string"
+"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen}  $config{hisat2} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $config{zip} $filenames_string"
     ) or die "Can't run hicup_mapper\n.";
 } else {
     !system(
-"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{ambiguous} $config{hisat2} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $filenames_string"
+"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $filenames_string"
     ) or die "Can't run hicup_mapper\n.";
 }
 
