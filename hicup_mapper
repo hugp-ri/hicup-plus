@@ -335,23 +335,23 @@ sub map_file {
         print "running bowtie2...\n";
 		#TODO
 		if ( $config{zip} and $config{samtools} ) {
-			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
+			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
 		# "| samtools view -bSh 2>/dev/null - > $paired_filename" 
 		} elsif ( $config{zip} ) {
-			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
+			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
 		# "| gzip -c - > $paired_filename"
 		} else {
-			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
+			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
 		}
     } elsif ( $config{dragen} ne '' ) {
          print "running dragen...\n";
          my $index_directory = dirname( $config{index} );
          my $output_directory  = dirname ( $outputfile );
          my $output_prefix = basename( $outputfile, ".sam");
-         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{dragen} -r $index_directory --output-format SAM --enable-map-align true --enable-map-align--output true --threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix -S $output_directory" );
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{dragen} -r $index_directory --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align--output true --threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix -S $output_directory" );
     } elsif ( $config{hisat2} ne '' ) {
          print "running hisat2...\n";
-         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{hisat2} -x $config{index} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{hisat2} -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
     } else {
         print("Must path for specify at least one aligner: bowtie, bowtie2, dragen, or hisat2 in configuration");
         exit(1);
