@@ -326,6 +326,23 @@ sub map_file {
     }
 
     print "$inputfile";
+    system ("ls $inputfile");
+    
+    my $index_directory = dirname( $config{index} );
+    print "index: $index_directory \n";
+    my $output_directory  = dirname ( $outputfile );
+    print "output: $output_directory \n";
+    my $output_prefix = basename( $outputfile, ".sam");
+    print "filename $output_prefix \n";
+
+    if ( $config{dragen} ne '' ) {
+        print "running dragen...\n";
+        print "Mapping $inputfile\n" unless $config{quiet};
+        system ("ls $inputfile");
+        print "\n$config{dragen} -r $index_directory -1 $inputfile --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory \n";
+        system("$config{dragen} -1 $inputfile -r $index_directory --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory" );
+    }
+
 
     local ( *READER, *WRITER, *ERROR );
     my $oid;
@@ -346,16 +363,8 @@ sub map_file {
 			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
 		}
     } elsif ( $config{dragen} ne '' ) {
-         print "running dragen...\n";
-         my $index_directory = dirname( $config{index} );
-         print "index: $index_directory \n";
-         my $output_directory  = dirname ( $outputfile );
-         print "output: $output_directory \n";
-         my $output_prefix = basename( $outputfile, ".sam");
-         print "filename $output_prefix \n";
-         system ("ls $inputfile");
-         print "\n$config{dragen} -r $index_directory -1 $inputfile --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory \n";
-         $oid = system("$config{dragen} -1 $inputfile -r $index_directory --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-directory $output_directory" );
+         print "summarising dragen results...\n";
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "cat ${output_directory}/${output_prefix}.wgs_coverage_metrics.csv >&2" );
     } elsif ( $config{hisat2} ne '' ) {
          print "running hisat2...\n";
          print ( "$config{hisat2} -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
