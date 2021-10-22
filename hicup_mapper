@@ -337,11 +337,13 @@ sub map_file {
     print "filename $output_prefix \n";
 
     if ( $config{dragen} ne '' ) {
-        print "running dragen...\n";
+        print "running samples...\n";
         print(system("pwd"));
+        print "\n";
         print "Mapping $inputfile\n" unless $config{quiet};
         system ("ls $inputfile");
-        print "\n$config{dragen} -r $index_directory -1 $inputfile --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory \n > dragen.out 2> dragen.err";
+        print "\n";
+        #print "\n$config{dragen} -r $index_directory -1 $inputfile --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory \n > dragen.out 2> dragen.err";
         #system("$config{dragen} -1 $inputfile -r $index_directory --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory" );
     }
 
@@ -366,7 +368,7 @@ sub map_file {
 		}
     } elsif ( $config{dragen} ne '' ) {
          print "running dragen...\n";
-         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{dragen} -1 $inputfile -r $index_directory --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory >&2" );
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{dragen} -1 $inputfile -r $index_directory --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory" );
          #$oid = open3( \*WRITER, \*READER, \*ERROR, "cat dragen.err >&2 cat dragen.out >&1" );
     } elsif ( $config{hisat2} ne '' ) {
          print "running hisat2...\n";
@@ -488,7 +490,12 @@ sub map_file {
                 $multi_mapped = $1;    #Will be overwritten later owing to new definition of multi-mapping
             }
 
-        } elsif ( $config{dragen} ) {
+        }
+    }
+
+    while (<READER>) {
+
+        if ( $config{dragen} ) {
 
             print("Release the Dragen!\n");
 
@@ -499,7 +506,7 @@ sub map_file {
             }
 
             $reads_processed = 0;
-            if (/MAPPING\/ALIGNING SUMMARY {3,}Total input reads {3,}(\d+?) {3,}(\\d+.\d+)/) {    #Dragen output
+            if (/MAPPING\/ALIGNING SUMMARY\.*?Total input reads\.*?(\d+)\.*?/) {    #Dragen output
                 $reads_processed = $1;
             }
             print "total reads: ";
@@ -508,26 +515,26 @@ sub map_file {
 
             $multi_mapped = 0;
             # defines mapping quality 1-10 as multi-mappers
-            if (/MAPPING\/ALIGNING SUMMARY {3,}Reads with MAPQ \[ 0\:10\) {3,}(\.*?)/) { #Dragen output
+            if (/MAPPING\/ALIGNING SUMMAR\.*?Reads with MAPQ \[ 0\:10\)\.*?(\d+)\.*?/) { #Dragen output
                 $multi_mapped = $1;
             }
             print "multimappers: ";
-            print($multi_mapped)
+            print($multi_mapped);
             print "\n";
 
             $unmapped = 0;
-            if (/MAPPING\/ALIGNING SUMMARY {3,}Unmapped reads {3,}(\d+)/){ #Dragen output
+            if (/MAPPING\/ALIGNING SUMMARY\.*Unmapped reads\.*?(\d+)\.*?/){ #Dragen output
                 $unmapped = $1;
             }
             print "unmapped: ";
-            print($unmapped)
+            print($unmapped);
             print "\n";
 
             $unique_map = 0;
             # defines mapping quality > 10 as uniquely mapping
             $unique_map = $reads_processed - $multi_mapped - $unmapped ;
             print "unique mappers: ";
-            print($unique_map)
+            print($unique_map);
             print "\n";
 
         }
@@ -662,17 +669,17 @@ sub pair {
             next;
         } else {
 
-            if ($in_header) {    #Print the additional SAM header line
-                my $sam_header_line = "\@PG\tID:HiCUP Mapper\tVN:" . "$hicup_module::VERSION\n";
-                print PAIRED $sam_header_line;
+        	if ($in_header) {    #Print the additional SAM header line
+                	my $sam_header_line = "\@PG\tID:HiCUP Mapper\tVN:" . "$hicup_module::VERSION\n";
+                	print PAIRED $sam_header_line;
 
-                if ( $config{ligation} ) {
-                    print PAIRED $config{ligation} . "\n";
-                }
+			if ( $config{ligation} ) {
+                    		print PAIRED $config{ligation} . "\n";
+                	}
                 $in_header = 0;
-            }
-            /^(\d+)_/;
-            $f_read_id = $1;
+            	}
+            	/^(\d+)_/;
+            	$f_read_id = $1;
 
 			if($config{bowtie2} ne ''){
 				if ( bowtie2MultiMapRead($f_read) ){    #Don't included multi-mapping reads
@@ -684,56 +691,56 @@ sub pair {
 			if($r_read_id == $f_read_id){   #Special case in which current Forward ID is same as previous reverse ID
 			
  		
-			if($config{bowtie2} ne ''){
-				if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
-					$r_read_bowtie2_multimap++;
-					next;
-				}
-			}
-								
-			$f_read =~ s/^(\d+)_//;                  #Remove numbering labels
-			$r_read =~ s/^(\d+)_//;
-            ( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
-			if ($f_read) {                           #Do not print empty values
-				print PAIRED $f_read;
-				print PAIRED $r_read;
-				$paired_reads_counter++;
-				next;
-				}			
-			}
-					
-            while ( $r_read_id < $f_read_id ) {
-                $r_read = scalar <REVERSE> or last;
-
-                if ( $r_read =~ /^\s*$/ ) {
-                    next;
-                } elsif ( $r_read =~ /^@/ ) {    #Ignore SAM format header lines
-                    next;
-                } else {
-                    $r_read =~ /^(\d+)_/;
-                    $r_read_id = $1;
-                }
-
-				if($config{bowtie2} ne ''){
+	  			if($config{bowtie2} ne ''){
 					if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
 						$r_read_bowtie2_multimap++;
 						next;
 					}
 				}
+								
+				$f_read =~ s/^(\d+)_//;                  #Remove numbering labels
+				$r_read =~ s/^(\d+)_//;
+	            ( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
+				if ($f_read) {                           #Do not print empty values
+					print PAIRED $f_read;
+					print PAIRED $r_read;
+					$paired_reads_counter++;
+					next;
+					}			
+				}
+					
+            			while ( $r_read_id < $f_read_id ) {
+			                $r_read = scalar <REVERSE> or last;
 
-                if ( $f_read_id == $r_read_id ) {
-                    $f_read =~ s/^(\d+)_//;                  #Remove numbering labels
-                    $r_read =~ s/^(\d+)_//;
-                    ( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
-                    if ($f_read) {                           #Do not print empty values
-                        print PAIRED $f_read;
-                        print PAIRED $r_read;
-                        $paired_reads_counter++;
-                    }
-                }
-            }
-        }
-    }
+			                if ( $r_read =~ /^\s*$/ ) {
+                    				next;
+			                } elsif ( $r_read =~ /^@/ ) {    #Ignore SAM format header lines
+			                    next;
+			                } else {
+                    				$r_read =~ /^(\d+)_/;
+				                    $r_read_id = $1;
+                			}
+
+					if($config{bowtie2} ne ''){
+						if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
+							$r_read_bowtie2_multimap++;
+							next;
+						}
+					}
+
+			                if ( $f_read_id == $r_read_id ) {
+			                	$f_read =~ s/^(\d+)_//;                  #Remove numbering labels
+                   				$r_read =~ s/^(\d+)_//;
+						( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
+						if ($f_read) {                           #Do not print empty values
+                        				print PAIRED $f_read;
+				                        print PAIRED $r_read;
+                        				$paired_reads_counter++;
+                    				}
+                			}
+				}
+        		}
+    		}
 
 	if ( $config{bowtie2} or $config{hisat2} ) {    #When using bowtie2 we need to record the number of multi-mapping reads in the reverse read file   
 		while (<REVERSE>){
