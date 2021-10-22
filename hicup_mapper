@@ -464,7 +464,7 @@ sub map_file {
             if (/\# reads with alignments suppressed due to -m: (\d+)/) {    #Bowtie output
                 $multi_mapped = $1;
             }
-        } else {
+        } elsif ( $config{bowtie2} or $config{hisat2} ) {
 
             # Don't show expected messages from bowtie2, but
             # warn about anything else
@@ -692,7 +692,7 @@ sub pair {
         }
     }
 
-	if($config{bowtie2}){    #When using bowtie2 we need to record the number of multi-mapping reads in the reverse read file   
+	if ( $config{bowtie2} or $config{hisat2} ) {    #When using bowtie2 we need to record the number of multi-mapping reads in the reverse read file   
 		while (<REVERSE>){
 			my $r_read = $_;
 			$r_read_bowtie2_multimap++ if( bowtie2MultiMapRead($r_read) );     #Don't included multi-mapping reads
