@@ -5,6 +5,7 @@ use warnings;
 use Getopt::Long;
 use POSIX ":sys_wait_h";    #for nonblocking read
 use POSIX;
+use IPC::Open2;
 use IPC::Open3;
 use IO::Select;
 use FindBin '$Bin';
@@ -337,9 +338,10 @@ sub map_file {
 
     if ( $config{dragen} ne '' ) {
         print "running dragen...\n";
+        print(system("pwd"));
         print "Mapping $inputfile\n" unless $config{quiet};
         system ("ls $inputfile");
-        print "\n$config{dragen} -r $index_directory -1 $inputfile --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory \n";
+        print "\n$config{dragen} -r $index_directory -1 $inputfile --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory \n > dragen.out 2> dragen.err";
         system("$config{dragen} -1 $inputfile -r $index_directory --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory" );
     }
 
@@ -364,7 +366,7 @@ sub map_file {
 		}
     } elsif ( $config{dragen} ne '' ) {
          print "summarising dragen results...\n";
-         $oid = open3( \*WRITER, \*READER, \*ERROR, "cat ${output_directory}/${output_prefix}.wgs_coverage_metrics.csv >&2" );
+         $oid = open2( \*WRITER, \*READER, "cat dragen.out" );
     } elsif ( $config{hisat2} ne '' ) {
          print "running hisat2...\n";
          print ( "$config{hisat2} -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
@@ -488,7 +490,7 @@ sub map_file {
         }
     }
     close READER or die "Could not close 'READER' filehandle : $!";
-    close ERROR or die "Could not close 'ERROR' filehandle : $!";
+    # close ERROR or die "Could not close 'ERROR' filehandle : $!";
     waitpid( $oid, 0 );
 
     #Add the results to the results summary hash
