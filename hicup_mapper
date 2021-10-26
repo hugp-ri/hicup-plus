@@ -16,6 +16,7 @@ use hicup_module qw(hashVal checkAligner checkAlignerIndices
   determineAlignerFormat quality_checker);
 
 use Data::Dumper;
+use Carp;
 
 ###################################################################################
 ###################################################################################
@@ -337,7 +338,7 @@ sub map_file {
     print "filename $output_prefix \n";
 
     if ( $config{dragen} ne '' ) {
-        print "running samples...\n";
+        print "\nrunning samples...\n";
         print(system("pwd"));
         print "\n";
         print "Mapping $inputfile\n" unless $config{quiet};
@@ -352,10 +353,10 @@ sub map_file {
     my $oid;
 
     if ( $config{bowtie} ne '' ) {
-        print "running bowtie...\n";
+        print "n\ running bowtie...\n";
         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie} -m 1 -n 1 --best --$config{format} -p 1 --chunkmbs 512 $config{index} --sam - $outputfile" );
     } elsif ( $config{bowtie2} ne '' ) {
-        print "running bowtie2...\n";
+        print "\n running bowtie2...\n";
 		#TODO
 		if ( $config{zip} and $config{samtools} ) {
 			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
@@ -367,11 +368,11 @@ sub map_file {
 			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
 		}
     } elsif ( $config{dragen} ne '' ) {
-         print "running dragen...\n";
-         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{dragen} -1 $inputfile -r $index_directory --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory" );
-         #$oid = open3( \*WRITER, \*READER, \*ERROR, "cat dragen.err >&2 cat dragen.out >&1" );
+         print "\n running dragen...\n";
+         print "\n$config{dragen} -r $index_directory -1 $inputfile --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory > $output_directory/dragen.out 2> $output_directory/dragen.err \n";
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{dragen} -1 $inputfile -r $index_directory --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory > $output_directory/dragen.out 2> $output_directory/dragen.err" );
     } elsif ( $config{hisat2} ne '' ) {
-         print "running hisat2...\n";
+         print "\n running hisat2...\n";
          print ( "$config{hisat2} -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{hisat2} -x $config{index} --$config{format} -k 1 --no-unal --no-spliced-alignment --no-softclip --threads $bowtie2_threads --reorder - -S $outputfile" );
     } else {
@@ -379,26 +380,27 @@ sub map_file {
         exit(1);
     }
 
-    print ( "call" );
+    print ( "call " );
     print ( $oid );
 
     unless ($oid) {
         die "Failed to launch aligner";
     }
 
-    print "Mapping $inputfile\n" unless $config{quiet};
+    print "\nMapping $inputfile\n" unless $config{quiet};
 
     my $read_count       = 1;
     my $too_short_to_map = 0;
     my $unique_map       = 0;
+    my $mapped           = 0;
     my $unmapped         = 0;
     my $multi_mapped     = 0;
     my $reads_processed  = 0;
-	my $bowtie2_custom_multimap = 0;   #Number of reads 
+    my $bowtie2_custom_multimap = 0;   #Number of reads 
+
 
     my $select = IO::Select->new();
     $select->add( \*ERROR );
-
     while (<INPUT>) {
         my $read = $_;
         if (/^@\d+_[ATCG]+_/) {    #Checks if lines already numbered by the no longer supported script hicup_sorter?
@@ -425,20 +427,28 @@ sub map_file {
                 next;
             }
         }
-        print WRITER $read;
+        if ( $config{dragen} ) {
+           print "";
+        } else {
+           print WRITER $read; ## <- dragen fails on this line
 
-        #Check for error messages from Bowtie
-        if ( $select->can_read(0.00000001) ) {
-            while ( $select->can_read(0.0001) ) {
-                $_ = <ERROR>;
-                warn "$inputfile Aligner error: $_" unless(/Unable to change buffer size from default of 8192/);   #Suppress confusing message from Bowtie2
+           #Check for error messages from Bowtie
+           if ( $select->can_read(0.00000001) ) {
+                while ( $select->can_read(0.0001) ) {
+                    $_ = <ERROR>;
+                    warn "$inputfile Aligner error: $_" unless(/Unable to change buffer size from default of 8192/);   #Suppress confusing message from Bowtie2
+                }
             }
         }
     }
 
-    while ( $select->can_read(0.01) ) {
-        $_ = <ERROR>;
-        warn "$inputfile Aligner error: $_";
+    if ( $config{dragen} ) {
+           print WRITER "";
+    } else {
+        while ( $select->can_read(0.01) ) {
+            $_ = <ERROR>;
+            warn "$inputfile Aligner error: $_";
+        }
     }
 
     close WRITER or die "Could not close 'WRITER' filehandle : $!";
@@ -489,59 +499,49 @@ sub map_file {
             if (/(\d+) \(.+\) aligned >1 times/) {          #Bowtie2 or HiSAT2 output
                 $multi_mapped = $1;    #Will be overwritten later owing to new definition of multi-mapping
             }
-
+        } elsif ( $config{dragen} ) {
+            # show all warnings
+            warn $_;
         }
     }
-
-    while (<READER>) {
-
-        if ( $config{dragen} ) {
-
-            print("Release the Dragen!\n");
-
-            # Don't show expected messages from bowtie2, but
-            # warn about anything else
-            unless ( /\d* reads; of these:/ or /were unpaired; of these:/ or /aligned.+time/ or /overall alignment rate/ ) {
-                warn $_;
-            }
-
-            $reads_processed = 0;
-            if (/MAPPING\/ALIGNING SUMMARY\.*?Total input reads\.*?(\d+)\.*?/) {    #Dragen output
-                $reads_processed = $1;
-            }
-            print "total reads: ";
-            print($reads_processed);
-            print "\n";
-
-            $multi_mapped = 0;
-            # defines mapping quality 1-10 as multi-mappers
-            if (/MAPPING\/ALIGNING SUMMAR\.*?Reads with MAPQ \[ 0\:10\)\.*?(\d+)\.*?/) { #Dragen output
-                $multi_mapped = $1;
-            }
-            print "multimappers: ";
-            print($multi_mapped);
-            print "\n";
-
-            $unmapped = 0;
-            if (/MAPPING\/ALIGNING SUMMARY\.*Unmapped reads\.*?(\d+)\.*?/){ #Dragen output
-                $unmapped = $1;
-            }
-            print "unmapped: ";
-            print($unmapped);
-            print "\n";
-
-            $unique_map = 0;
-            # defines mapping quality > 10 as uniquely mapping
-            $unique_map = $reads_processed - $multi_mapped - $unmapped ;
-            print "unique mappers: ";
-            print($unique_map);
-            print "\n";
-
-        }
-    }
+    # complete aligner call
     close READER or die "Could not close 'READER' filehandle : $!";
     close ERROR or die "Could not close 'ERROR' filehandle : $!";
     waitpid( $oid, 0 );
+
+    if ( $config{dragen} ) {
+        
+        # import results from Dragen logs
+
+        my $dragen_file = "$output_directory/dragen.out" ;
+        my %dragen_results = %{ &dragen2hash($dragen_file) };
+
+        $reads_processed = $dragen_results{TOTAL};
+        print "total reads: "  unless $config{quiet};
+        print($reads_processed) unless $config{quiet};
+        print "\n" unless $config{quiet};
+        $mapped  = $dragen_results{MAPPED};
+        print "mapped: " unless $config{quiet};
+        print($mapped) unless $config{quiet};
+        print "\n" unless $config{quiet};
+        $multi_mapped = $dragen_results{MULTI};
+        print "multimappers: " unless $config{quiet};
+        print($multi_mapped) unless $config{quiet};
+        print "\n" unless $config{quiet};
+        $unmapped  = $dragen_results{UNMAPPED};
+        print "unmapped: " unless $config{quiet};
+        print($unmapped) unless $config{quiet};
+        print "\n" unless $config{quiet};
+
+        # defines mapping quality >10 as uniquely mapped
+        $unique_map = $mapped - $multi_mapped;
+        print "unique mappers: " unless $config{quiet};
+        print($unique_map) unless $config{quiet};
+        print "\n" unless $config{quiet};
+    }
+
+    # test printing output
+    print SUMMARYTEMP "$inputfile\t$reads_processed\t$too_short_to_map\t\t$unique_map\t\t$multi_mapped\t\t$unmapped\t\t\n";
 
     #Add the results to the results summary hash
 	#Note, these values will be re-calculated if Bowtie2 is used as the aligner
@@ -558,6 +558,7 @@ sub map_file {
         $percent_unmapped         = sprintf( "%.1f", ( $unmapped / $reads_processed * 100 ) );
         $percent_multi            = sprintf( "%.1f", ( $multi_mapped / $reads_processed * 100 ) );
     } else {
+        $percent_too_short_to_map = 'N/A';
         $percent_unique   = 'N/A';
         $percent_unmapped = 'N/A';
         $percent_multi    = 'N/A';
@@ -681,7 +682,7 @@ sub pair {
             	/^(\d+)_/;
             	$f_read_id = $1;
 
-			if($config{bowtie2} ne ''){
+			if( $config{bowtie2} or $config{hisat2} ){
 				if ( bowtie2MultiMapRead($f_read) ){    #Don't included multi-mapping reads
 					$f_read_bowtie2_multimap++;
 					next;
@@ -691,7 +692,7 @@ sub pair {
 			if($r_read_id == $f_read_id){   #Special case in which current Forward ID is same as previous reverse ID
 			
  		
-	  			if($config{bowtie2} ne ''){
+	  			if($config{bowtie2}  or $config{hisat2}){
 					if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
 						$r_read_bowtie2_multimap++;
 						next;
@@ -721,7 +722,7 @@ sub pair {
 				                    $r_read_id = $1;
                 			}
 
-					if($config{bowtie2} ne ''){
+					if($config{bowtie2} or $config{hisat2} ){
 						if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
 							$r_read_bowtie2_multimap++;
 							next;
@@ -921,6 +922,66 @@ sub extract_mapping_results {
     return %results;
 }
 
+#####SUB#####
+#Reads a dragen output file and converts it into hash with accessible data
+sub dragen2hash {
+        if (@_ != 1) {
+                die "USAGE: module dragen2hash requires one argument: <\$dragen_file>.\n";
+        }
+
+        #
+        #Get file
+        #
+        my ($dragen_file) = @_;
+
+        my %data = (
+                'TOTAL' => "NA",
+                'MAPPED' => "NA",
+                'UNIQUE' => "NA",
+                'MULTI' => "NA",
+                'UNMAPPED' => "NA"
+                );
+
+
+        open (DRAGEN, "<", $dragen_file) or die "cannot open $dragen_file.\n";
+        while (my $line = <DRAGEN>) {
+                my $data = $line;
+                $data =~ s/\r//sig;
+                $data =~ s/\n//sig;
+                if ($data !~ m/^MAPPING\/ALIGNING SUMMARY/) {
+                        next;
+                }
+
+                $data =~ s/ +/ /g; #ignores consecutive whitespaces
+                $data =~ s/ $//;   #removes the last space from each line
+
+                my @data = split (/ /, $data);
+
+                if ($data =~ m/Total input reads/) {
+                        $data{TOTAL} = $data[-2]/2;
+                        next;
+                }
+                elsif ($data =~ m/Mapped reads [0123456789]/) {  #do not match "Mapped reads R1" or "Mapped reads R2"
+                        $data{MAPPED} = $data[-2];
+                        next;
+                }
+                elsif ($data =~ m/Unmapped reads/ && $data{UNMAPPED} =~ m/NA/) {
+                        $data{UNMAPPED} = $data[-2];
+                }
+                elsif ($data =~ m/Reads with MAPQ \[ 0\:10\)/ && $data{MULTI} =~ m/NA/) {
+                        $data{MULTI} = $data[-2];
+                }
+
+                #print "$data\n";
+        }
+        close (DRAGEN);
+
+        $data{UNIQUE} = $data{MAPPED} - $data{MULTI};
+
+        return (\%data);
+}
+##########
+
 __DATA__
 
 HiCUP homepage: www.bioinformatics.babraham.ac.uk/projects/hicup
@@ -929,7 +990,7 @@ SYNOPSIS
 
 The hicup_mapper script aligns paired-end read files to a specified reference genome
 
-hicup_mapper [OPTIONS]... -config [CONFIGURATION FILE]...
+hicup_mapper [OPTIONS]... --config [CONFIGURATION FILE]...
 hicup_mapper [OPTIONS]... [FASTQ FILES]...
 
 FUNCTION
