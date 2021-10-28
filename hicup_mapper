@@ -209,6 +209,9 @@ print SUMMARY "File\tTotal_reads_processed\tReads_too_short_to_map\t%Reads_too_s
 foreach my $fileforward ( keys %files ) {
     my $filereverse = $files{$fileforward};
 
+    print "File forward: $fileforward\n" unless $config{quiet};
+    print "File reverse: $filereverse\n" unless $config{quiet};
+
     my $pid = fork();
     die "cannot fork" unless defined $pid;
 
@@ -231,6 +234,8 @@ do {
 } until ( keys(%children) == 0 );
 
 print "Pairing complete\n" unless $config{quiet};
+
+exit(1); ## <= test until here
 
 #Remove intermediate *.map* files
 my @map_files = fileNamer(\@filenames, \%config, 'mapper', 0, 0, 0, 1, 0);
@@ -369,8 +374,8 @@ sub map_file {
 		}
     } elsif ( $config{dragen} ne '' ) {
          print "\n running dragen...\n";
-         print "\n$config{dragen} -r $index_directory -1 $inputfile --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory > $output_directory/dragen.out 2> $output_directory/dragen.err \n";
-         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{dragen} -1 $inputfile -r $index_directory --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory > $output_directory/dragen.out 2> $output_directory/dragen.err" );
+         print "\n$config{dragen} -r $index_directory -1 $inputfile --output-format SAM --enable-sort false --enable-map-align true --preserve-map-align-order true --ref-sequence-filter false --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory > $output_directory/dragen.out 2> $output_directory/dragen.err \n";
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{dragen} -1 $inputfile -r $index_directory --output-format SAM --enable-sort false --enable-map-align true --preserve-map-align-order true --ref-sequence-filter false --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory > $output_directory/dragen.out 2> $output_directory/dragen.err" );
     } elsif ( $config{hisat2} ne '' ) {
          print "\n running hisat2...\n";
          print ( "$config{hisat2} -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
@@ -642,27 +647,28 @@ sub pair {
     } else {
         open( FORWARD, $fileForward ) or die "Can't read \'$fileForward\' : $!";
     }
-    if ( $fileForward =~ /\.gz$/ ) {
+    if ( $fileReverse =~ /\.gz$/ ) {
         open( REVERSE, "gunzip -c $fileReverse |" ) or die "Couldn't read file '$fileReverse' : $!";
     } else {
         open( REVERSE, $fileReverse ) or die "Can't read \'$fileReverse\' : $!";
     }
 
     my $f_read;
-    my $r_read;
+    my $r_read = <REVERSE>;             # initialise with first line for Dragen
     my $f_read_id            = 0;
     my $r_read_id            = 0;
     my $paired_reads_counter = 0;
     my $f_reads_counter      = 0;
     my $r_reads_counter      = 0;
-	my $f_read_bowtie2_multimap = 0;    #Bowtie2 multi-mapping
-	my $r_read_bowtie2_multimap = 0;
+    my $f_read_bowtie2_multimap = 0;    #Bowtie2 multi-mapping
+    my $r_read_bowtie2_multimap = 0;
 	
 
     my $in_header = 1;    #Flag indicating if in the header region
 
     while (<FORWARD>) {
         $f_read = $_;
+#print( $f_read );
         if (/^\s*$/) {
             next;
         } elsif (/^@/) {    #Print SAM header lines so conversion to BAM is possible
@@ -679,8 +685,19 @@ sub pair {
                 	}
                 $in_header = 0;
             	}
-            	/^(\d+)_/;
-            	$f_read_id = $1;
+print( $f_read );
+                if ( $config{dragen} ) {
+                   my @f_read_split = split("\t", $f_read);
+                   $f_read_id = $f_read_split[0];
+                   my @r_read_split = split("\t", $r_read);
+                   $r_read_id = $r_read_split[0];
+                } else {
+                    /^(\d+)_/;
+                    $f_read_id = $1;
+                }
+print( $f_read_id );
+#exit(1); ##<- here
+#print( $f_read_id ) unless $config{quiet};
 
 			if( $config{bowtie2} or $config{hisat2} ){
 				if ( bowtie2MultiMapRead($f_read) ){    #Don't included multi-mapping reads
@@ -689,7 +706,7 @@ sub pair {
 				}
 			}
 					
-			if($r_read_id == $f_read_id){   #Special case in which current Forward ID is same as previous reverse ID
+			if($r_read_id eq $f_read_id){   #Special case in which current Forward ID is same as previous reverse ID
 			
  		
 	  			if($config{bowtie2}  or $config{hisat2}){
@@ -698,9 +715,14 @@ sub pair {
 						next;
 					}
 				}
-								
-				$f_read =~ s/^(\d+)_//;                  #Remove numbering labels
-				$r_read =~ s/^(\d+)_//;
+							
+                                if ( $config{dragen} ){	
+				    $f_read =~ s/^(.*?) /$1\\1 /; # add \1 to add R1s
+                                    $r_read =~ s/^(.*?) /$1\\2 /; # add \2 to add R2s
+                                } else {
+                                    $f_read =~ s/^(\d+)_//; #Remove numbering labels
+                                    $r_read =~ s/^(\d+)_//; #Remove numbering labels
+                                }
 	            ( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
 				if ($f_read) {                           #Do not print empty values
 					print PAIRED $f_read;
@@ -710,7 +732,7 @@ sub pair {
 					}			
 				}
 					
-            			while ( $r_read_id < $f_read_id ) {
+            			while ( $r_read_id ne $f_read_id ) {
 			                $r_read = scalar <REVERSE> or last;
 
 			                if ( $r_read =~ /^\s*$/ ) {
@@ -718,8 +740,14 @@ sub pair {
 			                } elsif ( $r_read =~ /^@/ ) {    #Ignore SAM format header lines
 			                    next;
 			                } else {
-                    				$r_read =~ /^(\d+)_/;
-				                    $r_read_id = $1;
+
+                                               if ( $config{dragen} ) {
+                                                   my @r_read_split = split("\t", $r_read);
+                                                   $r_read_id = $r_read_split[0];
+                                                } else {
+                    				    $r_read =~ /^(\d+)_/;
+				                        $r_read_id = $1;
+                                                }
                 			}
 
 					if($config{bowtie2} or $config{hisat2} ){
@@ -729,9 +757,14 @@ sub pair {
 						}
 					}
 
-			                if ( $f_read_id == $r_read_id ) {
-			                	$f_read =~ s/^(\d+)_//;                  #Remove numbering labels
-                   				$r_read =~ s/^(\d+)_//;
+			                if ( $f_read_id eq $r_read_id ) {
+                                            if ( $config{dragen} ){
+                                                $f_read =~ s/^(.*?) /$1\\1 /; # add \1 to add R1s
+                                                $r_read =~ s/^(.*?) /$1\\2 /; # add \2 to add R2s
+                                            } else {
+                                                $f_read =~ s/^(\d+)_//; #Remove numbering labels
+                                                $r_read =~ s/^(\d+)_//; #Remove numbering labels
+                                            }
 						( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
 						if ($f_read) {                           #Do not print empty values
                         				print PAIRED $f_read;
@@ -741,7 +774,7 @@ sub pair {
                 			}
 				}
         		}
-    		}
+    	}
 
 	if ( $config{bowtie2} or $config{hisat2} ) {    #When using bowtie2 we need to record the number of multi-mapping reads in the reverse read file   
 		while (<REVERSE>){
@@ -958,7 +991,7 @@ sub dragen2hash {
                 my @data = split (/ /, $data);
 
                 if ($data =~ m/Total input reads/) {
-                        $data{TOTAL} = $data[-2]/2;
+                        $data{TOTAL} = $data[-2];
                         next;
                 }
                 elsif ($data =~ m/Mapped reads [0123456789]/) {  #do not match "Mapped reads R1" or "Mapped reads R2"
