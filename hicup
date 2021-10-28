@@ -122,7 +122,7 @@ if ( $config{example} ) {
 }
 
 if( hasval($config{config}) ){
-	die "Configuration file '$config{config}' does not exist\n" unless(-e $config{config});
+   die "Configuration file '$config{config}' does not exist\n" unless(-e $config{config});
 }
 
 print "Starting HiCUP pipeline (v$hicup_module::VERSION)\n" unless $config{quiet};
@@ -147,11 +147,11 @@ if (@ARGV) {
 
 #Check files specified and exist
 if(@filenames){
-	unless ( check_files_exist( \@filenames, 'EXISTS' ) ) {
-    	die "Please adjust configuration.\n";
-	}
+   unless ( check_files_exist( \@filenames, 'EXISTS' ) ) {
+       die "Please adjust configuration.\n";
+   }
 }else{
-	die "Please specify files to process.\n";
+   die "Please specify files to process.\n";
 }
 
 
@@ -340,9 +340,9 @@ if ( $config{zip} ) {
 #Map and pair sequences
 my $ligation = "\@PG\tID:HiCUP Truncater\tVN:" . $hicup_module::VERSION;       #Create the hidden ligation flag to send to HiCUP mapper to print the hicup_truncation settings to the output file
 if ( $config{re1} ) {
-	#We cannot have a ":" in the SAM header at this point, so remove it
-	my $colonless_re1 = $config{re1};
-	$colonless_re1 =~ s/://g;
+   #We cannot have a ":" in the SAM header at this point, so remove it
+   my $colonless_re1 = $config{re1};
+   $colonless_re1 =~ s/://g;
     $ligation = $ligation . "\tDS:\"" . "$colonless_re1\"";
 } else {
     $ligation = $ligation . "\tDS\"" . "Ligation junction sequences $config{sequence}\"";

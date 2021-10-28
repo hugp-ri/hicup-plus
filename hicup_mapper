@@ -353,16 +353,16 @@ sub map_file {
         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie} -m 1 -n 1 --best --$config{format} -p 1 --chunkmbs 512 $config{index} --sam - $outputfile" );
     } elsif ( $config{bowtie2} ne '' ) {
         print "\n running bowtie2...\n" unless $config{quiet};
-		#TODO
-		if ( $config{zip} and $config{samtools} ) {
-			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
-		# "| samtools view -bSh 2>/dev/null - > $paired_filename" 
-		} elsif ( $config{zip} ) {
-			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
-		# "| gzip -c - > $paired_filename"
-		} else {
-			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
-		}
+      #TODO
+      if ( $config{zip} and $config{samtools} ) {
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
+      # "| samtools view -bSh 2>/dev/null - > $paired_filename" 
+      } elsif ( $config{zip} ) {
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
+      # "| gzip -c - > $paired_filename"
+      } else {
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
+      }
     } elsif ( $config{dragen} ne '' ) {
          print "\n running dragen...\n" unless $config{quiet};
          print "\n$config{dragen} -r $index_directory -1 $inputfile --output-format SAM --enable-sort false --enable-map-align true --preserve-map-align-order true --ref-sequence-filter false --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory > $output_directory/dragen.out 2> $output_directory/dragen.err \n" unless $config{quiet};
@@ -540,7 +540,7 @@ sub map_file {
     print SUMMARYTEMP "$inputfile\t$reads_processed\t$too_short_to_map\t\t$unique_map\t\t$multi_mapped\t\t$unmapped\t\t\n";
 
     #Add the results to the results summary hash
-	#Note, these values will be re-calculated if Bowtie2 is used as the aligner
+   #Note, these values will be re-calculated if Bowtie2 is used as the aligner
     my $percent_too_short_to_map;
     my $percent_unique;
     my $percent_unmapped;
@@ -570,36 +570,36 @@ sub map_file {
 #Returns 1 if multi-mapping and 0 if uniquely mapping
 #Slightly adjusted from the main hicup subroutine
 sub bowtie2MultiMapRead {
-	
+   
     my @tags = split( /\t/, $_[0]);
-	my $mapq = $tags[4];
-	
+   my $mapq = $tags[4];
+   
     @tags = splice( @tags, 11 );    #Only evaluate SAM tags
 
-	my $as;
-	my $xs;
-	
+   my $as;
+   my $xs;
+   
     foreach my $tag (@tags) {
-        my ($tag_id, $score) = split(/:i:/, $tag);		
-		if($tag_id eq 'AS'){
-			$as = $score;
-		} elsif($tag_id eq 'XS') {
-			$xs = $score;
-		}
-	}
-	
-	if(defined $xs and defined $as){    #Potential multi-map, check quality scores to determine whether multi-maps		
-		if( ($mapq >= 30) and ( abs($xs - $as) >= 10 )  ){
-			return 0;    #Unique map
-		} else {
-			return 1;
-		}	
-	} elsif(defined $as){    #Unique map
-		return 0;
-	} else {
-		die "AS not defined in @tags\n";
-	}
-}	
+        my ($tag_id, $score) = split(/:i:/, $tag);      
+      if($tag_id eq 'AS'){
+         $as = $score;
+      } elsif($tag_id eq 'XS') {
+         $xs = $score;
+      }
+   }
+   
+   if(defined $xs and defined $as){    #Potential multi-map, check quality scores to determine whether multi-maps      
+      if( ($mapq >= 30) and ( abs($xs - $as) >= 10 )  ){
+         return 0;    #Unique map
+      } else {
+         return 1;
+      }   
+   } elsif(defined $as){    #Unique map
+      return 0;
+   } else {
+      die "AS not defined in @tags\n";
+   }
+}   
 
 
 ###################
@@ -653,7 +653,7 @@ sub pair {
     my $r_reads_counter      = 0;
     my $f_read_bowtie2_multimap = 0;    #Bowtie2 multi-mapping
     my $r_read_bowtie2_multimap = 0;
-	
+   
 
     my $in_header = 1;    #Flag indicating if in the header region
 
@@ -666,15 +666,15 @@ sub pair {
             next;
         } else {
 
-        	if ($in_header) {    #Print the additional SAM header line
-                	my $sam_header_line = "\@PG\tID:HiCUP Mapper\tVN:" . "$hicup_module::VERSION\n";
-                	print PAIRED $sam_header_line;
+           if ($in_header) {    #Print the additional SAM header line
+                   my $sam_header_line = "\@PG\tID:HiCUP Mapper\tVN:" . "$hicup_module::VERSION\n";
+                   print PAIRED $sam_header_line;
 
-			if ( $config{ligation} ) {
-                    		print PAIRED $config{ligation} . "\n";
+         if ( $config{ligation} ) {
+                          print PAIRED $config{ligation} . "\n";
                         }
                     $in_header = 0;
-            	}
+               }
                 if ( $config{dragen} ) {
                    my @f_read_split = split("\t", $f_read);
                    $f_read_id = $f_read_split[0];
@@ -685,65 +685,65 @@ sub pair {
                     $f_read_id = $1;
                 }
 
-			if( $config{bowtie2} or $config{hisat2} ){
-				if ( bowtie2MultiMapRead($f_read) ){    #Don't included multi-mapping reads
-					$f_read_bowtie2_multimap++;
-					next;
-				}
-			}
-					
-			if($r_read_id eq $f_read_id){   #Special case in which current Forward ID is same as previous reverse ID
-			
- 		
-	  			if($config{bowtie2}  or $config{hisat2}){
-					if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
-						$r_read_bowtie2_multimap++;
-						next;
-					}
-				}
-							
-                                if ( $config{dragen} ){	
-				    $f_read =~ s/^(.*?) /$1\\1 /; # add \1 to add R1s
+         if( $config{bowtie2} or $config{hisat2} ){
+            if ( bowtie2MultiMapRead($f_read) ){    #Don't included multi-mapping reads
+               $f_read_bowtie2_multimap++;
+               next;
+            }
+         }
+               
+         if($r_read_id eq $f_read_id){   #Special case in which current Forward ID is same as previous reverse ID
+         
+       
+              if($config{bowtie2}  or $config{hisat2}){
+               if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
+                  $r_read_bowtie2_multimap++;
+                  next;
+               }
+            }
+                     
+                                if ( $config{dragen} ){   
+                $f_read =~ s/^(.*?) /$1\\1 /; # add \1 to add R1s
                                     $r_read =~ s/^(.*?) /$1\\2 /; # add \2 to add R2s
                                 } else {
                                     $f_read =~ s/^(\d+)_//; #Remove numbering labels
                                     $r_read =~ s/^(\d+)_//; #Remove numbering labels
                                 }
-	            ( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
-				if ($f_read) {                           #Do not print empty values
-					print PAIRED $f_read;
-					print PAIRED $r_read;
-					$paired_reads_counter++;
-					next;
-					}			
-				}
-					
-            			while ( $r_read_id ne $f_read_id ) {
-			                $r_read = scalar <REVERSE> or last;
+               ( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
+            if ($f_read) {                           #Do not print empty values
+               print PAIRED $f_read;
+               print PAIRED $r_read;
+               $paired_reads_counter++;
+               next;
+               }         
+            }
+               
+                     while ( $r_read_id ne $f_read_id ) {
+                         $r_read = scalar <REVERSE> or last;
 
-			                if ( $r_read =~ /^\s*$/ ) {
-                    				next;
-			                } elsif ( $r_read =~ /^@/ ) {    #Ignore SAM format header lines
-			                    next;
-			                } else {
+                         if ( $r_read =~ /^\s*$/ ) {
+                                next;
+                         } elsif ( $r_read =~ /^@/ ) {    #Ignore SAM format header lines
+                             next;
+                         } else {
 
                                                if ( $config{dragen} ) {
                                                    my @r_read_split = split("\t", $r_read);
                                                    $r_read_id = $r_read_split[0];
                                                 } else {
-                    				    $r_read =~ /^(\d+)_/;
-				                        $r_read_id = $1;
+                                    $r_read =~ /^(\d+)_/;
+                                    $r_read_id = $1;
                                                 }
-                			}
+                         }
 
-					if($config{bowtie2} or $config{hisat2} ){
-						if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
-							$r_read_bowtie2_multimap++;
-							next;
-						}
-					}
+               if($config{bowtie2} or $config{hisat2} ){
+                  if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
+                     $r_read_bowtie2_multimap++;
+                     next;
+                  }
+               }
 
-			                if ( $f_read_id eq $r_read_id ) {
+                         if ( $f_read_id eq $r_read_id ) {
                                             if ( $config{dragen} ){
                                                 $f_read =~ s/^(.*?) /$1\\1 /; # add \1 to add R1s
                                                 $r_read =~ s/^(.*?) /$1\\2 /; # add \2 to add R2s
@@ -751,28 +751,28 @@ sub pair {
                                                 $f_read =~ s/^(\d+)_//; #Remove numbering labels
                                                 $r_read =~ s/^(\d+)_//; #Remove numbering labels
                                             }
-						( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
-						if ($f_read) {                           #Do not print empty values
-                        				print PAIRED $f_read;
-				                        print PAIRED $r_read;
-                        				$paired_reads_counter++;
-                    				}
-                			}
-				}
-        		}
-    	}
+                  ( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
+                  if ($f_read) {                           #Do not print empty values
+                                    print PAIRED $f_read;
+                                    print PAIRED $r_read;
+                                    $paired_reads_counter++;
+                                }
+                         }
+            }
+              }
+       }
 
-	if ( $config{bowtie2} or $config{hisat2} ) {    #When using bowtie2 we need to record the number of multi-mapping reads in the reverse read file   
-		while (<REVERSE>){
-			my $r_read = $_;
-			$r_read_bowtie2_multimap++ if( bowtie2MultiMapRead($r_read) );     #Don't included multi-mapping reads
-		}
-	}
-	
+   if ( $config{bowtie2} or $config{hisat2} ) {    #When using bowtie2 we need to record the number of multi-mapping reads in the reverse read file   
+      while (<REVERSE>){
+         my $r_read = $_;
+         $r_read_bowtie2_multimap++ if( bowtie2MultiMapRead($r_read) );     #Don't included multi-mapping reads
+      }
+   }
+   
     #Add the results to the summary_results hash
     my @results_to_edit = ( $sequencefileF, $sequencefileR );
-	my $reverse_file_flag = 0;
-	
+   my $reverse_file_flag = 0;
+   
     foreach my $key (@results_to_edit) {
 
         unless ( exists $summary_results{$key} ) {
@@ -780,40 +780,40 @@ sub pair {
         }
 
         my $result = $summary_results{$key};
-		
-		if( $config{bowtie2} or $config{hisat2} ){    #Custom edit the multi_mapped reads
-			my ($reads_processed, $too_short_to_map, $percent_too_short_to_map, $unique_map, $percent_unique, $multi_mapped, $percent_multi, $unmapped, $percent_unmapped) = split(/\t/, $result);
-			
-			if($reverse_file_flag){
-				$multi_mapped = $r_read_bowtie2_multimap;
-			} else {
-				$multi_mapped = $f_read_bowtie2_multimap;
-			}
-			
-			$unique_map = $reads_processed - $too_short_to_map - $multi_mapped - $unmapped;
-					
-			if ($reads_processed) {
-				$percent_too_short_to_map = sprintf( "%.1f", ( $too_short_to_map / $reads_processed * 100 ) );
-				$percent_unique           = sprintf( "%.1f", ( $unique_map / $reads_processed * 100 ) );
-				$percent_unmapped         = sprintf( "%.1f", ( $unmapped / $reads_processed * 100 ) );
-				$percent_multi            = sprintf( "%.1f", ( $multi_mapped / $reads_processed * 100 ) );
-			} else {
-				$percent_unique   = 'N/A';
-				$percent_unmapped = 'N/A';
-				$percent_multi    = 'N/A';
-			}	
-			
-			$result = join("\t", $reads_processed, $too_short_to_map, $percent_too_short_to_map, $unique_map, $percent_unique, $multi_mapped, $percent_multi, $unmapped, $percent_unmapped);
-			$result .= "\t";
-		}
-			
+      
+      if( $config{bowtie2} or $config{hisat2} ){    #Custom edit the multi_mapped reads
+         my ($reads_processed, $too_short_to_map, $percent_too_short_to_map, $unique_map, $percent_unique, $multi_mapped, $percent_multi, $unmapped, $percent_unmapped) = split(/\t/, $result);
+         
+         if($reverse_file_flag){
+            $multi_mapped = $r_read_bowtie2_multimap;
+         } else {
+            $multi_mapped = $f_read_bowtie2_multimap;
+         }
+         
+         $unique_map = $reads_processed - $too_short_to_map - $multi_mapped - $unmapped;
+               
+         if ($reads_processed) {
+            $percent_too_short_to_map = sprintf( "%.1f", ( $too_short_to_map / $reads_processed * 100 ) );
+            $percent_unique           = sprintf( "%.1f", ( $unique_map / $reads_processed * 100 ) );
+            $percent_unmapped         = sprintf( "%.1f", ( $unmapped / $reads_processed * 100 ) );
+            $percent_multi            = sprintf( "%.1f", ( $multi_mapped / $reads_processed * 100 ) );
+         } else {
+            $percent_unique   = 'N/A';
+            $percent_unmapped = 'N/A';
+            $percent_multi    = 'N/A';
+         }   
+         
+         $result = join("\t", $reads_processed, $too_short_to_map, $percent_too_short_to_map, $unique_map, $percent_unique, $multi_mapped, $percent_multi, $unmapped, $percent_unmapped);
+         $result .= "\t";
+      }
+         
         my $percent_paired = sprintf( "%.1f", ( 100 * $paired_reads_counter ) / ( ( split( /\t/, $result ) )[0] ) );
         $result .= "$paired_reads_counter\t$percent_paired";
         $summary_results{$key} = $result;
         my $filename_for_summary = ( split( /\//, $key ) )[-1];    #Remove folder paths
         print SUMMARY "$filename_for_summary\t$summary_results{$key}\n";
-		
-		$reverse_file_flag++;
+      
+      $reverse_file_flag++;
     }
 
     #Check that same number of reads were mapped in the forward file as the reverse file
@@ -823,8 +823,8 @@ sub pair {
         warn "Warning, risk of mis-pairing: forward and reverse FASTQ files do not contain the same number of reads: $sequencefileF ($F_reads_processed) vs $sequencefileR ($R_reads_processed)\n";
 
     }
-	
-	close PAIRED or die "Output file '$paired_filename' did not close correctly, either an error or file contains no valid reads (check summary report) : $!";
+   
+   close PAIRED or die "Output file '$paired_filename' did not close correctly, either an error or file contains no valid reads (check summary report) : $!";
 
 }
 

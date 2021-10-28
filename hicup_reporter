@@ -206,7 +206,7 @@ foreach my $summary_group (keys %summary_data){
 
     for (my $i = 0; $i < scalar ( @{$summary_data{$summary_group}->{$truncater_summaryfile}} ); $i++) {
 
-    	#Truncation results
+       #Truncation results
         my $truncater_results1 = ${$summary_data{$summary_group}->{$truncater_summaryfile}}[$i];
         $i++;  #Paired results
         my $truncater_results2 = ${$summary_data{$summary_group}->{$truncater_summaryfile}}[$i];
@@ -217,14 +217,14 @@ foreach my $summary_group (keys %summary_data){
         ($fastq_file1, $summary_results{Total_Reads_1}, $summary_results{Truncated_Read_1}, undef, $summary_results{Not_Truncated_Reads_1}, 
         undef, $summary_results{Average_Length_Truncated_1}) = split("\t", $truncater_results1);
 
-    	($fastq_file2, $summary_results{Total_Reads_2}, $summary_results{Truncated_Read_2}, undef, $summary_results{Not_Truncated_Reads_2}, 
+       ($fastq_file2, $summary_results{Total_Reads_2}, $summary_results{Truncated_Read_2}, undef, $summary_results{Not_Truncated_Reads_2}, 
         undef, $summary_results{Average_Length_Truncated_2}) = split("\t", $truncater_results2);
 
-    	unless($summary_results{Total_Reads_1} == $summary_results{Total_Reads_2}){
-    		die "Input reads pairs in truncater summary file do not match: $summary_results{Total_Reads_1} compared to $summary_results{Total_Reads_2}\n";
-    	}
+       unless($summary_results{Total_Reads_1} == $summary_results{Total_Reads_2}){
+          die "Input reads pairs in truncater summary file do not match: $summary_results{Total_Reads_1} compared to $summary_results{Total_Reads_2}\n";
+       }
 
-    	#Mapping results
+       #Mapping results
         my $trunc_file1 = fileNamer($fastq_file1, \%config_dummy, 'truncater');
         my $trunc_file2 = fileNamer($fastq_file2, \%config_dummy, 'truncater');
         my @mapping_results = @{$summary_data{$summary_group}->{$mapper_summaryfile} };
@@ -391,7 +391,7 @@ foreach my $summary_group (keys %summary_data){
             calc_perc( $summary_results{Deduplication_Trans_Uniques}, $summary_results{Deduplication_Read_Pairs_Uniques}, 2);
 
         $summary_results{Percentage_Ditags_Passed_Through_HiCUP} = calc_perc($summary_results{Deduplication_Read_Pairs_Uniques}, $summary_results{Total_Reads_1}, 2);
-	  
+     
 
         #Print results to the main collated summary file
         #but also write to individual summary files - 1 file for each HiCUP run

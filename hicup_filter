@@ -1321,7 +1321,7 @@ sub sonicate_hic {
 # print DITAG_LENGTHS "Bin\tFrequency\n";
             my $ditagLength_HTML_Report = ( fileNamer( $filename, \%config, 'filter', 0, 0, 0, 1, 0 ) )[1];
             $ditagLength_HTML_Report = $config{outdir} . $ditagLength_HTML_Report;
-			open( DITAG_LENGTHS, '>', $ditagLength_HTML_Report ) or die "Could not write to '$ditagLength_HTML_Report' : $!";
+         open( DITAG_LENGTHS, '>', $ditagLength_HTML_Report ) or die "Could not write to '$ditagLength_HTML_Report' : $!";
             print DITAG_LENGTHS "Bin\tFrequency\n";
             foreach my $bin ( sort ( keys %edited_ditag_sizes ) ) {
                 print DITAG_LENGTHS "$bin\t$edited_ditag_sizes{$bin}\n";
@@ -1333,7 +1333,7 @@ sub sonicate_hic {
     }
 
     close PAIRED_READS or die "Could not close filehandle on '$filename' : $!";
-	close HIC_READS or warn "Filehandle on '$config{outdir} . $outputfilename_base' did not close correctly, either an error or file contains no valid reads (check summary report) : $!";
+   close HIC_READS or warn "Filehandle on '$config{outdir} . $outputfilename_base' did not close correctly, either an error or file contains no valid reads (check summary report) : $!";
     close WRONG_SIZE;
     close INVALID;
     close SAME_CIRCULARISED;
@@ -1383,7 +1383,7 @@ sub createFreqDistPlot {
     %edited_ditag_sizes = edit_ditag_sizes($ditagSizesHashRef);    #Sort Di-tags in the size range of 1-2000 and aggregate in 10s
 
     my $outfile = ( fileNamer( $filename, \%config, 'filter', 0, 0, 0, 1, 0 ) )[0];
-	$outfile = $config{outdir}.$outfile;
+   $outfile = $config{outdir}.$outfile;
 
     open( DISTRIBUTION, '>', $outfile ) or die "Could not write to '$outfile' : $!";
     foreach my $size ( sort { $a <=> $b } keys %edited_ditag_sizes ) {

@@ -256,23 +256,23 @@ sub process_file {
             $fh = $filehandler{$temp_filename};
             print $fh $readF, $readR or die "Could not write to $temp_filename: $!";
         } else {
-        	if(scalar keys %filehandler >= 100){   #Large number of filehandles already open!
-        		#Very, very rarely a file may require a huge number of filehandles 
-        		#(e.g. if mapping against a genome with thousands of scaffold files)
-        	    #Owing to Linux limits on the number of filehandles that may be opened
-        	    #simultaneously, HiCUP may not process such file. To make it less likely
-        	    #HiCUP will crash, this script will now open only 100 filehandles and additional
-        	    #data will be sent to an extra filehandle called EXTRA. This is not a perfect fix,
-        	    #rather a patch for one sample requiring HiCUP processing.
-        	    $temp_filename = $tempdir . '/' . $filename_no_folder_refs . "_" . 'EXTRA' . ".temp";
-        	   	$filehandler{$temp_filename} = newopen($temp_filename) unless exists $filehandler{$temp_filename};
-        	   	$fh = $filehandler{$temp_filename};
+           if(scalar keys %filehandler >= 100){   #Large number of filehandles already open!
+              #Very, very rarely a file may require a huge number of filehandles 
+              #(e.g. if mapping against a genome with thousands of scaffold files)
+               #Owing to Linux limits on the number of filehandles that may be opened
+               #simultaneously, HiCUP may not process such file. To make it less likely
+               #HiCUP will crash, this script will now open only 100 filehandles and additional
+               #data will be sent to an extra filehandle called EXTRA. This is not a perfect fix,
+               #rather a patch for one sample requiring HiCUP processing.
+               $temp_filename = $tempdir . '/' . $filename_no_folder_refs . "_" . 'EXTRA' . ".temp";
+                 $filehandler{$temp_filename} = newopen($temp_filename) unless exists $filehandler{$temp_filename};
+                 $fh = $filehandler{$temp_filename};
 
-        	}else{    #Print to a new file
-            	$filehandler{$temp_filename} = newopen($temp_filename);
-            	$fh = $filehandler{$temp_filename};
-        	}
-        	print $fh $readF, $readR or die "Could not write to $temp_filename: $!";
+           }else{    #Print to a new file
+               $filehandler{$temp_filename} = newopen($temp_filename);
+               $fh = $filehandler{$temp_filename};
+           }
+           print $fh $readF, $readR or die "Could not write to $temp_filename: $!";
         }
     }
 

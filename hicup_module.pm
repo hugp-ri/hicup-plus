@@ -322,25 +322,25 @@ sub checkAligner {
             }
         }
     }
- 	
- 	#Correct number (i.e. one) of aligners specified, check path correct
-	my $aligner_name = $$configRef{aligner};
-	my $aligner_path = $$configRef{$aligner_name};
+    
+    #Correct number (i.e. one) of aligners specified, check path correct
+   my $aligner_name = $$configRef{aligner};
+   my $aligner_path = $$configRef{$aligner_name};
 
     if(-e $aligner_path){         #Check file present at this path
-    	$found_aligner_flag = 1;
+       $found_aligner_flag = 1;
     }else{
-    	warn "Aligner not found at '$aligner_path'\n";
-    	$aligner_path =~ s/\/$//;    #Remove final '/' from path, if present
-    	$aligner_path = $aligner_path . '/' . $aligner_name;
-    	warn "Looking for aligner at '$aligner_path'\n";
-    	if(-e $aligner_path){
-    		warn "Aligner found at '$aligner_path'\n";
-    		$$configRef{$aligner_name} = $aligner_path;    #Adjust config hash accordingly
-    		$found_aligner_flag = 1
-    	}else{
-    		warn "Aligner not found at '$aligner_path'\n";
-    	}
+       warn "Aligner not found at '$aligner_path'\n";
+       $aligner_path =~ s/\/$//;    #Remove final '/' from path, if present
+       $aligner_path = $aligner_path . '/' . $aligner_name;
+       warn "Looking for aligner at '$aligner_path'\n";
+       if(-e $aligner_path){
+          warn "Aligner found at '$aligner_path'\n";
+          $$configRef{$aligner_name} = $aligner_path;    #Adjust config hash accordingly
+          $found_aligner_flag = 1
+       }else{
+          warn "Aligner not found at '$aligner_path'\n";
+       }
     }
 
     unless ($found_aligner_flag) {        #Try to find aligner automatically
@@ -358,17 +358,17 @@ sub checkAligner {
     
     #Perform other checks
     if($found_aligner_flag) {
-    	unless(-x $aligner_path){    #Check executable
-    		warn "Aligner at '$aligner_path' is not executable\n";
-    		$parameters_ok = 0;
-    	}
+       unless(-x $aligner_path){    #Check executable
+          warn "Aligner at '$aligner_path' is not executable\n";
+          $parameters_ok = 0;
+       }
 
-    	my $deduced_name = basename($aligner_path);
-    	unless( (lc $deduced_name) eq (lc $aligner_name) ){
-    		warn "Expecting aligner '$aligner_name', but path is to '$aligner_path'\n";
-    		warn "Which is correct '$aligner_name' or '$deduced_name'?\n";
-    		$parameters_ok = 0;
-    	}
+       my $deduced_name = basename($aligner_path);
+       unless( (lc $deduced_name) eq (lc $aligner_name) ){
+          warn "Expecting aligner '$aligner_name', but path is to '$aligner_path'\n";
+          warn "Which is correct '$aligner_name' or '$deduced_name'?\n";
+          $parameters_ok = 0;
+       }
 
     }else{    #No aligners found
         warn "Please specify a link to one valid aligner\n";
@@ -472,8 +472,8 @@ sub datestampGenerator {
         $now[2], $now[1],     $now[0],
         $now[3], $now[4] + 1, $now[5] + 1900
     );
-	
-	$datestamp = generateRandomString(10) . '_' . $datestamp;    #Add random string to datestamp
+   
+   $datestamp = generateRandomString(10) . '_' . $datestamp;    #Add random string to datestamp
     return $datestamp;
 }
 
@@ -1113,13 +1113,13 @@ sub cutsite_deduce {
 #Takes a number for the length of
 #the string and returns the string
 sub generateRandomString{
-	my $length = $_[0];
-	
-	my @chars = ("A".."Z", "a".."z");
-	my $string;
-	$string .= $chars[rand @chars] for 1..$length;
-	
-	return $string;
+   my $length = $_[0];
+   
+   my @chars = ("A".."Z", "a".."z");
+   my $string;
+   $string .= $chars[rand @chars] for 1..$length;
+   
+   return $string;
 }
 
 

@@ -35,7 +35,7 @@ use Data::Dumper;
 #Get user-supplied parameters
 #Option variables
 my %config = (
-	arima  	 => '',
+   arima      => '',
     config   => '',
     example  => '',
     genome   => '',
@@ -52,7 +52,7 @@ my %config = (
 );
 
 my $config_result = GetOptions(
-	"arima"    => \$config{arima},
+   "arima"    => \$config{arima},
     "re1=s"    => \$config{re1},
     "re2=s"    => \$config{re2},
     "config=s" => \$config{config},
@@ -263,15 +263,15 @@ sub check_parameters {
         $config{outdir} = './';
     }
 
-	if( ($config{re1} ne '') and ($config{arima} ne '') ){
-		warn "The options --re1 and --arima may not be specified together\n";
-		$parameters_ok = 0;
-	}
-	
-	if($config{arima}){
-			$config{re1} = '^GATC,DpnII:G^ANTC,Arima';
-	}
-	
+   if( ($config{re1} ne '') and ($config{arima} ne '') ){
+      warn "The options --re1 and --arima may not be specified together\n";
+      $parameters_ok = 0;
+   }
+   
+   if($config{arima}){
+         $config{re1} = '^GATC,DpnII:G^ANTC,Arima';
+   }
+   
     #Check restriction enzymes in correct format
     if ( $config{re1} eq '' ) {    #RE1 present
         warn "Please specify at least one restriction enzyme 1 (--re1)\n";
