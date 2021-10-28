@@ -16,7 +16,6 @@ use hicup_module qw(hashVal checkAligner checkAlignerIndices
   determineAlignerFormat quality_checker);
 
 use Data::Dumper;
-use Carp;
 
 ###################################################################################
 ###################################################################################
@@ -235,8 +234,6 @@ do {
 
 print "Pairing complete\n" unless $config{quiet};
 
-exit(1); ## <= test until here
-
 #Remove intermediate *.map* files
 my @map_files = fileNamer(\@filenames, \%config, 'mapper', 0, 0, 0, 1, 0);
 foreach my $mapFile (@map_files) {
@@ -332,25 +329,19 @@ sub map_file {
         open( INPUT, $inputfile ) or die $!;
     }
 
-    print "$inputfile";
-    system ("ls $inputfile");
-    
     my $index_directory = dirname( $config{index} );
-    print "index: $index_directory \n";
+    print "index: $index_directory \n" unless $config{quiet};
     my $output_directory  = dirname ( $outputfile );
-    print "output: $output_directory \n";
+    print "output: $output_directory \n" unless $config{quiet};
     my $output_prefix = basename( $outputfile, ".sam");
-    print "filename $output_prefix \n";
+    print "filename $output_prefix \n" unless $config{quiet};
 
     if ( $config{dragen} ne '' ) {
-        print "\nrunning samples...\n";
-        print(system("pwd"));
-        print "\n";
+        print(system("pwd")) unless $config{quiet};
+        print "\n" unless $config{quiet};
         print "Mapping $inputfile\n" unless $config{quiet};
-        system ("ls $inputfile");
-        print "\n";
-        #print "\n$config{dragen} -r $index_directory -1 $inputfile --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory \n > dragen.out 2> dragen.err";
-        #system("$config{dragen} -1 $inputfile -r $index_directory --output-format SAM --enable-map-align true --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory" );
+        system ("ls $inputfile") unless $config{quiet};
+        print "\n" unless $config{quiet};
     }
 
 
@@ -358,10 +349,10 @@ sub map_file {
     my $oid;
 
     if ( $config{bowtie} ne '' ) {
-        print "n\ running bowtie...\n";
+        print "n\ running bowtie...\n" unless $config{quiet};
         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie} -m 1 -n 1 --best --$config{format} -p 1 --chunkmbs 512 $config{index} --sam - $outputfile" );
     } elsif ( $config{bowtie2} ne '' ) {
-        print "\n running bowtie2...\n";
+        print "\n running bowtie2...\n" unless $config{quiet};
 		#TODO
 		if ( $config{zip} and $config{samtools} ) {
 			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
@@ -373,19 +364,19 @@ sub map_file {
 			$oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
 		}
     } elsif ( $config{dragen} ne '' ) {
-         print "\n running dragen...\n";
-         print "\n$config{dragen} -r $index_directory -1 $inputfile --output-format SAM --enable-sort false --enable-map-align true --preserve-map-align-order true --ref-sequence-filter false --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory > $output_directory/dragen.out 2> $output_directory/dragen.err \n";
+         print "\n running dragen...\n" unless $config{quiet};
+         print "\n$config{dragen} -r $index_directory -1 $inputfile --output-format SAM --enable-sort false --enable-map-align true --preserve-map-align-order true --ref-sequence-filter false --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory > $output_directory/dragen.out 2> $output_directory/dragen.err \n" unless $config{quiet};
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{dragen} -1 $inputfile -r $index_directory --output-format SAM --enable-sort false --enable-map-align true --preserve-map-align-order true --ref-sequence-filter false --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory > $output_directory/dragen.out 2> $output_directory/dragen.err" );
     } elsif ( $config{hisat2} ne '' ) {
-         print "\n running hisat2...\n";
-         print ( "$config{hisat2} -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
+         print "\n running hisat2...\n" unless $config{quiet};
+         print ( "$config{hisat2} -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" ) unless $config{quiet};
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{hisat2} -x $config{index} --$config{format} -k 1 --no-unal --no-spliced-alignment --no-softclip --threads $bowtie2_threads --reorder - -S $outputfile" );
     } else {
         print("Must path for specify at least one aligner: bowtie, bowtie2, dragen, or hisat2 in configuration");
         exit(1);
     }
 
-    print ( "call " );
+    print ( "call \n" );
     print ( $oid );
 
     unless ($oid) {
@@ -668,7 +659,6 @@ sub pair {
 
     while (<FORWARD>) {
         $f_read = $_;
-#print( $f_read );
         if (/^\s*$/) {
             next;
         } elsif (/^@/) {    #Print SAM header lines so conversion to BAM is possible
@@ -682,10 +672,9 @@ sub pair {
 
 			if ( $config{ligation} ) {
                     		print PAIRED $config{ligation} . "\n";
-                	}
-                $in_header = 0;
+                        }
+                    $in_header = 0;
             	}
-print( $f_read );
                 if ( $config{dragen} ) {
                    my @f_read_split = split("\t", $f_read);
                    $f_read_id = $f_read_split[0];
@@ -695,9 +684,6 @@ print( $f_read );
                     /^(\d+)_/;
                     $f_read_id = $1;
                 }
-print( $f_read_id );
-#exit(1); ##<- here
-#print( $f_read_id ) unless $config{quiet};
 
 			if( $config{bowtie2} or $config{hisat2} ){
 				if ( bowtie2MultiMapRead($f_read) ){    #Don't included multi-mapping reads
