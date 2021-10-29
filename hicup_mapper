@@ -407,7 +407,7 @@ sub map_file {
             $read .= scalar <INPUT>;
             $read .= scalar <INPUT>;
             if ( $read_length < 20 ) {    #Don't pass very short reads to Bowtie
-                $too_short_to_map++;
+                $too_short_to_map++ unless $config{dragen};
                 next;
             }
         } elsif (/^@/) {
@@ -545,11 +545,7 @@ sub map_file {
 
     if ( $config{dragen}) {
         #Reads processed is those reported by Dragen including those too short (unmapped)
-        if ( $too_short_to_map < $unmapped) {
-            $unmapped = $unmapped - $too_short_to_map
-        } else {
-            $too_short_to_map = 0;
-        }
+        $too_short_to_map = 0;
     }
     else {
         #Reads processed is the number of reads processed by Bowtie + those too short to send to Bowtie
