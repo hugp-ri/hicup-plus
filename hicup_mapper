@@ -536,17 +536,25 @@ sub map_file {
         print "\n" unless $config{quiet};
     }
 
-    # test printing output
-    print SUMMARYTEMP "$inputfile\t$reads_processed\t$too_short_to_map\t\t$unique_map\t\t$multi_mapped\t\t$unmapped\t\t\n";
-
     #Add the results to the results summary hash
-   #Note, these values will be re-calculated if Bowtie2 is used as the aligner
+    #Note, these values will be re-calculated if Bowtie2 is used as the aligner
     my $percent_too_short_to_map;
     my $percent_unique;
     my $percent_unmapped;
     my $percent_multi;
 
-    $reads_processed += $too_short_to_map;    #Reads processed is the number of reads processed by Bowtie + those too short to send to Bowtie
+    if ( $config{dragen}) {
+        #Reads processed is those reported by Dragen including those too short (unmapped)
+        if ( $too_short_to_map < $unmapped) {
+            $unmapped = $unmapped - $too_short_to_map
+        } else {
+            $too_short_to_map = 0;
+        }
+    }
+    else {
+        #Reads processed is the number of reads processed by Bowtie + those too short to send to Bowtie
+        $reads_processed += $too_short_to_map unless $config{dragen};
+    }
 
     if ($reads_processed) {
         $percent_too_short_to_map = sprintf( "%.1f", ( $too_short_to_map / $reads_processed * 100 ) );
