@@ -10,3 +10,4 @@ HiCUP Documentation:
 https://www.bioinformatics.babraham.ac.uk/projects/hicup/read_the_docs/html/index.html
 
 Primary contact: steven.wingett@babraham.ac.uk
+   
