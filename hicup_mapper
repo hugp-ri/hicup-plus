@@ -66,9 +66,9 @@ my $config_result = GetOptions(
     "bowtie2=s"   => \$config{bowtie2},
     "dragen=s"   => \$config{dragen},
     "hisat2=s"   => \$config{hisat2},
+    "config=s"    => \$config{config},
     "datestamp=s" => \$config{datestamp},
     "example"     => \$config{example},
-    "config=s"    => \$config{config},
     "format=s"    => \$config{format},
     "index=s"     => \$config{index},
     "ligation=s"  => \$config{ligation},    #Hidden flag to pass ligation details from HiCUP so hicup_truncater header can be included in the SAM file
