@@ -316,6 +316,10 @@ sub check_parameters {
 #launches Bowtie to align FASTQ reads against a specified reference genome
 
 sub map_file {
+    # start timing step
+    print "\nstarting HiCUP aligner call\n"
+    my $start_aligner = [Time::HiRes::gettimeofday()];
+
     my $inputfile = $_[0];
     my ($outputfile) = fileNamer( $inputfile, \%config, 'mapper', 0, 0, 0, 1, 0 );    #The first temp file returned (These files are deleted after pairing, a mapper_summary temp file is also returned)
     $outputfile = $config{outdir} . $outputfile;
@@ -505,6 +509,12 @@ sub map_file {
     close ERROR or die "Could not close 'ERROR' filehandle : $!";
     waitpid( $oid, 0 );
 
+
+    #report timing results
+    my $end = Time::HiRes::tv_interval($start_aligner);
+    print "\completed HiCUP aligner call\n"
+    print "\n\ntime: $end\n";
+
     if ( $config{dragen} ) {
         
         # import results from Dragen logs
@@ -563,6 +573,11 @@ sub map_file {
         $percent_unmapped = 'N/A';
         $percent_multi    = 'N/A';
     }
+    
+　　#report timing results
+    my $end = Time::HiRes::tv_interval($start_aligner);
+    print "\completed HiCUP aligner summary\n"
+    print "\n\ntime: $end\n";
     print SUMMARYTEMP "$inputfile\t$reads_processed\t$too_short_to_map\t$percent_too_short_to_map\t$unique_map\t$percent_unique\t$multi_mapped\t$percent_multi\t$unmapped\t$percent_unmapped\t\n";
 }
 

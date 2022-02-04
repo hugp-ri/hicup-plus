@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use Time::HiRes;
 use Getopt::Long;
 use File::Temp qw/ tempdir /;
 use File::Path qw(remove_tree);
@@ -329,6 +330,10 @@ my $truncater_version;    #Stores the truncater version number
 
 $truncater_version = `$Bin/hicup_truncater -v` or die "Can't run hicup_truncater to determine version number\n.";
 
+# start timing step
+print "\nstarting HiCUP truncater\n"
+my $start_time = [Time::HiRes::gettimeofday()];
+
 if ( $config{zip} ) {
     !system("$Bin/hicup_truncater $config{r} $datestamp_flag $config{nofill} $outdir_flag $config{quiet} $re1_string $config{sequence} $config{threads} $config{zip} $filenames_string")
       or die "Can't run hicup_truncater\n.";
@@ -336,6 +341,11 @@ if ( $config{zip} ) {
     !system("$Bin/hicup_truncater $config{r} $datestamp_flag $config{nofill} $outdir_flag $config{quiet} $re1_string $config{sequence} $config{threads} $filenames_string")
       or die "Can't run hicup_truncater\n.";
 }
+
+#report timing results
+my $diff = Time::HiRes::tv_interval($start_time);
+print "\completed HiCUP truncater\n"
+print "\n\ntime: $diff\n";
 
 #Map and pair sequences
 my $ligation = "\@PG\tID:HiCUP Truncater\tVN:" . $hicup_module::VERSION;       #Create the hidden ligation flag to send to HiCUP mapper to print the hicup_truncation settings to the output file
@@ -354,6 +364,10 @@ my @truncater_outputfiles = fileNamer( \@filenames, \%config, 'truncater' );
 my %truncater_outputfiles_paired = @truncater_outputfiles;
 $filenames_string = filename_string_generator(%truncater_outputfiles_paired);
 
+# start timing step
+print "\nstarting HiCUP mapper\n"
+my $start_time = [Time::HiRes::gettimeofday()];
+
 if ( $config{zip} ) {
     !system(
 "$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{hisat2} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $config{zip} $filenames_string"
@@ -363,6 +377,12 @@ if ( $config{zip} ) {
 "$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{hisat2} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $filenames_string"
     ) or die "Can't run hicup_mapper\n.";
 }
+
+
+#report timing results
+my $diff = Time::HiRes::tv_interval($start_time);
+print "\completed HiCUP mapper\n"
+print "\n\ntime: $diff\n";
 
 #Delete truncated intermediates
 unless ( $config{keep} ) {
@@ -378,6 +398,10 @@ my @mapper_outputfiles = fileNamer( \@truncater_outputfiles, \%config, 'mapper' 
 
 $filenames_string = filename_string_generator_unpaired(@mapper_outputfiles);                                            #Use this subroutine for unpaired filenames
 
+# start timing step
+print "\nstarting HiCUP filter\n"\
+my $start_time = [Time::HiRes::gettimeofday()];
+
 if ( $config{zip} ) {
     !system("$Bin/hicup_filter $config{r} $datestamp_flag $config{digest} $config{longest} $outdir_flag $config{quiet} $config{shortest} $config{threads} $config{zip} $filenames_string")
       or die "Can't run hicup_filter.\n";
@@ -385,6 +409,12 @@ if ( $config{zip} ) {
     !system("$Bin/hicup_filter $config{r} $datestamp_flag $config{digest} $config{longest} $outdir_flag $config{quiet} $config{shortest} $config{threads} $filenames_string")
       or die "Can't run hicup_filter.\n";
 }
+
+
+#report timing results
+my $diff = Time::HiRes::tv_interval($start_time);
+print "\completed HiCUP filter\n"
+print "\n\ntime: $diff\n";
 
 #Delete paired intermediates
 unless ( $config{keep} ) {
@@ -409,11 +439,21 @@ if ( hasval( $config{temp} ) ) {    #Use send to outdir, if temp folder specifie
 }
 $filenames_string   = filename_string_generator_unpaired(@filter_outputfiles);     #Use this subroutine for unpaired filenames
 
+# start timing step
+print "\nstarting HiCUP deduplicator\n"
+my $start_time = [Time::HiRes::gettimeofday()];
+
 if ( $config{zip} ) {                                                              #$keep not significant since this is the last step in the pipeline
     !system("$Bin/hicup_deduplicator $config{r} $datestamp_flag $outdir_flag $config{quiet} $config{threads} $config{zip} $filenames_string") or die "Can't run hicup_deduplicator.\n";
 } else {
     !system("$Bin/hicup_deduplicator $config{r} $datestamp_flag $outdir_flag $config{quiet} $config{threads} $filenames_string") or die "Can't run hicup_deduplicator.\n";
 }
+
+
+#report timing results
+my $diff = Time::HiRes::tv_interval($start_time);
+print "\completed HiCUP deduplicator\n"
+print "\n\ntime: $diff\n";
 
 #Delete filtered files
 unless ( $config{keep} ) {
@@ -446,6 +486,11 @@ if ( hasval( $config{temp} ) ) {
 
 #Create the HiCUP summary reports
 #Navigate to the folder where the output is written and run the script there
+
+# start timing step
+print "\nstarting HiCUP reporter\n"
+my $start_time = [Time::HiRes::gettimeofday()];
+
 if($sonication_protocol){
     my $current_working_directory = cwd;
     my $hicup_reporter_command =  "$Bin/hicup_reporter .";
