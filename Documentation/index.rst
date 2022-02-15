@@ -37,8 +37,8 @@ There are also HiCUP+ tutorials on the `Babraham Bioinformatics YouTube Channel 
 
 `Tutorial 3: Interpreting HiCUP+ Summary Results <https://www.youtube.com/watch?v=xWpjlXnsOU4>`_
 
-**We welcome your comments or suggestions, please email them to:**
-**steven.wingett@babraham.ac.uk**
+**We welcome your comments or suggestions, please report them at:**
+**https://github.com/StevenWingett/HiCUP/issues**
 
 
 Hi-C Overview
@@ -918,12 +918,13 @@ HiCUP+ is distributed under a "GNU General Public License", a copy of which is d
 ################
 Report problems
 ################
-This modified version is maintained separately by **simonthomas.kelly@hugp.com**.
+This modified version is maintained separately by S. Thomas Kelly (**simonthomas.kelly@hugp.com**).
 If you have problems specific to new features in this version reports are welcome.
 Filing an issue on GitHub is the preferred contact method:
 https://github.com/hugp-ri/hicup-plus/issues/new/
 
-Please contact the original maintainer if you **steven.wingett@babraham.ac.uk** if you have any problems earlier versions of this program. 
+Please go to https://github.com/StevenWingett/HiCUP/issues to report issues with the orginal maintainer
+if you have any problems running older versions of this program.
 
 
 #################

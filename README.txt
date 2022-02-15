@@ -21,11 +21,20 @@ https://github.com/hugp-ri/hicup-plus/issues/new
 
 ## Maintainers
 
-HiCUP (v0.8.2) maintainer: steven.wingett@babraham.ac.uk
+HiCUP (v0.8.2) maintainer: Steven Wingett
 
-HiCUP+ (v1.0.9) maintainer: simonthomas.kelly@hugp.com
+Contact:
+Contact the software author to discuss the software, report bugs or suggest enhancements at:
+https://github.com/StevenWingett/HiCUP/issues
 
+HiCUP+ (v1.0.0) maintainer: S. Thomas Kelly
+
+Contact:
+simonthomas.kelly@hugp.com
+
+Source code:
 https://github.com/hugp-ri/hicup-plus/
+
 
 ## Documentation
 
@@ -46,4 +55,3 @@ HiCUP Publication:
 Please cite the original version in addition to the updated software release:
 
 **Kelly, ST, et al. (2022) HiCUP+: a fast open-source pipeline for accurately processing large scale Hi-C sequence data. Software release v1.0.0 URL: https://github.com/hugp-ri/hicup-plus/**
-
