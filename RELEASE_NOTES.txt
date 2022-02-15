@@ -1,3 +1,45 @@
+RELEASE NOTES FOR HICUP-Plus v1.0.0 (15 FEBRUARY 2022)
+-------------------------------------------------
+
+HiCUP+ v1.0.0 is a major update incorporating the changes described below:
+
+- refactors error handling and warnings without changes to results from
+Bowtie or Bowtie2 aligners
+
+- initialises reverse read for pairing and migrates filtering to use
+matches in header strings rather than index numbers
+
+- adds calls to the HiSAT2 aligner (Kim et al., 2019) using stream
+inputs and parameters equivalent to the Bowtie2 parameters
+
+- adds a call to the proprietary Dragen (Illumina Inc., 2021) aligner
+via a system call with the error handling and log outputs adjusted
+for compatibility
+
+- updates to pairing and reporting scripts for compatilibity with
+the Dragen aligner run only if this aligner is chosen
+
+- updates the documentation to describe configuration of changing
+aligners to HiSAT2 or Dragen
+
+- updates R graphical devices to PDF (removing need for Cairo graphics in SVG format)
+
+- updates Maintainer of this fork to S. Thomas Kelly
+ **simonthomas.kelly@hugp.com**  (Bioinformatics Team, 
+H.U. Group Research Institute G.K., Tokyo, Japan; SRL Inc., Tokyo, Japan)
+
+This release is a fork of the original HiCUP pipline. See the release notes
+for previous versions below and the GitHub repository for more details:
+https://github.com/StevenWingett/HiCUP
+
+This fork has been renamed to HiCUP-Plus (HiCUP+) to avoid it being
+mistaken to the original implementation. 
+
+Full details of changes can be viewed on GitHub:
+https://github.com/hugp-ri/hicup-plus/compare/test-original...master#diff-HEAD?w=1 
+
+
+
 RELEASE NOTES FOR HICUP v0.8.2 (13 JULY 2021)
 -------------------------------------------------
 

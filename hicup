@@ -37,6 +37,19 @@ use Data::Dumper;
 ###################################################################################
 ###################################################################################
 
+###################################################################################
+###################################################################################
+##                                                                               ##
+##   This file has been modified to support Dragen and HiSAT2 configurations     ##
+##                                                                               ##
+##                           HiCUP+ (HiCUP-Plus)                                 ##
+##      Maintained by S. Thomas Kelly (simonthomas.kelly@hugp.com)               ##
+##                                                                               ##
+##         Changes: supports addition configuration options                      ##
+##                                                                               ##
+###################################################################################
+###################################################################################
+
 ##########################################################
 #Get user-supplied parameters
 #Option variables
@@ -112,7 +125,7 @@ if ( $config{help} ) {
 
 #Print version and exit
 if ( $config{version} ) {
-    print "HiCUP v$hicup_module::VERSION\n";
+    print "HiCUP+ v$hicup_module::VERSION\n";
     exit(0);
 }
 
@@ -125,8 +138,8 @@ if( hasval($config{config}) ){
    die "Configuration file '$config{config}' does not exist\n" unless(-e $config{config});
 }
 
-print "Starting HiCUP pipeline (v$hicup_module::VERSION)\n" unless $config{quiet};
-print "PLEASE NOTE: FROM VERSION 8, HICUP REQUIRES THE R PACKAGES TIDYVERSE AND PLOTLY INSTALLED\n";
+print "Starting HiCUP+ pipeline (v$hicup_module::VERSION)\n" unless $config{quiet};
+print "PLEASE NOTE: HICUP+ REQUIRES THE R PACKAGES TIDYVERSE AND PLOTLY INSTALLED\n";
 print "SEE DOCUMENTATION FOR MORE DETAILS\n";
 
 my @filenames;
@@ -183,7 +196,7 @@ foreach my $file (@hicup_final_outfiles) {
 }
 
 unless ( check_files_exist( \@hicup_final_outfiles, 'NOT_EXISTS' ) ) {
-    die "HiCUP will not run until these files have been removed.\n";
+     die "HiCUP+ will not run until these files have been removed.\n";
 }
 
 #########################################################################
@@ -338,7 +351,7 @@ if ( $config{zip} ) {
 }
 
 #Map and pair sequences
-my $ligation = "\@PG\tID:HiCUP Truncater\tVN:" . $hicup_module::VERSION;       #Create the hidden ligation flag to send to HiCUP mapper to print the hicup_truncation settings to the output file
+my $ligation = "\@PG\tID:HiCUP+ Truncater\tVN:" . $hicup_module::VERSION;       #Create the hidden ligation flag to send to HiCUP mapper to print the hicup_truncation settings to the output file
 if ( $config{re1} ) {
    #We cannot have a ":" in the SAM header at this point, so remove it
    my $colonless_re1 = $config{re1};
@@ -458,10 +471,10 @@ if($sonication_protocol){
     }
 } else {
     print "Skipping summary report\n";
-    print "HiCUP now only collates results for sonication protocol datasets\n";
+    print "HiCUP+ now only collates results for sonication protocol datasets\n";
 }
 
-print "HiCUP processing complete.\n" unless $config{quiet};
+print "HiCUP+ processing complete.\n" unless $config{quiet};
 
 exit(0);
 
