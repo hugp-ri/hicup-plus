@@ -1463,6 +1463,7 @@ OPTIONS
 --longest      Maximum allowable insert size (bps)
 --outdir       Directory to write output files
 --quiet        Suppress all progress reports
+--samtools     Specify the path to samtool
 --shortest     Minimum allowable insert size (bps)
 --threads      Specify the number of threads, allowing simultaneous processing 
                of multiple files

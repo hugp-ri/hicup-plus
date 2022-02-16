@@ -529,6 +529,7 @@ COMMAND LINE OPTIONS
 --help         Print help message and exit
 --outdir       Directory to write output files
 --quiet        Suppress progress reports (except warnings)
+--samtools     Specify the path to samtools
 --threads      Number of threads to use, allowing simultaneous processing  of 
                different files
 --version      Print the program version and exit

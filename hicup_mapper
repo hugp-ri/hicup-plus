@@ -1064,6 +1064,7 @@ COMMAND LINE OPTIONS
 --index          Path to the relevant reference genome Bowtie/Bowtie2 indices
 --outdir         Directory to write output files
 --quiet          Suppress progress reports (except warnings)
+--samtools       Specify the path to samtools
 --threads        Specify the number of threads, allowing simultaneous processing 
                  of different files (default: 1)
 --version        Print the program version and exit
