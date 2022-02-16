@@ -12,6 +12,11 @@
 HiCUP+ Overview
 ##############
 
+`HiCUP+
+<https://github.com/hugp-ri/hicup-plus/>`_ is a fork of HiCUP_ with additional functionality. Please note that this is a maintained separately, although efforts have been made to ensure compatibility with configurations with prior versions.
+
+.. _HiCUP: http://www.bioinformatics.babraham.ac.uk/projects/hicup/
+
 **ATTENTION: HiCUP+ generates format summary report HTML and text files.  You will also notice new a pipeline script HiCUP+ Reporter and a new R markdown file r_scripts/hicup_reporter.rmd.  To generate the HTML summary report now requires R to be installed on your system as well as the R modules Tidyverse and Plotly.  Also, collated summary reports will no longer be generated for the rarely used for double-digest Hi-C protocol.**
 
 General Information
@@ -29,16 +34,17 @@ This documentation describes HiCUP+, a bioinformatics pipeline produced by the B
 
 To use HiCUP+ we suggest you read the Overview, the Quick Start and then follow the instructions to process the Test Dataset. The Scripts Description is usually only required for reference should you wish to understand an aspect of HiCUP+ in more detail.
 
-There are also HiCUP+ tutorials on the `Babraham Bioinformatics YouTube Channel <https://www.youtube.com/user/BabrahamBioinf>`_.  We recommend you watch these since watching instructional videos is often more clear than reading a manual:
+There are also HiCUP tutorials on the `Babraham Bioinformatics YouTube Channel <https://www.youtube.com/user/BabrahamBioinf>`_.  We recommend you watch these since watching instructional videos is often more clear than reading a manual:
 
-`Tutorial 1: HiCUP+ Overview <https://www.youtube.com/watch?v=nY9AQjwZCDo>`_
+`Tutorial 1: HiCUP Overview <https://www.youtube.com/watch?v=nY9AQjwZCDo>`_
 
-`Tutorial 2: How to run HiCUP+ <https://www.youtube.com/watch?v=i6imVs66aew>`_
+`Tutorial 2: How to run HiCUP <https://www.youtube.com/watch?v=i6imVs66aew>`_
 
-`Tutorial 3: Interpreting HiCUP+ Summary Results <https://www.youtube.com/watch?v=xWpjlXnsOU4>`_
+`Tutorial 3: Interpreting HiCUP Summary Results <https://www.youtube.com/watch?v=xWpjlXnsOU4>`_
 
 **We welcome your comments or suggestions, please report them at:**
-**https://github.com/StevenWingett/HiCUP/issues**
+
+https://github.com/hugp-ri/HiCUP-Plus/issues
 
 
 Hi-C Overview
@@ -433,7 +439,7 @@ Before HiCUP+ version 0.6.1, a unique-mapping read was defined simply as having 
 
 Run Map/Align (*.fastq to *.bam)
 ''  dragen -r <REF_DIR> --output-directory <OUT_DIR> --output-file-prefix <FILE_PREFIX> [options]
-  -1 <FASTQ> [-2 <FASTQ>] --RGID <RG> --RGSM <SM>''
+-1 <FASTQ> [-2 <FASTQ>] --RGID <RG> --RGSM <SM>''
 
 **HISAT 2 Mapping Parameters:**
 
@@ -932,9 +938,12 @@ How to cite HiCUP+
 #################
 HiCUP is described in:
 
-**Wingett S, et al. (2015) HiCUP: pipeline for mapping and processing Hi-C data. F1000Research, 4:1310 (doi: 10.12688/f1000research.7334.1)**
+Wingett S, *et al.* (2015) HiCUP: pipeline for mapping and processing Hi-C data. *F1000Research* **4**:1310. doi: `10.12688/f1000research.7334.1
+<https://doi.org/10.12688/f1000research.7334.1>`_
+
 
 Please cite the original version in addition to the updated software release:
 
-**Kelly, ST, et al. (2022) HiCUP+: a fast open-source pipeline for accurately processing large scale Hi-C sequence data. Software release v1.0.0 URL: https://github.com/hugp-ri/hicup-plus/**
+Kelly, ST, *et al.* (2022) HiCUP+: a fast open-source pipeline for accurately processing large scale Hi-C sequence data. Software release v1.0.0 URL: `https://github.com/hugp-ri/hicup-plus/
+<https://github.com/hugp-ri/hicup-plus/>`_
 
