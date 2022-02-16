@@ -3,12 +3,6 @@
 
 HiCUP+ (HiCUP-plus) is a bioinformatics pipeline for processing Hi-C data. 
 
-HiCUP homepage: 
-http://www.bioinformatics.babraham.ac.uk/projects/hicup
-
-HiCUP Documentation:
-https://www.bioinformatics.babraham.ac.uk/projects/hicup/read_the_docs/html/index.html
-
 ## Source
 
 HiCUP+ is released open-source:
@@ -37,6 +31,11 @@ https://github.com/hugp-ri/hicup-plus/
 
 
 ## Documentation
+
+New features are documented here.
+
+HiCUP+ Documentation:
+https://hicup-plus.readthedocs.io/en/latest/index.html
 
 HiCUP+ is backwards compatible with HiCUP configuration files. 
 Please refer to the documentation for the original version for more details:
