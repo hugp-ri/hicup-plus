@@ -19,7 +19,7 @@ use Data::Dumper;
 
 ###################################################################################
 ###################################################################################
-##This file is Copyright (C) 2020, Steven Wingett (steven.wingett@babraham.ac.uk)##
+##This file is Copyright (C) 2022, Steven Wingett                                ##
 ##                                                                               ##
 ##                                                                               ##
 ##This file is part of HiCUP.                                                    ##
@@ -38,6 +38,29 @@ use Data::Dumper;
 ##along with HiCUP.  If not, see <http://www.gnu.org/licenses/>.                 ##
 ###################################################################################
 ###################################################################################
+
+###################################################################################
+###################################################################################
+##                                                                               ##
+##   This file has been modified to support Dragen and HiSAT2 configurations     ##
+##                                                                               ##
+##                           HiCUP+ (HiCUP-Plus)                                 ##
+##      Maintained by S. Thomas Kelly (simonthomas.kelly@hugp.com)               ##
+##                                                                               ##
+##     Changes: additional input parameters for additional aligners              ##
+##              verbose log output for debugging                                 ##
+##              add aligner calls for HiSAT2 and Dragen                          ##
+##              skip counting reads too short to map for Dragen                  ##
+##              report results for HiSaT2 using same parameters as Bowtie2       ##
+##              skip logs from stdout with Dragen                                ##
+##              run Dragen with a system call and print logs to files            ##
+##              parse Dragen mapping statistics from log files                   ##
+##              initialise values and correct whitespace to allow debugging      ##
+##              initialise reverse read and match by header strings              ##
+##                                                                               ##
+###################################################################################
+###################################################################################
+
 
 #Option variables
 my %config = (
@@ -93,7 +116,7 @@ if ( $config{help} ) {
 
 #Print version and exit
 if ( $config{version} ) {
-    print "HiCUP Mapper v$hicup_module::VERSION\n";
+    print "HiCUP+ Mapper v$hicup_module::VERSION\n";
     exit(0);
 }
 
@@ -140,7 +163,7 @@ foreach my $file (@hicup_Mapper_Outfiles) {                      #Add filename e
 }
 
 unless ( check_files_exist( \@hicup_Mapper_Outfiles, 'NOT_EXISTS' ) ) {
-    die "HiCUP mapper will not run until files have been removed.\n";
+     die "HiCUP+ mapper will not run until files have been removed.\n";
 }
 
 
@@ -160,7 +183,7 @@ $summaryfileTemp = $config{outdir} . $summaryfileTemp;
 
 open( SUMMARYTEMP, ">$summaryfileTemp" ) or die "Could not write to '$summaryfileTemp' : $!";
 
-print "Mapping with HiCUP Mapper v$hicup_module::VERSION\n" unless $config{quiet};
+print "Mapping with HiCUP+ Mapper v$hicup_module::VERSION\n" unless $config{quiet};
 print "Using aligner '$config{aligner}'\n"                  unless $config{quiet};
 
 my $terminate = 0;                                                                            #Instruct script to die if error detected in child process
@@ -197,7 +220,7 @@ close SUMMARYTEMP or die "Could not close filehandle on '$summaryfileTemp' : $!"
 my %summary_results = extract_mapping_results("$summaryfileTemp");    #Stores the results to write to the summary file
 
 #Now pair the files
-print "Pairing files with HiCUP Mapper v$hicup_module::VERSION\n" unless $config{quiet};
+print "Pairing files with HiCUP+ Mapper v$hicup_module::VERSION\n" unless $config{quiet};
 
 open( SUMMARY, ">$summaryfile" ) or die "Could not write to $summaryfile : $!";
 print SUMMARY "File\tTotal_reads_processed\tReads_too_short_to_map\t%Reads_too_short_to_map\tUnique_alignments\t%Unique_alignments\tMultiple_alignments\t%Multiple_alignments\tFailed_to_align\t%failed_to_align\tPaired\t%Paired\n";
@@ -686,7 +709,7 @@ sub pair {
         } else {
 
            if ($in_header) {    #Print the additional SAM header line
-                   my $sam_header_line = "\@PG\tID:HiCUP Mapper\tVN:" . "$hicup_module::VERSION\n";
+                   my $sam_header_line = "\@PG\tID:HiCUP+ Mapper\tVN:" . "$hicup_module::VERSION\n";
                    print PAIRED $sam_header_line;
 
          if ( $config{ligation} ) {
@@ -1056,6 +1079,7 @@ COMMAND LINE OPTIONS
 --index          Path to the relevant reference genome Bowtie/Bowtie2 indices
 --outdir         Directory to write output files
 --quiet          Suppress progress reports (except warnings)
+--samtools       Specify the path to samtools
 --threads        Specify the number of threads, allowing simultaneous processing 
                  of different files (default: 1)
 --version        Print the program version and exit
@@ -1064,4 +1088,4 @@ COMMAND LINE OPTIONS
 Full instructions on running the pipeline can be found at:
 www.bioinformatics.babraham.ac.uk/projects/hicup
 
-Steven Wingett, Babraham Institute, Cambridge, UK (steven.wingett@babraham.ac.uk)
+Steven Wingett, Babraham Institute, Cambridge, UK

@@ -2,7 +2,7 @@
 
 ###################################################################################
 ###################################################################################
-##This file is Copyright (C) 2020, Steven Wingett (steven.wingett@babraham.ac.uk)##
+##This file is Copyright (C) 2022, Steven Wingett                                ##
 ##                                                                               ##
 ##                                                                               ##
 ##This file is part of HiCUP.                                                    ##
@@ -21,6 +21,21 @@
 ##along with HiCUP.  If not, see <http://www.gnu.org/licenses/>.                 ##
 ###################################################################################
 ###################################################################################
+
+###################################################################################
+###################################################################################
+##                                                                               ##
+##   This file has been modified to support Dragen and HiSAT2 configurations     ##
+##                                                                               ##
+##                           HiCUP+ (HiCUP-Plus)                                 ##
+##      Maintained by S. Thomas Kelly (simonthomas.kelly@hugp.com)               ##
+##                                                                               ##
+##     Changes: no major changes (whitespace edited to enable debugging)         ##
+##              reporting errors resolbed by changing HiCUP mapper               ##
+##                                                                               ##
+###################################################################################
+###################################################################################
+
 
 use strict;
 use warnings;
@@ -63,7 +78,7 @@ if ( $config{help} ) {
 
 #Print version and exit
 if ( $config{version} ) {
-    print "HiCUP Reporter v$hicup_module::VERSION\n";
+    print "HiCUP+ Reporter v$hicup_module::VERSION\n";
     exit(0);
 }
 
@@ -83,7 +98,7 @@ if(!defined $config{outdir}){
 } 
 $config{outdir} .= '/' unless ($config{outdir} =~ /\/$/);   #Add trailing folder forward slash
 
-print "Creating combined HiCUP summary report\n" unless $config{quiet};
+print "Creating combined HiCUP+ summary report\n" unless $config{quiet};
 
 my $indir = abs_path($ARGV[0]);
 chomp $indir;
@@ -491,4 +506,4 @@ COMMAND LINE OPTIONS
 Full instructions on running the pipeline can be found at:
 www.bioinformatics.babraham.ac.uk/projects/hicup
 
-Steven Wingett, Babraham Institute, Cambridge, UK (steven.wingett@babraham.ac.uk)
+Steven Wingett, Babraham Institute, Cambridge, UK

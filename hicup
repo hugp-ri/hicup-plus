@@ -18,7 +18,7 @@ use Data::Dumper;
 
 ###################################################################################
 ###################################################################################
-##This file is Copyright (C) 2020, Steven Wingett (steven.wingett@babraham.ac.uk)##
+##This file is Copyright (C) 2022, Steven Wingett                                ##
 ##                                                                               ##
 ##                                                                               ##
 ##This file is part of HiCUP.                                                    ##
@@ -35,6 +35,19 @@ use Data::Dumper;
 ##                                                                               ##
 ##You should have received a copy of the GNU General Public License              ##
 ##along with HiCUP.  If not, see <http://www.gnu.org/licenses/>.                 ##
+###################################################################################
+###################################################################################
+
+###################################################################################
+###################################################################################
+##                                                                               ##
+##   This file has been modified to support Dragen and HiSAT2 configurations     ##
+##                                                                               ##
+##                           HiCUP+ (HiCUP-Plus)                                 ##
+##      Maintained by S. Thomas Kelly (simonthomas.kelly@hugp.com)               ##
+##                                                                               ##
+##         Changes: supports addition configuration options                      ##
+##                                                                               ##
 ###################################################################################
 ###################################################################################
 
@@ -99,7 +112,7 @@ my $config_result = GetOptions(    #Stores parameters
     "filenames"  => \$config{filenames},
     "r=s"        => \$config{r},
     "sequence"   => \$config{sequence},
-    "samtools"   => \$config{samtools}     #Path to SAM Tools, not yet described in documentation
+    "samtools"   => \$config{samtools}
 );
 
 die "Command line options need to be in the correct format (hicup -help for more details).\n" unless ($config_result);
@@ -113,7 +126,7 @@ if ( $config{help} ) {
 
 #Print version and exit
 if ( $config{version} ) {
-    print "HiCUP v$hicup_module::VERSION\n";
+    print "HiCUP+ v$hicup_module::VERSION\n";
     exit(0);
 }
 
@@ -126,8 +139,8 @@ if( hasval($config{config}) ){
    die "Configuration file '$config{config}' does not exist\n" unless(-e $config{config});
 }
 
-print "Starting HiCUP pipeline (v$hicup_module::VERSION)\n" unless $config{quiet};
-print "PLEASE NOTE: FROM VERSION 8, HICUP REQUIRES THE R PACKAGES TIDYVERSE AND PLOTLY INSTALLED\n";
+print "Starting HiCUP+ pipeline (v$hicup_module::VERSION)\n" unless $config{quiet};
+print "PLEASE NOTE: HICUP+ REQUIRES THE R PACKAGES TIDYVERSE AND PLOTLY INSTALLED\n";
 print "SEE DOCUMENTATION FOR MORE DETAILS\n";
 
 my @filenames;
@@ -184,7 +197,7 @@ foreach my $file (@hicup_final_outfiles) {
 }
 
 unless ( check_files_exist( \@hicup_final_outfiles, 'NOT_EXISTS' ) ) {
-    die "HiCUP will not run until these files have been removed.\n";
+     die "HiCUP+ will not run until these files have been removed.\n";
 }
 
 #########################################################################
@@ -348,7 +361,7 @@ print "\completed HiCUP truncater\n"
 print "\n\ntime: $diff\n";
 
 #Map and pair sequences
-my $ligation = "\@PG\tID:HiCUP Truncater\tVN:" . $hicup_module::VERSION;       #Create the hidden ligation flag to send to HiCUP mapper to print the hicup_truncation settings to the output file
+my $ligation = "\@PG\tID:HiCUP+ Truncater\tVN:" . $hicup_module::VERSION;       #Create the hidden ligation flag to send to HiCUP mapper to print the hicup_truncation settings to the output file
 if ( $config{re1} ) {
    #We cannot have a ":" in the SAM header at this point, so remove it
    my $colonless_re1 = $config{re1};
@@ -503,10 +516,10 @@ if($sonication_protocol){
     }
 } else {
     print "Skipping summary report\n";
-    print "HiCUP now only collates results for sonication protocol datasets\n";
+    print "HiCUP+ now only collates results for sonication protocol datasets\n";
 }
 
-print "HiCUP processing complete.\n" unless $config{quiet};
+print "HiCUP+ processing complete.\n" unless $config{quiet};
 
 exit(0);
 
@@ -831,6 +844,7 @@ COMMAND LINE OPTIONS
                encountered
 --outdir       Directory to write output files
 --quiet        Suppress progress reports (except warnings)
+--samtools     Specify the path to samtools
 --shortest     Minimum allowable insert size (bps)
 --temp         Write intermediate files (i.e. all except summary files and files
                generated by HiCUP Deduplicator) to a specified directory
@@ -842,4 +856,4 @@ COMMAND LINE OPTIONS
 Full instructions on running the pipeline can be found at:
 www.bioinformatics.babraham.ac.uk/projects/hicup
 
-Steven Wingett, Babraham Institute, Cambridge, UK (steven.wingett@babraham.ac.uk)
+Steven Wingett, Babraham Institute, Cambridge, UK

@@ -8,7 +8,7 @@ our @EXPORT = qw(VERSION hasval deduplicate_array checkR process_config check_fi
 our @EXPORT_OK = qw(hashVal outdirFileNamer check_no_duplicate_filename check_filenames_ok 
     checkAligner checkAlignerIndices newopen quality_checker determineAlignerFormat get_csome_position);
 
-our $VERSION = "0.8.2";
+our $VERSION = "1.0.0";
 
 use Data::Dumper;
 use strict;
@@ -19,7 +19,7 @@ use lib $Bin;
 
 ###################################################################################
 ###################################################################################
-##This file is Copyright (C) 2020, Steven Wingett (steven.wingett@babraham.ac.uk)##
+##This file is Copyright (C) 2022, Steven Wingett                                ##
 ##                                                                               ##
 ##                                                                               ##
 ##This file is part of HiCUP.                                                    ##
@@ -36,6 +36,22 @@ use lib $Bin;
 ##                                                                               ##
 ##You should have received a copy of the GNU General Public License              ##
 ##along with HiCUP.  If not, see <http://www.gnu.org/licenses/>.                 ##
+###################################################################################
+###################################################################################
+
+###################################################################################
+###################################################################################
+##                                                                               ##
+##   This file has been modified to support Dragen and HiSAT2 configurations     ##
+##                                                                               ##
+##                           HiCUP+ (HiCUP-Plus)                                 ##
+##      Maintained by S. Thomas Kelly (simonthomas.kelly@hugp.com)               ##
+##                                                                               ##
+##     Changes: additional input parameters for additional aligners              ##
+##              check for reference index for respective aligners                ##
+##              configure correct fastq format parameters for phread score       ##
+##              convert to unix line-endings                                     ##
+##                                                                               ##
 ###################################################################################
 ###################################################################################
 
