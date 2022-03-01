@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use Time::HiRes;
 use Getopt::Long;
 use POSIX ":sys_wait_h";    #for nonblocking read
 use POSIX;
@@ -340,7 +341,7 @@ sub check_parameters {
 
 sub map_file {
     # start timing step
-    print "\nstarting HiCUP aligner call\n"
+    print STDOUT "\nstarting HiCUP aligner call\n";
     my $start_aligner = [Time::HiRes::gettimeofday()];
 
     my $inputfile = $_[0];
@@ -535,8 +536,8 @@ sub map_file {
 
     #report timing results
     my $end = Time::HiRes::tv_interval($start_aligner);
-    print "\completed HiCUP aligner call\n"
-    print "\n\ntime: $end\n";
+    print STDOUT "\completed HiCUP aligner call\n";
+    print STDOUT "\n\naligner run time: $end\n";
 
     if ( $config{dragen} ) {
         
@@ -596,11 +597,12 @@ sub map_file {
         $percent_unmapped = 'N/A';
         $percent_multi    = 'N/A';
     }
-    
-　　#report timing results
-    my $end = Time::HiRes::tv_interval($start_aligner);
-    print "\completed HiCUP aligner summary\n"
-    print "\n\ntime: $end\n";
+
+    # reporting timing results   
+    my $end2 = Time::HiRes::tv_interval($start_aligner);
+    print STDOUT "\completed HiCUP aligner summary\n";
+    print STDOUT "\n\naligner total time: $end2\n";
+
     print SUMMARYTEMP "$inputfile\t$reads_processed\t$too_short_to_map\t$percent_too_short_to_map\t$unique_map\t$percent_unique\t$multi_mapped\t$percent_multi\t$unmapped\t$percent_unmapped\t\n";
 }
 

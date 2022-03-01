@@ -76,11 +76,11 @@ my %config = (
     longest   => '',
     re1       => '',
     shortest  => '',
+    samtools  => '',
     temp      => '',
     threads   => '',
     filenames => '',
     sequence  => '',
-    samtools  => '',
     r         => '',
     aligner   => ''    #Not-specified by user - name of aligner to use
 );
@@ -107,12 +107,12 @@ my $config_result = GetOptions(    #Stores parameters
     "longest=s"  => \$config{longest},
     "re1=s"      => \$config{re1},
     "shortest=s" => \$config{shortest},
+    "samtools=s"   => \$config{samtools},
     "temp=s"     => \$config{temp},
     "threads=s"  => \$config{threads},
     "filenames"  => \$config{filenames},
     "r=s"        => \$config{r},
-    "sequence"   => \$config{sequence},
-    "samtools"   => \$config{samtools}
+    "sequence"   => \$config{sequence}
 );
 
 die "Command line options need to be in the correct format (hicup -help for more details).\n" unless ($config_result);
@@ -319,6 +319,7 @@ my $outdir_flag = '';
 $outdir_flag       = "--outdir $config{outdir}"     if ( $config{outdir} );           #This is the flag, not outdir
 $config{nofill}    = "--nofill"                     if ( $config{nofill} ne '' );
 $re1_string        = "--re1 $re1_string"            if ( $re1_string ne '' );
+## $config{samtools}    = "--samtools $config{samtools}"   if ( $config{samtools} ne '' );
 $config{seq_trunc} = "--sequence $config{sequence}" if ( $config{sequence} ne '' );
 if ( $config{shortest} ne '' ) {
     $config{shortest} = "--shortest $config{shortest}";
@@ -344,8 +345,8 @@ my $truncater_version;    #Stores the truncater version number
 $truncater_version = `$Bin/hicup_truncater -v` or die "Can't run hicup_truncater to determine version number\n.";
 
 # start timing step
-print "\nstarting HiCUP truncater\n"
-my $start_time = [Time::HiRes::gettimeofday()];
+print STDOUT "\nstarting HiCUP truncater\n";
+my $start_time1 = [Time::HiRes::gettimeofday()];
 
 if ( $config{zip} ) {
     !system("$Bin/hicup_truncater $config{r} $datestamp_flag $config{nofill} $outdir_flag $config{quiet} $re1_string $config{sequence} $config{threads} $config{zip} $filenames_string")
@@ -356,9 +357,9 @@ if ( $config{zip} ) {
 }
 
 #report timing results
-my $diff = Time::HiRes::tv_interval($start_time);
-print "\completed HiCUP truncater\n"
-print "\n\ntime: $diff\n";
+my $diff1 = Time::HiRes::tv_interval($start_time1);
+print STDOUT "\completed HiCUP truncater\n";
+print STDOUT "\n\ntruncater time: $diff1\n";
 
 #Map and pair sequences
 my $ligation = "\@PG\tID:HiCUP+ Truncater\tVN:" . $hicup_module::VERSION;       #Create the hidden ligation flag to send to HiCUP mapper to print the hicup_truncation settings to the output file
@@ -378,8 +379,8 @@ my %truncater_outputfiles_paired = @truncater_outputfiles;
 $filenames_string = filename_string_generator(%truncater_outputfiles_paired);
 
 # start timing step
-print "\nstarting HiCUP mapper\n"
-my $start_time = [Time::HiRes::gettimeofday()];
+print STDOUT "\nstarting HiCUP mapper\n";
+my $start_time2 = [Time::HiRes::gettimeofday()];
 
 if ( $config{zip} ) {
     !system(
@@ -387,15 +388,15 @@ if ( $config{zip} ) {
     ) or die "Can't run hicup_mapper\n.";
 } else {
     !system(
-"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{hisat2} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $filenames_string"
+"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{hisat2} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{samtools} $config{samtools} $config{threads} $filenames_string"
     ) or die "Can't run hicup_mapper\n.";
 }
 
 
 #report timing results
-my $diff = Time::HiRes::tv_interval($start_time);
-print "\completed HiCUP mapper\n"
-print "\n\ntime: $diff\n";
+my $diff2 = Time::HiRes::tv_interval($start_time2);
+print STDOUT "\completed HiCUP mapper\n";
+print STDOUT "\n\nmapper time: $diff2\n";
 
 #Delete truncated intermediates
 unless ( $config{keep} ) {
@@ -412,22 +413,22 @@ my @mapper_outputfiles = fileNamer( \@truncater_outputfiles, \%config, 'mapper' 
 $filenames_string = filename_string_generator_unpaired(@mapper_outputfiles);                                            #Use this subroutine for unpaired filenames
 
 # start timing step
-print "\nstarting HiCUP filter\n"\
-my $start_time = [Time::HiRes::gettimeofday()];
+print STDOUT "\nstarting HiCUP filter\n";
+my $start_time3 = [Time::HiRes::gettimeofday()];
 
 if ( $config{zip} ) {
-    !system("$Bin/hicup_filter $config{r} $datestamp_flag $config{digest} $config{longest} $outdir_flag $config{quiet} $config{shortest} $config{threads} $config{zip} $filenames_string")
+    !system("$Bin/hicup_filter $config{r} $datestamp_flag $config{digest} $config{longest} $outdir_flag $config{quiet} $config{shortest} $config{samtools} $config{threads} $config{zip} $filenames_string")
       or die "Can't run hicup_filter.\n";
 } else {
-    !system("$Bin/hicup_filter $config{r} $datestamp_flag $config{digest} $config{longest} $outdir_flag $config{quiet} $config{shortest} $config{threads} $filenames_string")
+    !system("$Bin/hicup_filter $config{r} $datestamp_flag $config{digest} $config{longest} $outdir_flag $config{quiet} $config{shortest} $config{samtools} $config{threads} $filenames_string")
       or die "Can't run hicup_filter.\n";
 }
 
 
 #report timing results
-my $diff = Time::HiRes::tv_interval($start_time);
-print "\completed HiCUP filter\n"
-print "\n\ntime: $diff\n";
+my $diff3 = Time::HiRes::tv_interval($start_time3);
+print STDOUT "\completed HiCUP filter\n";
+print STDOUT "\n\nfilter time: $diff3\n";
 
 #Delete paired intermediates
 unless ( $config{keep} ) {
@@ -453,20 +454,20 @@ if ( hasval( $config{temp} ) ) {    #Use send to outdir, if temp folder specifie
 $filenames_string   = filename_string_generator_unpaired(@filter_outputfiles);     #Use this subroutine for unpaired filenames
 
 # start timing step
-print "\nstarting HiCUP deduplicator\n"
-my $start_time = [Time::HiRes::gettimeofday()];
+print STDOUT "\nstarting HiCUP deduplicator\n";
+my $start_time4 = [Time::HiRes::gettimeofday()];
 
 if ( $config{zip} ) {                                                              #$keep not significant since this is the last step in the pipeline
-    !system("$Bin/hicup_deduplicator $config{r} $datestamp_flag $outdir_flag $config{quiet} $config{threads} $config{zip} $filenames_string") or die "Can't run hicup_deduplicator.\n";
+    !system("$Bin/hicup_deduplicator $config{r} $datestamp_flag $outdir_flag $config{quiet} $config{samtools} $config{threads} $config{zip} $filenames_string") or die "Can't run hicup_deduplicator.\n";
 } else {
-    !system("$Bin/hicup_deduplicator $config{r} $datestamp_flag $outdir_flag $config{quiet} $config{threads} $filenames_string") or die "Can't run hicup_deduplicator.\n";
+    !system("$Bin/hicup_deduplicator $config{r} $datestamp_flag $outdir_flag $config{quiet} $config{samtools} $config{threads} $filenames_string") or die "Can't run hicup_deduplicator.\n";
 }
 
 
 #report timing results
-my $diff = Time::HiRes::tv_interval($start_time);
-print "\completed HiCUP deduplicator\n"
-print "\n\ntime: $diff\n";
+my $diff4 = Time::HiRes::tv_interval($start_time4);
+print STDOUT "\completed HiCUP deduplicator\n";
+print STDOUT "\n\ndeduplicator time: $diff4\n";
 
 #Delete filtered files
 unless ( $config{keep} ) {
@@ -501,8 +502,8 @@ if ( hasval( $config{temp} ) ) {
 #Navigate to the folder where the output is written and run the script there
 
 # start timing step
-print "\nstarting HiCUP reporter\n"
-my $start_time = [Time::HiRes::gettimeofday()];
+print STDOUT "\nstarting HiCUP reporter\n";
+my $start_time5 = [Time::HiRes::gettimeofday()];
 
 if($sonication_protocol){
     my $current_working_directory = cwd;
@@ -521,6 +522,11 @@ if($sonication_protocol){
 
 print "HiCUP+ processing complete.\n" unless $config{quiet};
 
+#report timing results
+my $diff5 = Time::HiRes::tv_interval($start_time5);
+print STDOUT "\completed HiCUP reporter\n";
+print STDOUT "\n\nreporter time: $diff5\n";
+print STDOUT "\n\ntotal run time: $diff1\n";
 exit(0);
 
 #######################################################################################

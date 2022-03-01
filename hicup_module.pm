@@ -231,7 +231,7 @@ sub process_config {
             }
         }
     }
-    close CONF or die "Could not close filhandle on configuration file: '$config_file'\n";
+    close CONF or die "Could not close filehandle on configuration file: '$config_file'\n";
     
     return @non_parameters;
 }
