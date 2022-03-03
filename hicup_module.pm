@@ -1177,5 +1177,3 @@ sub get_csome_position{
         return ($csome, $three_prime, "-");
 }
 
-
-1
