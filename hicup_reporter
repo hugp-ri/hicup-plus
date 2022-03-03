@@ -22,6 +22,21 @@
 ###################################################################################
 ###################################################################################
 
+###################################################################################
+###################################################################################
+##                                                                               ##
+##   This file has been modified to support Dragen and HiSAT2 configurations     ##
+##                                                                               ##
+##                           HiCUP+ (HiCUP-Plus)                                 ##
+##      Maintained by S. Thomas Kelly (simonthomas.kelly@hugp.com)               ##
+##                                                                               ##
+##     Changes: no major changes (whitespace edited to enable debugging)         ##
+##              reporting errors resolbed by changing HiCUP mapper               ##
+##                                                                               ##
+###################################################################################
+###################################################################################
+
+
 use strict;
 use warnings;
 use Getopt::Long;
@@ -63,7 +78,7 @@ if ( $config{help} ) {
 
 #Print version and exit
 if ( $config{version} ) {
-    print "HiCUP Reporter v$hicup_module::VERSION\n";
+    print "HiCUP+ Reporter v$hicup_module::VERSION\n";
     exit(0);
 }
 
@@ -83,7 +98,7 @@ if(!defined $config{outdir}){
 } 
 $config{outdir} .= '/' unless ($config{outdir} =~ /\/$/);   #Add trailing folder forward slash
 
-print "Creating combined HiCUP summary report\n" unless $config{quiet};
+print "Creating combined HiCUP+ summary report\n" unless $config{quiet};
 
 my $indir = abs_path($ARGV[0]);
 chomp $indir;

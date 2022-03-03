@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use Time::HiRes;
 use Getopt::Long;
 use File::Temp qw/ tempdir /;
 use File::Path qw(remove_tree);
@@ -37,6 +38,19 @@ use Data::Dumper;
 ###################################################################################
 ###################################################################################
 
+###################################################################################
+###################################################################################
+##                                                                               ##
+##   This file has been modified to support Dragen and HiSAT2 configurations     ##
+##                                                                               ##
+##                           HiCUP+ (HiCUP-Plus)                                 ##
+##      Maintained by S. Thomas Kelly (simonthomas.kelly@hugp.com)               ##
+##                                                                               ##
+##         Changes: supports addition configuration options                      ##
+##                                                                               ##
+###################################################################################
+###################################################################################
+
 ##########################################################
 #Get user-supplied parameters
 #Option variables
@@ -62,11 +76,11 @@ my %config = (
     longest   => '',
     re1       => '',
     shortest  => '',
+    samtools  => '',
     temp      => '',
     threads   => '',
     filenames => '',
     sequence  => '',
-    samtools  => '',
     r         => '',
     aligner   => ''    #Not-specified by user - name of aligner to use
 );
@@ -93,12 +107,12 @@ my $config_result = GetOptions(    #Stores parameters
     "longest=s"  => \$config{longest},
     "re1=s"      => \$config{re1},
     "shortest=s" => \$config{shortest},
+    "samtools=s"   => \$config{samtools},
     "temp=s"     => \$config{temp},
     "threads=s"  => \$config{threads},
     "filenames"  => \$config{filenames},
     "r=s"        => \$config{r},
-    "sequence"   => \$config{sequence},
-    "samtools"   => \$config{samtools}     #Path to SAM Tools, not yet described in documentation
+    "sequence"   => \$config{sequence}
 );
 
 die "Command line options need to be in the correct format (hicup -help for more details).\n" unless ($config_result);
@@ -112,7 +126,7 @@ if ( $config{help} ) {
 
 #Print version and exit
 if ( $config{version} ) {
-    print "HiCUP v$hicup_module::VERSION\n";
+    print "HiCUP+ v$hicup_module::VERSION\n";
     exit(0);
 }
 
@@ -125,8 +139,8 @@ if( hasval($config{config}) ){
    die "Configuration file '$config{config}' does not exist\n" unless(-e $config{config});
 }
 
-print "Starting HiCUP pipeline (v$hicup_module::VERSION)\n" unless $config{quiet};
-print "PLEASE NOTE: FROM VERSION 8, HICUP REQUIRES THE R PACKAGES TIDYVERSE AND PLOTLY INSTALLED\n";
+print "Starting HiCUP+ pipeline (v$hicup_module::VERSION)\n" unless $config{quiet};
+print "PLEASE NOTE: HICUP+ REQUIRES THE R PACKAGES TIDYVERSE AND PLOTLY INSTALLED\n";
 print "SEE DOCUMENTATION FOR MORE DETAILS\n";
 
 my @filenames;
@@ -183,7 +197,7 @@ foreach my $file (@hicup_final_outfiles) {
 }
 
 unless ( check_files_exist( \@hicup_final_outfiles, 'NOT_EXISTS' ) ) {
-    die "HiCUP will not run until these files have been removed.\n";
+     die "HiCUP+ will not run until these files have been removed.\n";
 }
 
 #########################################################################
@@ -305,6 +319,7 @@ my $outdir_flag = '';
 $outdir_flag       = "--outdir $config{outdir}"     if ( $config{outdir} );           #This is the flag, not outdir
 $config{nofill}    = "--nofill"                     if ( $config{nofill} ne '' );
 $re1_string        = "--re1 $re1_string"            if ( $re1_string ne '' );
+## $config{samtools}    = "--samtools $config{samtools}"   if ( $config{samtools} ne '' );
 $config{seq_trunc} = "--sequence $config{sequence}" if ( $config{sequence} ne '' );
 if ( $config{shortest} ne '' ) {
     $config{shortest} = "--shortest $config{shortest}";
@@ -329,6 +344,10 @@ my $truncater_version;    #Stores the truncater version number
 
 $truncater_version = `$Bin/hicup_truncater -v` or die "Can't run hicup_truncater to determine version number\n.";
 
+# start timing step
+print STDOUT "\nstarting HiCUP truncater\n";
+my $start_time1 = [Time::HiRes::gettimeofday()];
+
 if ( $config{zip} ) {
     !system("$Bin/hicup_truncater $config{r} $datestamp_flag $config{nofill} $outdir_flag $config{quiet} $re1_string $config{sequence} $config{threads} $config{zip} $filenames_string")
       or die "Can't run hicup_truncater\n.";
@@ -337,8 +356,13 @@ if ( $config{zip} ) {
       or die "Can't run hicup_truncater\n.";
 }
 
+#report timing results
+my $diff1 = Time::HiRes::tv_interval($start_time1);
+print STDOUT "\completed HiCUP truncater\n";
+print STDOUT "\n\ntruncater time: $diff1\n";
+
 #Map and pair sequences
-my $ligation = "\@PG\tID:HiCUP Truncater\tVN:" . $hicup_module::VERSION;       #Create the hidden ligation flag to send to HiCUP mapper to print the hicup_truncation settings to the output file
+my $ligation = "\@PG\tID:HiCUP+ Truncater\tVN:" . $hicup_module::VERSION;       #Create the hidden ligation flag to send to HiCUP mapper to print the hicup_truncation settings to the output file
 if ( $config{re1} ) {
    #We cannot have a ":" in the SAM header at this point, so remove it
    my $colonless_re1 = $config{re1};
@@ -354,15 +378,25 @@ my @truncater_outputfiles = fileNamer( \@filenames, \%config, 'truncater' );
 my %truncater_outputfiles_paired = @truncater_outputfiles;
 $filenames_string = filename_string_generator(%truncater_outputfiles_paired);
 
+# start timing step
+print STDOUT "\nstarting HiCUP mapper\n";
+my $start_time2 = [Time::HiRes::gettimeofday()];
+
 if ( $config{zip} ) {
     !system(
 "$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{hisat2} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $config{zip} $filenames_string"
     ) or die "Can't run hicup_mapper\n.";
 } else {
     !system(
-"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{hisat2} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $filenames_string"
+"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{hisat2} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{samtools} $config{samtools} $config{threads} $filenames_string"
     ) or die "Can't run hicup_mapper\n.";
 }
+
+
+#report timing results
+my $diff2 = Time::HiRes::tv_interval($start_time2);
+print STDOUT "\completed HiCUP mapper\n";
+print STDOUT "\n\nmapper time: $diff2\n";
 
 #Delete truncated intermediates
 unless ( $config{keep} ) {
@@ -378,13 +412,23 @@ my @mapper_outputfiles = fileNamer( \@truncater_outputfiles, \%config, 'mapper' 
 
 $filenames_string = filename_string_generator_unpaired(@mapper_outputfiles);                                            #Use this subroutine for unpaired filenames
 
+# start timing step
+print STDOUT "\nstarting HiCUP filter\n";
+my $start_time3 = [Time::HiRes::gettimeofday()];
+
 if ( $config{zip} ) {
-    !system("$Bin/hicup_filter $config{r} $datestamp_flag $config{digest} $config{longest} $outdir_flag $config{quiet} $config{shortest} $config{threads} $config{zip} $filenames_string")
+    !system("$Bin/hicup_filter $config{r} $datestamp_flag $config{digest} $config{longest} $outdir_flag $config{quiet} $config{shortest} $config{samtools} $config{threads} $config{zip} $filenames_string")
       or die "Can't run hicup_filter.\n";
 } else {
-    !system("$Bin/hicup_filter $config{r} $datestamp_flag $config{digest} $config{longest} $outdir_flag $config{quiet} $config{shortest} $config{threads} $filenames_string")
+    !system("$Bin/hicup_filter $config{r} $datestamp_flag $config{digest} $config{longest} $outdir_flag $config{quiet} $config{shortest} $config{samtools} $config{threads} $filenames_string")
       or die "Can't run hicup_filter.\n";
 }
+
+
+#report timing results
+my $diff3 = Time::HiRes::tv_interval($start_time3);
+print STDOUT "\completed HiCUP filter\n";
+print STDOUT "\n\nfilter time: $diff3\n";
 
 #Delete paired intermediates
 unless ( $config{keep} ) {
@@ -409,11 +453,21 @@ if ( hasval( $config{temp} ) ) {    #Use send to outdir, if temp folder specifie
 }
 $filenames_string   = filename_string_generator_unpaired(@filter_outputfiles);     #Use this subroutine for unpaired filenames
 
+# start timing step
+print STDOUT "\nstarting HiCUP deduplicator\n";
+my $start_time4 = [Time::HiRes::gettimeofday()];
+
 if ( $config{zip} ) {                                                              #$keep not significant since this is the last step in the pipeline
-    !system("$Bin/hicup_deduplicator $config{r} $datestamp_flag $outdir_flag $config{quiet} $config{threads} $config{zip} $filenames_string") or die "Can't run hicup_deduplicator.\n";
+    !system("$Bin/hicup_deduplicator $config{r} $datestamp_flag $outdir_flag $config{quiet} $config{samtools} $config{threads} $config{zip} $filenames_string") or die "Can't run hicup_deduplicator.\n";
 } else {
-    !system("$Bin/hicup_deduplicator $config{r} $datestamp_flag $outdir_flag $config{quiet} $config{threads} $filenames_string") or die "Can't run hicup_deduplicator.\n";
+    !system("$Bin/hicup_deduplicator $config{r} $datestamp_flag $outdir_flag $config{quiet} $config{samtools} $config{threads} $filenames_string") or die "Can't run hicup_deduplicator.\n";
 }
+
+
+#report timing results
+my $diff4 = Time::HiRes::tv_interval($start_time4);
+print STDOUT "\completed HiCUP deduplicator\n";
+print STDOUT "\n\ndeduplicator time: $diff4\n";
 
 #Delete filtered files
 unless ( $config{keep} ) {
@@ -446,6 +500,11 @@ if ( hasval( $config{temp} ) ) {
 
 #Create the HiCUP summary reports
 #Navigate to the folder where the output is written and run the script there
+
+# start timing step
+print STDOUT "\nstarting HiCUP reporter\n";
+my $start_time5 = [Time::HiRes::gettimeofday()];
+
 if($sonication_protocol){
     my $current_working_directory = cwd;
     my $hicup_reporter_command =  "$Bin/hicup_reporter .";
@@ -458,11 +517,16 @@ if($sonication_protocol){
     }
 } else {
     print "Skipping summary report\n";
-    print "HiCUP now only collates results for sonication protocol datasets\n";
+    print "HiCUP+ now only collates results for sonication protocol datasets\n";
 }
 
-print "HiCUP processing complete.\n" unless $config{quiet};
+print "HiCUP+ processing complete.\n" unless $config{quiet};
 
+#report timing results
+my $diff5 = Time::HiRes::tv_interval($start_time5);
+print STDOUT "\completed HiCUP reporter\n";
+print STDOUT "\n\nreporter time: $diff5\n";
+print STDOUT "\n\ntotal run time: $diff1\n";
 exit(0);
 
 #######################################################################################
@@ -786,6 +850,7 @@ COMMAND LINE OPTIONS
                encountered
 --outdir       Directory to write output files
 --quiet        Suppress progress reports (except warnings)
+--samtools     Specify the path to samtools
 --shortest     Minimum allowable insert size (bps)
 --temp         Write intermediate files (i.e. all except summary files and files
                generated by HiCUP Deduplicator) to a specified directory

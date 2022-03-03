@@ -32,6 +32,19 @@ use Data::Dumper;
 ###################################################################################
 ###################################################################################
 
+###################################################################################
+###################################################################################
+##                                                                               ##
+##   This file has been modified to support Dragen and HiSAT2 configurations     ##
+##                                                                               ##
+##                           HiCUP+ (HiCUP-Plus)                                 ##
+##      Maintained by S. Thomas Kelly (simonthomas.kelly@hugp.com)               ##
+##                                                                               ##
+##     Changes: no major changes (whitespace edited to enable debugging)         ##
+##                                                                               ##
+###################################################################################
+###################################################################################
+
 #Get user-supplied parameters
 #Option variables
 my %config = (
@@ -76,7 +89,7 @@ if ( $config{help} ) {
 
 #Print version and exit
 if ($config{version}) {
-    print "HiCUP Digester v$hicup_module::VERSION\n";
+    print "HiCUP+ Digester v$hicup_module::VERSION\n";
     exit(0);
 }
 
@@ -115,7 +128,7 @@ unless ( check_parameters() ) {
     die "Please change configuration file and/or command-line parameters and/or installation accordingly\n";
 }
 
-print "HiCUP Digester (version $hicup_module::VERSION)\n";
+print "HiCUP+ Digester (version $hicup_module::VERSION)\n";
 print "Digesting files\n" unless $config{quiet};
 
 # First restriction digestion - with potential additonal enzymes
@@ -496,8 +509,8 @@ hicup_digester [OPTIONS]... [FASTA FILES]...
 FUNCTION
 
 The HiCUP pipeline removes Hi-C artefacts, requiring a reference digested 
-genome. HiCUP Digester identifies the cut sites in FASTA files. The script 
-prints the results to file for subsequent processing by HiCUP Filter.
+genome. HiCUP+ Digester identifies the cut sites in FASTA files. The script 
+prints the results to file for subsequent processing by HiCUP+ Filter.
 
 The names of the files to be processed and the digestion parameters may be 
 passed to the script by a configuration file or command line arguments. 

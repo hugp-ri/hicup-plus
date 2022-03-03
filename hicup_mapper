@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use Time::HiRes;
 use Getopt::Long;
 use POSIX ":sys_wait_h";    #for nonblocking read
 use POSIX;
@@ -38,6 +39,29 @@ use Data::Dumper;
 ##along with HiCUP.  If not, see <http://www.gnu.org/licenses/>.                 ##
 ###################################################################################
 ###################################################################################
+
+###################################################################################
+###################################################################################
+##                                                                               ##
+##   This file has been modified to support Dragen and HiSAT2 configurations     ##
+##                                                                               ##
+##                           HiCUP+ (HiCUP-Plus)                                 ##
+##      Maintained by S. Thomas Kelly (simonthomas.kelly@hugp.com)               ##
+##                                                                               ##
+##     Changes: additional input parameters for additional aligners              ##
+##              verbose log output for debugging                                 ##
+##              add aligner calls for HiSAT2 and Dragen                          ##
+##              skip counting reads too short to map for Dragen                  ##
+##              report results for HiSaT2 using same parameters as Bowtie2       ##
+##              skip logs from stdout with Dragen                                ##
+##              run Dragen with a system call and print logs to files            ##
+##              parse Dragen mapping statistics from log files                   ##
+##              initialise values and correct whitespace to allow debugging      ##
+##              initialise reverse read and match by header strings              ##
+##                                                                               ##
+###################################################################################
+###################################################################################
+
 
 #Option variables
 my %config = (
@@ -93,7 +117,7 @@ if ( $config{help} ) {
 
 #Print version and exit
 if ( $config{version} ) {
-    print "HiCUP Mapper v$hicup_module::VERSION\n";
+    print "HiCUP+ Mapper v$hicup_module::VERSION\n";
     exit(0);
 }
 
@@ -140,7 +164,7 @@ foreach my $file (@hicup_Mapper_Outfiles) {                      #Add filename e
 }
 
 unless ( check_files_exist( \@hicup_Mapper_Outfiles, 'NOT_EXISTS' ) ) {
-    die "HiCUP mapper will not run until files have been removed.\n";
+     die "HiCUP+ mapper will not run until files have been removed.\n";
 }
 
 
@@ -160,7 +184,7 @@ $summaryfileTemp = $config{outdir} . $summaryfileTemp;
 
 open( SUMMARYTEMP, ">$summaryfileTemp" ) or die "Could not write to '$summaryfileTemp' : $!";
 
-print "Mapping with HiCUP Mapper v$hicup_module::VERSION\n" unless $config{quiet};
+print "Mapping with HiCUP+ Mapper v$hicup_module::VERSION\n" unless $config{quiet};
 print "Using aligner '$config{aligner}'\n"                  unless $config{quiet};
 
 my $terminate = 0;                                                                            #Instruct script to die if error detected in child process
@@ -197,7 +221,7 @@ close SUMMARYTEMP or die "Could not close filehandle on '$summaryfileTemp' : $!"
 my %summary_results = extract_mapping_results("$summaryfileTemp");    #Stores the results to write to the summary file
 
 #Now pair the files
-print "Pairing files with HiCUP Mapper v$hicup_module::VERSION\n" unless $config{quiet};
+print "Pairing files with HiCUP+ Mapper v$hicup_module::VERSION\n" unless $config{quiet};
 
 open( SUMMARY, ">$summaryfile" ) or die "Could not write to $summaryfile : $!";
 print SUMMARY "File\tTotal_reads_processed\tReads_too_short_to_map\t%Reads_too_short_to_map\tUnique_alignments\t%Unique_alignments\tMultiple_alignments\t%Multiple_alignments\tFailed_to_align\t%failed_to_align\tPaired\t%Paired\n";
@@ -316,6 +340,10 @@ sub check_parameters {
 #launches Bowtie to align FASTQ reads against a specified reference genome
 
 sub map_file {
+    # start timing step
+    print STDOUT "\nstarting HiCUP aligner call\n";
+    my $start_aligner = [Time::HiRes::gettimeofday()];
+
     my $inputfile = $_[0];
     my ($outputfile) = fileNamer( $inputfile, \%config, 'mapper', 0, 0, 0, 1, 0 );    #The first temp file returned (These files are deleted after pairing, a mapper_summary temp file is also returned)
     $outputfile = $config{outdir} . $outputfile;
@@ -505,6 +533,12 @@ sub map_file {
     close ERROR or die "Could not close 'ERROR' filehandle : $!";
     waitpid( $oid, 0 );
 
+
+    #report timing results
+    my $end = Time::HiRes::tv_interval($start_aligner);
+    print STDOUT "\completed HiCUP aligner call\n";
+    print STDOUT "\n\naligner run time: $end\n";
+
     if ( $config{dragen} ) {
         
         # import results from Dragen logs
@@ -563,6 +597,12 @@ sub map_file {
         $percent_unmapped = 'N/A';
         $percent_multi    = 'N/A';
     }
+
+    # reporting timing results   
+    my $end2 = Time::HiRes::tv_interval($start_aligner);
+    print STDOUT "\completed HiCUP aligner summary\n";
+    print STDOUT "\n\naligner total time: $end2\n";
+
     print SUMMARYTEMP "$inputfile\t$reads_processed\t$too_short_to_map\t$percent_too_short_to_map\t$unique_map\t$percent_unique\t$multi_mapped\t$percent_multi\t$unmapped\t$percent_unmapped\t\n";
 }
 
@@ -671,7 +711,7 @@ sub pair {
         } else {
 
            if ($in_header) {    #Print the additional SAM header line
-                   my $sam_header_line = "\@PG\tID:HiCUP Mapper\tVN:" . "$hicup_module::VERSION\n";
+                   my $sam_header_line = "\@PG\tID:HiCUP+ Mapper\tVN:" . "$hicup_module::VERSION\n";
                    print PAIRED $sam_header_line;
 
          if ( $config{ligation} ) {
@@ -1041,6 +1081,7 @@ COMMAND LINE OPTIONS
 --index          Path to the relevant reference genome Bowtie/Bowtie2 indices
 --outdir         Directory to write output files
 --quiet          Suppress progress reports (except warnings)
+--samtools       Specify the path to samtools
 --threads        Specify the number of threads, allowing simultaneous processing 
                  of different files (default: 1)
 --version        Print the program version and exit

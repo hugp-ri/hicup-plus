@@ -82,7 +82,7 @@ if ( $config{help} ) {
 
 #Print version and exit
 if ( $config{version} ) {
-    print "HiCUP Truncater v$hicup_module::VERSION\n";
+    print "HiCUP+ Truncater v$hicup_module::VERSION\n";
     exit(0);
 }
 
@@ -174,7 +174,7 @@ foreach my $ligation_site (keys %unique_ligation_sites){
 }
 $sequences_string =~ s/, $/]/;
 
-print "Truncating with HiCUP Truncater v$hicup_module::VERSION\n" unless ( $config{quiet} );
+print "Truncating with HiCUP+ Truncater v$hicup_module::VERSION\n" unless ( $config{quiet} );
 print "Truncating sequences at occurrence of sequences '$sequences_string'\n" unless ( $config{quiet} );
 
 #Before processing the sequence file check whether the output output files

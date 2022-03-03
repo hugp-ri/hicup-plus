@@ -1,4 +1,4 @@
-.. HiCUP documentation master file, created by
+.. HiCUP+ documentation master file, created by
    sphinx-quickstart on Wed Jul 25 12:09:55 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -9,25 +9,30 @@
 
 
 ##############
-HiCUP Overview
+HiCUP+ Overview
 ##############
 
-**ATTENTION: HiCUP Version 8+ generates new format summary report HTML and text files.  You will also notice new a pipeline script HiCUP Reporter and a new R markdown file r_scripts/hicup_reporter.rmd.  To generate the HTML summary report now requires R to be installed on your system as well as the R modules Tidyverse and Plotly.  Also, collated summary reports will no longer be generated for the rarely used for double-digest Hi-C protocol.**
+`HiCUP+
+<https://github.com/hugp-ri/hicup-plus/>`_ is a fork of HiCUP_ with additional functionality. Please note that this is a maintained separately, although efforts have been made to ensure compatibility with configurations with prior versions.
+
+.. _HiCUP: http://www.bioinformatics.babraham.ac.uk/projects/hicup/
+
+**ATTENTION: HiCUP+ generates format summary report HTML and text files.  You will also notice new a pipeline script HiCUP+ Reporter and a new R markdown file r_scripts/hicup_reporter.rmd.  To generate the HTML summary report now requires R to be installed on your system as well as the R modules Tidyverse and Plotly.  Also, collated summary reports will no longer be generated for the rarely used for double-digest Hi-C protocol.**
 
 General Information
 *******************
 
-This documentation describes HiCUP, a bioinformatics pipeline produced by the Babraham Institute for processing Hi-C data.  The documentation has three sections:
+This documentation describes HiCUP+, a bioinformatics pipeline produced by the Babraham Institute for processing Hi-C data.  The documentation has three sections:
 
-1. Overview - an explanation of Hi-C and how HiCUP helps analyse this kind of data
+1. Overview - an explanation of Hi-C and how HiCUP+ helps analyse this kind of data
 
-2. Quick Start - how to run HiCUP
+2. Quick Start - how to run HiCUP+
 
-3. Test Dataset - enables users to test HiCUP on their system
+3. Test Dataset - enables users to test HiCUP+ on their system
 
-4. Scripts Description - details each step of the pipeline and how to run various HiCUP components on their own. Also discusses how to analyse Hi-C protocol variants.
+4. Scripts Description - details each step of the pipeline and how to run various HiCUP+ components on their own. Also discusses how to analyse Hi-C protocol variants.
 
-To use HiCUP we suggest you read the Overview, the Quick Start and then follow the instructions to process the Test Dataset. The Scripts Description is usually only required for reference should you wish to understand an aspect of HiCUP in more detail.
+To use HiCUP+ we suggest you read the Overview, the Quick Start and then follow the instructions to process the Test Dataset. The Scripts Description is usually only required for reference should you wish to understand an aspect of HiCUP+ in more detail.
 
 There are also HiCUP tutorials on the `Babraham Bioinformatics YouTube Channel <https://www.youtube.com/user/BabrahamBioinf>`_.  We recommend you watch these since watching instructional videos is often more clear than reading a manual:
 
@@ -38,7 +43,8 @@ There are also HiCUP tutorials on the `Babraham Bioinformatics YouTube Channel <
 `Tutorial 3: Interpreting HiCUP Summary Results <https://www.youtube.com/watch?v=xWpjlXnsOU4>`_
 
 **We welcome your comments or suggestions, please report them at:**
-**https://github.com/StevenWingett/HiCUP/issues**
+
+https://github.com/hugp-ri/HiCUP-Plus/issues
 
 
 Hi-C Overview
@@ -52,20 +58,20 @@ Hi-C, developed from 3C, identifies long-range genomic interactions.  The Hi-C p
 
 What is HiCUP?
 **************
-HiCUP is a bioinformatics pipeline for processing Hi-C data. The pipeline takes and maps FASTQ data against a reference genome and filters out frequently encountered experimental artefacts. The pipeline produces paired-read files in SAM/BAM format, each read pair corresponding to a putative Hi-C di-tag. HiCUP also produces summary statistics at each stage of the pipeline providing quality control, helping pinpoint potential problems and refine the experimental protocol.
+HiCUP+ is a bioinformatics pipeline for processing Hi-C data. The pipeline takes and maps FASTQ data against a reference genome and filters out frequently encountered experimental artefacts. The pipeline produces paired-read files in SAM/BAM format, each read pair corresponding to a putative Hi-C di-tag. HiCUP+ also produces summary statistics at each stage of the pipeline providing quality control, helping pinpoint potential problems and refine the experimental protocol.
 
-The filtered read-pairs produced by HiCUP may then be used by Hi-C analysis tools to build a three-dimensional interpretation of the dataset.  Such analysis tools include `Hicpipe <http://compgenomics.weizmann.ac.il/tanay/?page_id=283>`_ which eliminates pre-defined systematic biases to produce normalised contact maps; `Homer <http://homer.salk.edu/homer/interactions>`_, which also produces corrected contact maps without the need for specifying the global biases inherent to the Hi-C protocol.  There is also a Bioconductor package named `GOTHiC <http://www.bioconductor.org/packages/release/bioc/html/GOTHiC.html>`_ to identify statistically significant Hi-C interactions. Another useful tool is `CHiCAGO <https://bioconductor.org/packages/release/bioc/html/Chicago.html>`_, for identifying statistically significant interactions in Capture HiC (CHiC) data.
+The filtered read-pairs produced by HiCUP+ may then be used by Hi-C analysis tools to build a three-dimensional interpretation of the dataset.  Such analysis tools include `Hicpipe <http://compgenomics.weizmann.ac.il/tanay/?page_id=283>`_ which eliminates pre-defined systematic biases to produce normalised contact maps; `Homer <http://homer.salk.edu/homer/interactions>`_, which also produces corrected contact maps without the need for specifying the global biases inherent to the Hi-C protocol.  There is also a Bioconductor package named `GOTHiC <http://www.bioconductor.org/packages/release/bioc/html/GOTHiC.html>`_ to identify statistically significant Hi-C interactions. Another useful tool is `CHiCAGO <https://bioconductor.org/packages/release/bioc/html/Chicago.html>`_, for identifying statistically significant interactions in Capture HiC (CHiC) data.
 
 Another Babraham Institute project, `SeqMonk <http://www.bioinformatics.babraham.ac.uk/projects/seqmonk>`_, is an interactive genome browser that imports the SAM/BAM output from HiCUP.
 
-HiCUP (Hi-C User Pipeline) comprises six Perl scripts for analysing Hi-C sequence data:
+HiCUP+ (Hi-C User Pipeline) comprises six Perl scripts for analysing Hi-C sequence data:
 
-1. HiCUP Digester - creates a digested reference genome  
-2. HiCUP - executes sequentially the scripts below
-3. HiCUP Truncater - cuts reads at the putative Hi-C ligation junction
-4. HiCUP Mapper - aligns read pairs independently to a reference genome  
-5. HiCUP Filter - removes commonly encountered Hi-C artefacts 
-6. HiCUP Deduplicator - removes (retaining one copy) putative PCR duplicates
+1. HiCUP+ Digester - creates a digested reference genome  
+2. HiCUP+ - executes sequentially the scripts below
+3. HiCUP+ Truncater - cuts reads at the putative Hi-C ligation junction
+4. HiCUP+ Mapper - aligns read pairs independently to a reference genome  
+5. HiCUP+ Filter - removes commonly encountered Hi-C artefacts 
+6. HiCUP+ Deduplicator - removes (retaining one copy) putative PCR duplicates
 
 The pipeline enables multiplexed sequences to be sorted and mapped to the genome, the pairing of Hi-C fragment ends and filtering for valid Hi-C interaction products.
 
@@ -73,14 +79,14 @@ The pipeline enables multiplexed sequences to be sorted and mapped to the genome
 
 
 #######################
-HiCUP Quick Start Guide
+HiCUP+ Quick Start Guide
 #######################
 
-HiCUP is a bioinformatics pipeline for processing Hi-C data. The pipeline maps FASTQ data against a reference genome and filters out frequently encountered experimental artefacts. The pipeline produces paired-read files in SAM/BAM format, each read pair corresponding to a putative Hi-C di-tag. HiCUP also produces summary statistics at each stage of the pipeline providing quality control, helping pinpoint potential problems and refine the experimental protocol.
+HiCUP+ is a bioinformatics pipeline for processing Hi-C data. The pipeline maps FASTQ data against a reference genome and filters out frequently encountered experimental artefacts. The pipeline produces paired-read files in SAM/BAM format, each read pair corresponding to a putative Hi-C di-tag. HiCUP+ also produces summary statistics at each stage of the pipeline providing quality control, helping pinpoint potential problems and refine the experimental protocol.
 
 Requirements
 ************
-HiCUP should work on most Linux-based operating systems. It requires a working version of `Perl <http://www.perl.org>`_ and uses `Bowtie <http://bowtie-bio.sourceforge.net>`_ or `Bowtie2 <http://bowtie-bio.sourceforge.net/bowtie2>`_ to perform the mapping.  
+HiCUP+ should work on most Linux-based operating systems. It requires a working version of `Perl <http://www.perl.org>`_ and uses `Bowtie <http://bowtie-bio.sourceforge.net>`_ or `Bowtie2 <http://bowtie-bio.sourceforge.net/bowtie2>`_ to perform the mapping.  
 
 Full functionality requires `R <http://www.r-project.org>`_ (tested using version 3.1.2), with the R modules Tidyverse and Plotly installed.  If you experience problems generating HTML summary reports using R, then you may also need to install `Pandoc <https://pandoc.org>`_ on your system.  `SAM tools <http://sourceforge.net/projects/samtools>`_ (version 0.1.18 or later) also needs to be installed.
 
@@ -88,7 +94,7 @@ Memory requirements depend on the size of the input files, but as a rough guide 
 
 Installation
 ************
-HiCUP is written in Perl and executed from the command line. To install HiCUP download the hicup_v0.X.Y.tar.gz file and extract all files by typing:
+HiCUP+ is written in Perl and executed from the command line. To install HiCUP+ download the hicup_v0.X.Y.tar.gz file and extract all files by typing:
 
 ``tar -xvzf hicup_v0.X.Y.tar.gz``
 
@@ -96,10 +102,10 @@ Check after extracting that the Perl scripts are executable by **all**, which ca
 
 ``chmod a+x [files]`` 
 
-Running HiCUP
+Running HiCUP+
 *************
 1) Create Aligner Indices
-HiCUP uses the aligner Bowtie or Bowtie2 to map sequences to a reference genome, requiring the construction of genome index files. These indices **MUST** be constructed from the same reference genome files as used by the HiCUP Digester script.
+HiCUP+ uses the aligner Bowtie or Bowtie2 to map sequences to a reference genome, requiring the construction of genome index files. These indices **MUST** be constructed from the same reference genome files as used by the HiCUP+ Digester script.
 
 On the command line enter ‘bowtie-build’ (or bowtie2-build) to construct the indices, followed by a comma-separated list of the sequence files and then a space followed by the name of the output indices:  
 
@@ -114,7 +120,7 @@ On the command line enter ‘bowtie-build’ (or bowtie2-build) to construct the
 Refer to the `Bowtie <http://bowtie-bio.sourceforge.net/manual.shtml#the-bowtie-build-indexer>`_ or `Bowtie2 <http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#the-bowtie2-build-indexer>`_ manuals for further guidance.
 
 2) Create a digested reference genome
-To filter out common experimental artefacts, HiCUP requires the positions at which the restriction enzyme(s) used in the protocol cut the genome. The script HiCUP Digester creates this reference genome digest file. The example below performs an *in silico* HindIII digest of all DNA sequences contained within the files in the current working directory suffixed with ‘.fa’.  The digest output file will be labelled as the genome ‘Human_GRCh37’. Provide the full path to HiCUP Digester or the sequence files to be digested if they are not in the current working directory.  
+To filter out common experimental artefacts, HiCUP+ requires the positions at which the restriction enzyme(s) used in the protocol cut the genome. The script HiCUP+ Digester creates this reference genome digest file. The example below performs an *in silico* HindIII digest of all DNA sequences contained within the files in the current working directory suffixed with ‘.fa’.  The digest output file will be labelled as the genome ‘Human_GRCh37’. Provide the full path to HiCUP+ Digester or the sequence files to be digested if they are not in the current working directory.  
 
 Execute the script:  
 
@@ -124,9 +130,9 @@ The argument '--re1' specifies the restriction enzyme used to digest the genome 
 
 *Hi-C Protocol Variations: some Hi-C protocols may use two restriction enzymes at this stage (i.e. the creation of the initial Hi-C interaction). To specify two enzymes use the nomenclature: --re1 A^GATCT,BglII:A^AGCTT,HindIII*
 
-3) Run the HiCUP Pipeline
+3) Run the HiCUP+ Pipeline
 
-Create an example HiCUP configuration file in your current working directory:
+Create an example HiCUP+ configuration file in your current working directory:
 
 ``hicup --example``
 
@@ -165,7 +171,7 @@ Use a text editor to edit the configuration file as required, such as in the fol
 
     #FASTQ format (valid formats: 'Sanger', 'Solexa_Illumina_1.0',
 
-    #'Illumina_1.3' or 'Illumina_1.5'). If not specified, HiCUP will 
+    #'Illumina_1.3' or 'Illumina_1.5'). If not specified, HiCUP+ will 
     #try to determine the format automatically by analysing one of 
     #the FASTQ files. All input FASTQ will assumed to be in that 
     #format.
@@ -189,38 +195,38 @@ Use a text editor to edit the configuration file as required, such as in the fol
 
 Rename the configuration file if desired.
 
-Enter the following text in the command line to run the whole HiCUP pipeline using the parameters specified in the configuration file:
+Enter the following text in the command line to run the whole HiCUP+ pipeline using the parameters specified in the configuration file:
 
 ``hicup --config [Configuration Filename]``
 
-The --config flag is used to specify the configuration filename.  Also, remember to provide the full path to the HiCUP script and/or the configuration file if they are not in the current working directory.  
+The --config flag is used to specify the configuration filename.  Also, remember to provide the full path to the HiCUP+ script and/or the configuration file if they are not in the current working directory.  
 
-*Please Note: HiCUP attempts to intelligently name files as the pipeline proceeds, so avoid passing HiCUP input files with identical names prior to the filename extension.  For example, the files 'sample.fa' and 'sample.fastq' would produce files with identical names as the pipeline progresses.  This problem could be overcome by renaming one the files to 'sample2.fa'.   To minimise inconvenience, HiCUP will immediately produce a warning message and not run if the input filenames are too similar.*
+*Please Note: HiCUP+ attempts to intelligently name files as the pipeline proceeds, so avoid passing HiCUP+ input files with identical names prior to the filename extension.  For example, the files 'sample.fa' and 'sample.fastq' would produce files with identical names as the pipeline progresses.  This problem could be overcome by renaming one the files to 'sample2.fa'.   To minimise inconvenience, HiCUP+ will immediately produce a warning message and not run if the input filenames are too similar.*
 
 4) Output
 
-The pipeline produces paired-read BAM files representing the filtered di-tags. HiCUP also generates an HTML summary report for each sample and a text file summarising every sample processed. Summary text files and SVG-format charts are also created at each step along the pipeline.
+The pipeline produces paired-read BAM files representing the filtered di-tags. HiCUP+ also generates an HTML summary report for each sample and a text file summarising every sample processed. Summary text files and SVG-format charts are also created at each step along the pipeline.
 
-The 'Conversion' folder within the main HiCUP directory contains Perl scripts to convert HiCUP BAM/SAM files into a format compatible with other analysis tools. Executing one of these files with the command line argument --help prints instructions on how to use the conversion script. 
+The 'Conversion' folder within the main HiCUP+ directory contains Perl scripts to convert HiCUP+ BAM/SAM files into a format compatible with other analysis tools. Executing one of these files with the command line argument --help prints instructions on how to use the conversion script. 
 
 
 ###################
 Scripts Description
 ###################
-The rest of this section discusses each script in more detail and provides instructions on how to execute pipeline scripts separately i.e. without running the HiCUP control script.
+The rest of this section discusses each script in more detail and provides instructions on how to execute pipeline scripts separately i.e. without running the HiCUP+ control script.
 
-The HiCUP pipeline comprises the following scripts:
+The HiCUP+ pipeline comprises the following scripts:
 
-* HiCUP (control script)
-* HiCUP Truncater
-* HiCUP Mapper
-* HiCUP Filter
-* HiCUP Deduplicator
-* HiCUP Digester
+* HiCUP+ (control script)
+* HiCUP+ Truncater
+* HiCUP+ Mapper
+* HiCUP+ Filter
+* HiCUP+ Deduplicator
+* HiCUP+ Digester
 
-HiCUP (pipeline control script)
+HiCUP+ (pipeline control script)
 *******************************
-The hicup Perl script controls the other programs in the HiCUP pipeline
+The hicup Perl script controls the other programs in the HiCUP+ pipeline
 
 
 Synopsis
@@ -230,7 +236,7 @@ Synopsis
 
 Function
 ========
-The HiCUP pipeline comprises the scripts 'hicup_truncater', 'hicup_mapper', 'hicup_filter' and ‘hicup_deduplicator’ ('hicup_digester generates the genome_digest file used by hicup_filter).  The pipeline takes FASTQ files and generates Hi-C di-tag paired reads, aligned to a specified reference genome. The HiCUP script regulates the pipeline, executing each script in turn and passing output from one stage of the program to the next. 
+The HiCUP+ pipeline comprises the scripts 'hicup_truncater', 'hicup_mapper', 'hicup_filter' and ‘hicup_deduplicator’ ('hicup_digester generates the genome_digest file used by hicup_filter).  The pipeline takes FASTQ files and generates Hi-C di-tag paired reads, aligned to a specified reference genome. The HiCUP+ script regulates the pipeline, executing each script in turn and passing output from one stage of the program to the next. 
 
 The designated configuration file sets the parameters for the whole pipeline. The configuration file lists the names of the FASTQ file pairs to be processed.
 
@@ -259,11 +265,14 @@ The designated configuration file sets the parameters for the whole pipeline. Th
     #In the example below Bowtie2 is specified.
     Bowtie2: /usr/local/bowtie2/bowtie2
 
+    #In the example below the version of Samtools is specified (optional).
+    Samtools: /usr/local/samtools-1.14/bin/samtools
+
     #Path to the genome digest file produced by hicup_digester
     Digest: Digest_Mouse_genome_HindIII_None_12-32-06_17-02-2012.txt
 
     #FASTQ format (valid formats: 'Sanger', 'Solexa_Illumina_1.0', 'Illumina_1.3' or 'Illumina_1.5')
-    #If not specified, HiCUP will try to determine the format automatically by analysing
+    #If not specified, HiCUP+ will try to determine the format automatically by analysing
     #one of the FASTQ files. All input FASTQ will assumed to be in this format
     Format: Sanger 
 
@@ -290,7 +299,7 @@ The designated configuration file sets the parameters for the whole pipeline. Th
 
 This configuration instructs the pipeline to process and pair the files s_1_1_sequence.txt with s_1_2_sequence.txt;  and s_2_1_sequence.txt with s_2_2_sequence.txt; and  s_3_1_sequence.txt with s_3_2_sequence.txt.    Remember, a file pair generates one output file.)
 
-HiCUP also requires the paths to Bowtie and the genome digest file.
+HiCUP+ also requires the paths to Bowtie and the genome digest file.
 
 Command Line Options
 ====================
@@ -316,9 +325,10 @@ Command Line Options
     --outdir        Directory to write output files
     --quiet         Suppress progress reports (except 
                     warnings)
+    --samtools      Specify the path to samtools
     --shortest      Minimum allowable insert size (bps)
     --temp          Write intermediate files (i.e. all except 
-                    summaryfiles and files generated by HiCUP 
+                    summaryfiles and files generated by HiCUP+ 
                     Deduplicator) to a specified directory
     --threads       Specify the number of threads, allowing 
                     simultaneous
@@ -329,9 +339,9 @@ Command Line Options
 -------------------------------------------------------------------------------
 
 
-HiCUP Truncater
+HiCUP+ Truncater
 ***************
-The HiCUP Truncater Perl script terminates sequence reads at specified Hi-C ligation junctions
+The HiCUP+ Truncater Perl script terminates sequence reads at specified Hi-C ligation junctions
 
 
 Synopsis
@@ -345,7 +355,7 @@ Valid Hi-C pairs comprise two DNA fragments from different regions of the genome
 
 .. image:: https://www.bioinformatics.babraham.ac.uk/projects/hicup/assets/truncation_explanation.svg
 
-The names of the files to be processed and the restriction site may be passed to the scrip using a configuration file or command line arguments. The configuration file contains: i) the recognition sequence of the first (or only) restriction enzyme  used in the Hi-C protocol and ii) the sequence files to be processed by the HiCUP Truncater.
+The names of the files to be processed and the restriction site may be passed to the scrip using a configuration file or command line arguments. The configuration file contains: i) the recognition sequence of the first (or only) restriction enzyme  used in the Hi-C protocol and ii) the sequence files to be processed by the HiCUP+ Truncater.
 
 **Configuration File Example:**
 
@@ -386,10 +396,10 @@ Command Line Options
 
 -------------------------------------------------------------------------------
 
-HiCUP Mapper
+HiCUP+ Mapper
 ************
 
-The HiCUP Mapper script aligns paired reads independently to a reference genome and retains reads where both partners align
+The HiCUP+ Mapper script aligns paired reads independently to a reference genome and retains reads where both partners align
 
 Synopsis
 ========
@@ -400,7 +410,7 @@ Function
 ========
 Valid Hi-C ligation products comprise two restriction fragments from different regions of the genome ligated together. This program maps Hi-C di-tags against a reference genome to determine from where each restriction fragment is derived. Following mapping the forward and reverse reads are paired i.e. two input files result in one output file.
 
-HiCUP Mapper uses the sequence alignment programs `Bowtie <http://bowtie-bio.sourceforge.net>`_ or `Bowtie2 <http://bowtie-bio.sourceforge.net/bowtie2>`_ to perform the mapping.
+HiCUP+ Mapper uses the sequence alignment programs `Bowtie <http://bowtie-bio.sourceforge.net>`_ or `Bowtie2 <http://bowtie-bio.sourceforge.net/bowtie2>`_ to perform the mapping.
 
 **Bowtie mapping parameters:**
 
@@ -414,7 +424,7 @@ HiCUP Mapper uses the sequence alignment programs `Bowtie <http://bowtie-bio.sou
 
 **--best:** reports alignments in best-to-worst order 
 
-The configuration file sets the parameters for HiCUP Mapper, it contains: i) names of files to be mapped; ii) local path to Bowtie; iii) path to the relevant reference genome Bowtie indices; iv) the sequence format.
+The configuration file sets the parameters for HiCUP+ Mapper, it contains: i) names of files to be mapped; ii) local path to Bowtie; iii) path to the relevant reference genome Bowtie indices; iv) the sequence format.
 
 **Bowtie2 Mapping Parameters:**
 
@@ -426,14 +436,14 @@ The configuration file sets the parameters for HiCUP Mapper, it contains: i) nam
 
 **--reorder:** ensure the read output order is the same as the input order when multi-threading
 
-Bowtie2 does not have a direct equivalent of the -m 1 option available in the original Bowtie.  Therefore, to identify and filter out multi-mapping reads, HiCUP processes the SAM file generated by Bowtie2.  A reads is considered as uniquely mapping if the quality score is greater than or equal to 30 and either i) the read cannot be mapped to another location or ii) if the read can be mapped to other locations, then the difference in quality score between this hit and the next-best match should be at least 10 (as reported in the Bowtie2 SAM tags "AS" and "XS").
-Before HiCUP version 0.6.1, a unique-mapping read was defined simply as having no next-best hit when using Bowtie2 as the aligner.
+Bowtie2 does not have a direct equivalent of the -m 1 option available in the original Bowtie.  Therefore, to identify and filter out multi-mapping reads, HiCUP+ processes the SAM file generated by Bowtie2.  A reads is considered as uniquely mapping if the quality score is greater than or equal to 30 and either i) the read cannot be mapped to another location or ii) if the read can be mapped to other locations, then the difference in quality score between this hit and the next-best match should be at least 10 (as reported in the Bowtie2 SAM tags "AS" and "XS").
+Before HiCUP+ version 0.6.1, a unique-mapping read was defined simply as having no next-best hit when using Bowtie2 as the aligner.
 
 **Dragen Mapping Parameters:**
 
 Run Map/Align (*.fastq to *.bam)
 ''  dragen -r <REF_DIR> --output-directory <OUT_DIR> --output-file-prefix <FILE_PREFIX> [options]
-  -1 <FASTQ> [-2 <FASTQ>] --RGID <RG> --RGSM <SM>''
+-1 <FASTQ> [-2 <FASTQ>] --RGID <RG> --RGSM <SM>''
 
 **HISAT 2 Mapping Parameters:**
 
@@ -483,6 +493,7 @@ Command Line Options
     --outdir            Directory to write output files
     --quiet             Suppress progress reports (except 
                         warnings)
+    --samtools          Specify the path to samtools
     --threads           Specify the number of threads, allowing 
                         simultaneous processing of different files 
                         (default: 1)
@@ -491,10 +502,10 @@ Command Line Options
 
 -------------------------------------------------------------------------------
 
-HiCUP Filter
+HiCUP+ Filter
 ************
 
-The HiCUP Filter Perl script classifies read pairs, identifying valid Hi-C di-tags
+The HiCUP+ Filter Perl script classifies read pairs, identifying valid Hi-C di-tags
 
 Synopsis
 ========
@@ -503,9 +514,9 @@ Synopsis
 
 Function
 ========
-The majority of reads generated by the HiCUP Mapper script are most likely valid Hi-C products, but a substantial minority are probably not and should be removed. The HiCUP Filter script processes paired reads together with the file created by HiCUP Digester to identify valid Hi-C pairs. 
+The majority of reads generated by the HiCUP+ Mapper script are most likely valid Hi-C products, but a substantial minority are probably not and should be removed. The HiCUP+ Filter script processes paired reads together with the file created by HiCUP+ Digester to identify valid Hi-C pairs. 
 
-The names of the files to be processed and other parameters may be passed to the script using a configuration file or by command line arguments. As a minimum requirement the script requires: i) a list of HiCUP Mapper output file(s) and ii) a digested genome produced by HiCUP Digester. 
+The names of the files to be processed and other parameters may be passed to the script using a configuration file or by command line arguments. As a minimum requirement the script requires: i) a list of HiCUP+ Mapper output file(s) and ii) a digested genome produced by HiCUP+ Digester. 
 
 **Configuration File Example:**  ::
 
@@ -569,6 +580,7 @@ Command Line Options
     --longest       Maximum allowable insert size (bps)
     --outdir        Directory to write output files
     --quiet         Suppress all progress reports
+    --samtools      Specify the path to samtools
     --shortest      Minimum allowable insert size (bps)
     --threads       Specify the number of threads, allowing 
                     simultaneous processing of multiple files
@@ -578,10 +590,10 @@ Command Line Options
 
 -------------------------------------------------------------------------------
 
-HiCUP Deduplicator
+HiCUP+ Deduplicator
 ******************
 
-The HiCUP Deduplicator script removes duplicated di-tags (retaining one copy of each) from the data set
+The HiCUP+ Deduplicator script removes duplicated di-tags (retaining one copy of each) from the data set
 
 Synopsis
 ========
@@ -590,7 +602,7 @@ Synopsis
 
 Function
 ========
-The Hi-C experimental protocol involves a PCR amplification step to generate enough material for sequencing. Consequently, the dataset generated by HiCUP Filter may contain PCR copies of the same di-tag. These PCR duplicates could result in incorrect inferences being drawn regarding the genomic conformation and so should be removed from the data set.
+The Hi-C experimental protocol involves a PCR amplification step to generate enough material for sequencing. Consequently, the dataset generated by HiCUP+ Filter may contain PCR copies of the same di-tag. These PCR duplicates could result in incorrect inferences being drawn regarding the genomic conformation and so should be removed from the data set.
 
 The names of the files to process can be passed to the script either by using a configuration file or command line arguments.
 
@@ -598,7 +610,7 @@ Example:
 
 ``hicup_deduplicator --zip sample_544_PC_FL_500_lane2.sam``
 
-The program creates SAM/BAM files named the same as the input files, only suffixed with '.dedup.bam' or 'dedup.sam'.  If running the whole HiCUP pipeline (not solely the deduplicator script), the final HiCUP file will be end '.hicup.bam' or '.hicup.sam'.
+The program creates SAM/BAM files named the same as the input files, only suffixed with '.dedup.bam' or 'dedup.sam'.  If running the whole HiCUP+ pipeline (not solely the deduplicator script), the final HiCUP+ file will be end '.hicup.bam' or '.hicup.sam'.
 
 *De-duplication step only*
 Input: sample_544_PC_FL_500_lane2.filt.sam
@@ -622,6 +634,7 @@ Command Line Options
     --help          Print help message and exit
     --outdir        Directory to write output files
     --quiet         Suppress progress reports (except warnings)
+    --samtools      Specify the path to samtools
     --threads       Specify the number of threads, allowing simultaneous
                     processing of multiple files
     --version       Print the program version and exit
@@ -629,10 +642,10 @@ Command Line Options
 
 -------------------------------------------------------------------------------
 
-HiCUP Digester
+HiCUP+ Digester
 **************
 
-The HiCUP Digester Perl script cuts throughout a selected genome at one or two specified restriction sites
+The HiCUP+ Digester Perl script cuts throughout a selected genome at one or two specified restriction sites
 
 Synopsis
 ========
@@ -641,9 +654,9 @@ Synopsis
 
 Function
 ========
-The Perl script HiCUP Mapper generates a file of paired mapped reads. While the majority of those reads are expected to be valid Hi-C ligation products, a substantial minority probably will not and should be removed. 
+The Perl script HiCUP+ Mapper generates a file of paired mapped reads. While the majority of those reads are expected to be valid Hi-C ligation products, a substantial minority probably will not and should be removed. 
 
-The script HiCUP Filter removes many of those invalid pairs, but before it can do this it requires a digested reference genome as input, along with the paired sequence files. The HiCUP Digester program cuts a selected reference genome with one or two specified Type II restriction enzymes that recognise single undivided palindromic sequences.  The script prints the results to file for subsequent processing by HiCUP Filter.
+The script HiCUP+ Filter removes many of those invalid pairs, but before it can do this it requires a digested reference genome as input, along with the paired sequence files. The HiCUP+ Digester program cuts a selected reference genome with one or two specified Type II restriction enzymes that recognise single undivided palindromic sequences.  The script prints the results to file for subsequent processing by HiCUP+ Filter.
 
 The names of the files to be processed and the digestion parameters may be passed to the script by a configuration file or command line arguments. The configuration file contains: i) restriction site 1; ii) restriction site 2 (optional and an atypical choice of protocol); iii) the name of the genome to be processed (optional) and iv) list of FASTA files to be processed.
 
@@ -704,10 +717,10 @@ Command Line Options
     --zip       Print the results to a gzip file
 
 
-HiCUP Reporter
+HiCUP+ Reporter
 **************
 
-The HiCUP Reporter generates summary results for the whole HiCUP pipeline
+The HiCUP+ Reporter generates summary results for the whole HiCUP+ pipeline
 
 SYNOPSIS
 
@@ -716,13 +729,13 @@ hicup_reporter [OPTIONS]...
 
 FUNCTION
 
-The hicup_reporter script collates the summary reports generated by the HiCUP 
+The hicup_reporter script collates the summary reports generated by the HiCUP+ 
 pipeline scripts (hicup_truncater, hicup_mapper etc.) and converts them into 
 collated summary text files and interactive documents containing tables and 
 plots.
 
 To run the script, pass as an argument the path to the folder containing the 
-summary files generated by the HiCUP pipeline scripts.
+summary files generated by the HiCUP+ pipeline scripts.
 
 COMMAND LINE OPTIONS
 
@@ -735,7 +748,7 @@ COMMAND LINE OPTIONS
 ###########################
 Processing the Test Dataset
 ###########################
-To confirm HiCUP functions correctly on your system please download the `Test Hi-C dataset <http://www.bioinformatics.babraham.ac.uk/projects/hicup/test_dataset.tar.gz>`_.  The test files 'test_dataset1.fastq'  and 'test_dataset2.fastq' both contain human Hi-C reads in Sanger FASTQ format. 
+To confirm HiCUP+ functions correctly on your system please download the `Test Hi-C dataset <http://www.bioinformatics.babraham.ac.uk/projects/hicup/test_dataset.tar.gz>`_.  The test files 'test_dataset1.fastq'  and 'test_dataset2.fastq' both contain human Hi-C reads in Sanger FASTQ format. 
 
 **1) Extract the tar archive before processing:**
 
@@ -753,7 +766,7 @@ Example commands:
 
 ``hisat2-build 1.fa,2.fa,...,MT.fa human_GRCh37``
 
-**3) Using HiCUP Digester create a reference genome of Homo sapiens GRCh37 all chromosomes (1,...,22, X, Y and MT) digested with HindIII (A^AGCTT).**
+**3) Using HiCUP+ Digester create a reference genome of Homo sapiens GRCh37 all chromosomes (1,...,22, X, Y and MT) digested with HindIII (A^AGCTT).**
 
 Example command:
 
@@ -779,7 +792,7 @@ Example command:
 
 **5) Run the pipeline:**
 
-Execute HiCUP with the command:
+Execute HiCUP+ with the command:
 
 ``hicup --config [Configuration Filename]``
 
@@ -787,7 +800,7 @@ Execute HiCUP with the command:
 ###############
 Arima Protocol
 ###############
-`Arima Genomics <https://arimagenomics.com>`_ has developed a Hi-C kit. HiCUP is compatible with the Arima protocol, simply generate the relevant HiCUP Digest file with the command: 
+`Arima Genomics <https://arimagenomics.com>`_ has developed a Hi-C kit. HiCUP+ is compatible with the Arima protocol, simply generate the relevant HiCUP+ Digest file with the command: 
 
 ``hicup_digester --genome [Genome Name] --arima [FASTA files]``
 
@@ -797,7 +810,7 @@ This is all that is additionally required to process an Arima Hi-C dataset.
 ###############
 Miscellaneous Functioality
 ###############
-The main HiCUP folder contains a folder named 'Misc' which contains several useful scripts.
+The main HiCUP+ folder contains a folder named 'Misc' which contains several useful scripts.
 
 The script hicup_capture is for identifying di-tags mapping to captured regions of the genome in Capture Hi-C experiments (Capture Hi-C is described in - DOI: 10.1101/gr.185272.114).  For a di-tag to be considered captured, both or either read needs to map to a captured restriction fragment. 
  
@@ -811,7 +824,7 @@ Documentation references
 Lieberman-Aiden et al. (2009) Comprehensive mapping of long-range interactions reveals folding principles of the human genome. Science (326), 289-293
 
 
-Research that used HiCUP
+Research that used HiCUP+
 ************************
 
 Schoenfelder S, et al. (2018) Divergent wiring of repressive and active chromatin interactions between mouse embryonic and trophoblast lineages.  Nat Commun, 9(1):4189
@@ -899,28 +912,45 @@ Dryden, N. H. et al. (2014) Unbiased analysis of potential targets of breast can
 Acknowledgements
 #################
 
-HiCUP was written by Steven Wingett (Bioinformatics Group, Babraham Institue, Cambridge, UK).
+HiCUP+ was developed by S. Thomas Kelly (Bioinformatics Section, H.U. Group Research Institute G.K., Tokyo, Japan; SRL Inc., Tokyo, Japan)
+based on the HiCUP v0.8.2 open-source release.
+
+HiCUP was originally written by Steven Wingett (Bioinformatics Group, Babraham Institue, Cambridge, UK).
 
 Rola Dali, Edouard Henrion and Mathieu Bourgey (McGill University, Canada) assisted with making HiCUP compatible with the Arima protocol.
+
+Kai Battenberg (RIKEN Center for Sustainable Resource Science, Yokohama, Japan) assisted with summary statistics for the Dragen aligner.
 
 
 #############
 Terms of use
 #############
-HiCUP is distributed under a "GNU General Public License", a copy of which is distributed with the software.
+HiCUP+ is distributed under a "GNU General Public License", a copy of which is distributed with the software.
 
 
 ################
 Report problems
 ################
-Please go to https://github.com/StevenWingett/HiCUP/issues if you have any problems running this program. 
+This modified version is maintained separately by S. Thomas Kelly (**simonthomas.kelly@hugp.com**).
+If you have problems specific to new features in this version reports are welcome.
+Filing an issue on GitHub is the preferred contact method:
+https://github.com/hugp-ri/hicup-plus/issues/new/
+
+Please go to https://github.com/StevenWingett/HiCUP/issues to report issues with the orginal maintainer
+if you have any problems running older versions of this program.
 
 
 #################
-How to cite HiCUP
+How to cite HiCUP+
 #################
 HiCUP is described in:
 
-**Wingett S, et al. (2015) HiCUP: pipeline for mapping and processing Hi-C data F1000Research, 4:1310 (doi: 10.12688/f1000research.7334.1)**
+Wingett S, *et al.* (2015) HiCUP: pipeline for mapping and processing Hi-C data. *F1000Research* **4**:1310. doi: `10.12688/f1000research.7334.1
+<https://doi.org/10.12688/f1000research.7334.1>`_
 
+
+Please cite the original version in addition to the updated software release:
+
+Kelly, ST, *et al.* (2022) HiCUP+: a fast open-source pipeline for accurately processing large scale Hi-C sequence data. Software release v1.0.0 URL: `https://github.com/hugp-ri/hicup-plus/
+<https://github.com/hugp-ri/hicup-plus/>`_
 

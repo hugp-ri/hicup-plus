@@ -35,6 +35,20 @@ use Data::Dumper;
 ###################################################################################
 ###################################################################################
 
+###################################################################################
+###################################################################################
+##                                                                               ##
+##   This file has been modified to support Dragen and HiSAT2 configurations     ##
+##                                                                               ##
+##                           HiCUP+ (HiCUP-Plus)                                 ##
+##      Maintained by S. Thomas Kelly (simonthomas.kelly@hugp.com)               ##
+##                                                                               ##
+##     Changes: no major changes (whitespace edited to enable debugging)         ##
+##                                                                               ##
+###################################################################################
+###################################################################################
+
+
 #Option variables
 my %config = (
     digest    => '',
@@ -85,7 +99,7 @@ if ( $config{help} ) {
 
 #Print version and exit
 if ( $config{version} ) {
-    print "HiCUP Filter v$hicup_module::VERSION\n";
+    print "HiCUP+ Filter v$hicup_module::VERSION\n";
     exit(0);
 }
 
@@ -135,7 +149,7 @@ foreach my $outfile (@hicup_filter_outfiles) {
 }
 
 unless ( check_files_exist( \@hicup_filter_outfiles, 'NOT_EXISTS' ) ) {
-    die "HiCUP Filter will not run until files have been removed.\n";
+     die "HiCUP+ Filter will not run until files have been removed.\n";
 }
 
 #Create a directory for rejected Hi-C sequences
@@ -144,7 +158,7 @@ $rejdir = $config{outdir} . $rejdir;
 mkdir $rejdir or die "Could not write to '$rejdir'\n";
 
 #Processes the data in accordance with the protocol followed (i.e. double digest or sonication)
-print "Filtering with HiCUP Filter v$hicup_module::VERSION\n" unless hasval( $config{quiet} );
+print "Filtering with HiCUP+ Filter v$hicup_module::VERSION\n" unless hasval( $config{quiet} );
 
 my $terminate = 0;                                                    #Instruct script to die if error detected in child process
 my %digest_fragments;
@@ -1036,7 +1050,7 @@ sub sonicate_hic {
             next;
         } else {
             if ($in_header) {
-                my $sam_header_line = "\@PG\tID:HiCUP Filter\tVN:" . "$hicup_module::VERSION\t";
+                my $sam_header_line = "\@PG\tID:HiCUP+ Filter\tVN:" . "$hicup_module::VERSION\t";
                 $sam_header_line .= "DS:\"Max insert " . $config{longest} . ' Min insert ' . $config{shortest} . ' Digest file ' . "$config{digest}\"\n";
                 print HIC_READS $sam_header_line;
                 if ($insert_size_check) {
@@ -1449,6 +1463,7 @@ OPTIONS
 --longest      Maximum allowable insert size (bps)
 --outdir       Directory to write output files
 --quiet        Suppress all progress reports
+--samtools     Specify the path to samtool
 --shortest     Minimum allowable insert size (bps)
 --threads      Specify the number of threads, allowing simultaneous processing 
                of multiple files
