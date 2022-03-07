@@ -689,9 +689,12 @@ sub pair {
     }
 
     my $f_read;
-    my $r_read = <REVERSE>;             # initialise with first line for Dragen
+    my $r_read;
+#    my $f_read = <FORWARD>;
+#    my $r_read = <REVERSE>;             # initialise with first line for Dragen
     my $f_read_id            = 0;
-    my $r_read_id            = 0;
+#    my $r_read_id            = 0;
+    my $r_read_id;
     my $paired_reads_counter = 0;
     my $f_reads_counter      = 0;
     my $r_reads_counter      = 0;
@@ -703,107 +706,113 @@ sub pair {
 
     while (<FORWARD>) {
         $f_read = $_;
-        if (/^\s*$/) {
-            next;
-        } elsif (/^@/) {    #Print SAM header lines so conversion to BAM is possible
-            print PAIRED $_;
-            next;
-        } else {
+#        while (<REVERSE>){
+#            $r_read = $_;
+            if (/^\s*$/) {
+                next;
+            } elsif (/^@/) {    #Print SAM header lines so conversion to BAM is possible
+                 print PAIRED $_;
+                 next;
+            } else {
 
-           if ($in_header) {    #Print the additional SAM header line
+                if ($in_header) {    #Print the additional SAM header line
                    my $sam_header_line = "\@PG\tID:HiCUP+ Mapper\tVN:" . "$hicup_module::VERSION\n";
                    print PAIRED $sam_header_line;
 
-         if ( $config{ligation} ) {
-                          print PAIRED $config{ligation} . "\n";
-                        }
+                   if ( $config{ligation} ) {
+                        print PAIRED $config{ligation} . "\n";
+                    }
                     $in_header = 0;
-               }
-                if ( $config{dragen} ) {
-                   my @f_read_split = split("\t", $f_read);
-                   $f_read_id = $f_read_split[0];
-                   my @r_read_split = split("\t", $r_read);
-                   $r_read_id = $r_read_split[0];
-                } else {
+                }
+#                if ( $config{dragen} ) {
+#                   my @f_read_split = split("\t", $f_read);
+#                   $f_read_id = $f_read_split[0];
+#                   my @r_read_split = split("\t", $r_read);
+#                   $r_read_id = $r_read_split[0];
+#                } else {
                     /^(\d+)_/;
                     $f_read_id = $1;
-                }
+#                }
 
-         if( $config{bowtie2} or $config{hisat2} ){
-            if ( bowtie2MultiMapRead($f_read) ){    #Don't included multi-mapping reads
-               $f_read_bowtie2_multimap++;
-               next;
+                if( $config{bowtie2} or $config{hisat2} ){
+                    if ( bowtie2MultiMapRead($f_read) ){    #Don't included multi-mapping reads
+                    $f_read_bowtie2_multimap++;
+                    next;
+                }
             }
-         }
-               
-         if($r_read_id eq $f_read_id){   #Special case in which current Forward ID is same as previous reverse ID
+
+            if($r_read_id == $f_read_id){               
+#            if($r_read_id eq $f_read_id){   #Special case in which current Forward ID is same as previous reverse ID
          
        
-              if($config{bowtie2}  or $config{hisat2}){
-               if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
-                  $r_read_bowtie2_multimap++;
-                  next;
-               }
+            if($config{bowtie2}  or $config{hisat2}){
+                if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
+                    $r_read_bowtie2_multimap++;
+                    next;
+                }
             }
-                     
-                                if ( $config{dragen} ){   
-                $f_read =~ s/^(.*?) /$1\\1 /; # add \1 to add R1s
-                                    $r_read =~ s/^(.*?) /$1\\2 /; # add \2 to add R2s
-                                } else {
-                                    $f_read =~ s/^(\d+)_//; #Remove numbering labels
-                                    $r_read =~ s/^(\d+)_//; #Remove numbering labels
-                                }
-               ( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
+              
+#            if ( $config{dragen} ){   
+#                $f_read =~ s/^(.*?) /$1\\1 /; # add \1 to add R1s
+#                                   $r_read =~ s/^(.*?) /$1\\2 /; # add \2 to add R2s
+#            } else {
+                                   $f_read =~ s/^(\d+)_//; #Remove numbering labels
+#                                   $r_read =~ s/^(\d+)_//; #Remove numbering labels
+#            }
+            ( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
             if ($f_read) {                           #Do not print empty values
-               print PAIRED $f_read;
-               print PAIRED $r_read;
-               $paired_reads_counter++;
-               next;
-               }         
-            }
+                print PAIRED $f_read;
+                print PAIRED $r_read;
+                $paired_reads_counter++;
+                next;
+            }         
+        }
                
-                     while ( $r_read_id ne $f_read_id ) {
-                         $r_read = scalar <REVERSE> or last;
+         while ( $r_read_id < $f_read_id ) {
+#         while ( $r_read_id ne $f_read_id ) {
+            $r_read = scalar <REVERSE> or last;
 
-                         if ( $r_read =~ /^\s*$/ ) {
-                                next;
-                         } elsif ( $r_read =~ /^@/ ) {    #Ignore SAM format header lines
-                             next;
-                         } else {
+             if ( $r_read =~ /^\s*$/ ) {
+                 next;
+             } elsif ( $r_read =~ /^@/ ) {    #Ignore SAM format header lines
+                 next;
+             } else {
 
-                                               if ( $config{dragen} ) {
-                                                   my @r_read_split = split("\t", $r_read);
-                                                   $r_read_id = $r_read_split[0];
-                                                } else {
-                                    $r_read =~ /^(\d+)_/;
-                                    $r_read_id = $1;
-                                                }
-                         }
+#                 if ( $config{dragen} ) {
+#                     my @r_read_split = split("\t", $r_read);
+#                     my $r_read_id = $r_read_split[0];
+#                 } else {
+                     $r_read =~ /^(\d+)_/;
+                     $r_read_id = $1;
+#                 }
+         }
 
-               if($config{bowtie2} or $config{hisat2} ){
-                  if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
-                     $r_read_bowtie2_multimap++;
-                     next;
-                  }
-               }
+         if($config{bowtie2} or $config{hisat2} ){
+             if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
+                 $r_read_bowtie2_multimap++;
+                 next;
+             }
+         }
 
-                         if ( $f_read_id eq $r_read_id ) {
-                                            if ( $config{dragen} ){
-                                                $f_read =~ s/^(.*?) /$1\\1 /; # add \1 to add R1s
-                                                $r_read =~ s/^(.*?) /$1\\2 /; # add \2 to add R2s
-                                            } else {
-                                                $f_read =~ s/^(\d+)_//; #Remove numbering labels
-                                                $r_read =~ s/^(\d+)_//; #Remove numbering labels
-                                            }
-                  ( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
-                  if ($f_read) {                           #Do not print empty values
-                                    print PAIRED $f_read;
-                                    print PAIRED $r_read;
-                                    $paired_reads_counter++;
-                                }
-                         }
-            }
-              }
+         if ( $f_read_id == $r_read_id ) {
+#         if ( $f_read_id eq $r_read_id ) {
+#             if ( $config{dragen} ){
+#                 $f_read =~ s/^(.*?) /$1\\1 /; # add \1 to add R1s
+#                 $r_read =~ s/^(.*?) /$1\\2 /; # add \2 to add R2s
+#             } else {
+                 $f_read =~ s/^(\d+)_//; #Remove numbering labels
+#                 $r_read =~ s/^(\d+)_//; #Remove numbering labels
+#             }
+             ( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
+             if ($f_read) {                           #Do not print empty values
+                 print PAIRED $f_read;
+                 print PAIRED $r_read;
+                 $paired_reads_counter++;
+             }
+        }
+    }
+#}
+}
        }
 
    if ( $config{bowtie2} or $config{hisat2} ) {    #When using bowtie2 we need to record the number of multi-mapping reads in the reverse read file   
