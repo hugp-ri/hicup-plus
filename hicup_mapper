@@ -707,12 +707,12 @@ sub pair {
 #           $r_read = $_;           ##
 
 
-                    print STDERR "input";
-                    print STDERR "\n";
-                    print STDERR $f_read;
-                    print STDERR "\n";
-                    print STDERR $r_read;
-                    print STDERR "\n";
+#                    print STDERR "input";
+#                    print STDERR "\n";
+#                    print STDERR $f_read;
+#                    print STDERR "\n";
+#                    print STDERR $r_read;
+#                    print STDERR "\n";
 
             if (/^\s*$/) {
                 next;
@@ -736,12 +736,12 @@ sub pair {
                    my @r_read_split = split("\t", $r_read);
                    my $r_read_str_id = $r_read_split[0];
 
-                    print STDERR "string ID";
-                    print STDERR "\n";
-                    print STDERR $f_read_str_id;
-                    print STDERR "\n";
-                    print STDERR $r_read_str_id;
-                    print STDERR "\n";
+#                    print STDERR "string ID";
+#                    print STDERR "\n";
+#                    print STDERR $f_read_str_id;
+#                    print STDERR "\n";
+#                    print STDERR $r_read_str_id;
+#                    print STDERR "\n";
 
                    if (  $f_read_id == 0){
                         $f_read_id = 1;
@@ -760,10 +760,10 @@ sub pair {
 
 
 
-                    print STDERR $f_read_id;
-                    print STDERR "\n";
-                    print STDERR $r_read_id;
-                    print STDERR "\n";
+#                    print STDERR $f_read_id;
+#                    print STDERR "\n";
+#                    print STDERR $r_read_id;
+#                    print STDERR "\n";
 
                    # test for header rows and skip
                    my $firstchar = substr $f_read_str_id, 0, 1;
@@ -774,24 +774,25 @@ sub pair {
                    if ( $firstchar2 eq "@"){
                        $r_read_id = $f_read_id - 1;
                    }
-                    print STDERR "read ID";
-                    print STDERR "\n";
-                    print STDERR $f_read_id;
-                    print STDERR "\n";
-                    print STDERR $r_read_id;
-                    print STDERR "\n";
+
+#                    print STDERR "read ID";
+#                    print STDERR "\n";
+#                    print STDERR $f_read_id;
+#                    print STDERR "\n";
+#                    print STDERR $r_read_id;
+#                    print STDERR "\n";
 
                 } else {
                     /^(\d+)_/;
                     $f_read_id = $1;
                 }
 
-                    print STDERR "read ID";
-                    print STDERR "\n";
-                    print STDERR $f_read_id;
-                    print STDERR "\n";
-                    print STDERR $r_read_id;
-                    print STDERR "\n";
+#                    print STDERR "read ID";
+#                    print STDERR "\n";
+#                    print STDERR $f_read_id;
+#                    print STDERR "\n";
+#                    print STDERR $r_read_id;
+#                    print STDERR "\n";
 
                 if( $config{bowtie2} or $config{hisat2} ){
                     if ( bowtie2MultiMapRead($f_read) ){    #Don't included multi-mapping reads
@@ -804,12 +805,12 @@ sub pair {
                 if($r_read_id eq $f_read_id){   #Special case in which current Forward ID is same as previous reverse ID
          
 
-                    print STDERR "read ID match";
-                    print STDERR "\n";
-                    print STDERR $f_read_id;
-                    print STDERR "\n";
-                    print STDERR $r_read_id;
-                    print STDERR "\n";
+#                    print STDERR "read ID match";
+#                    print STDERR "\n";
+#                    print STDERR $f_read_id;
+#                    print STDERR "\n";
+#                    print STDERR $r_read_id;
+#                    print STDERR "\n";
        
                     if($config{bowtie2}  or $config{hisat2}){
                         if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
@@ -831,13 +832,13 @@ sub pair {
                         $r_read =~ s/^(\d+)_//; #Remove numbering labels                ##
                     }
 
-                    print STDERR "\n";
-                    print STDERR "read to format input";
-                    print STDERR "\n";
-                    print STDERR $f_read;
-                    print STDERR "\n";
-                    print STDERR $r_read;
-                    print STDERR "\n";
+#                    print STDERR "\n";
+#                    print STDERR "read to format input";
+#                    print STDERR "\n";
+#                    print STDERR $f_read;
+#                    print STDERR "\n";
+#                    print STDERR $r_read;
+#                    print STDERR "\n";
 
                     ( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
 
@@ -853,12 +854,12 @@ sub pair {
                 while ( $r_read_id < $f_read_id ) {     ##
                     $r_read = scalar <REVERSE> or last;
 
-                    print STDERR "reverse input";
-                    print STDERR "\n";
-                    print STDERR $f_read;
-                    print STDERR "\n";
-                    print STDERR $r_read;
-                    print STDERR "\n";
+#                    print STDERR "reverse input";
+#                    print STDERR "\n";
+#                    print STDERR $f_read;
+#                    print STDERR "\n";
+#                    print STDERR $r_read;
+#                    print STDERR "\n";
 
                     if ( $r_read =~ /^\s*$/ ) {
                         next;
@@ -896,12 +897,12 @@ sub pair {
                         }
                     }
 
-                    print STDERR "final read ID input";
-                    print STDERR "\n";
-                    print STDERR $f_read_id;
-                    print STDERR "\n";
-                    print STDERR $r_read_id;
-                    print STDERR "\n";
+#                    print STDERR "final read ID input";
+#                    print STDERR "\n";
+#                    print STDERR $f_read_id;
+#                    print STDERR "\n";
+#                    print STDERR $r_read_id;
+#                    print STDERR "\n";
 
                     if( $config{bowtie2} or $config{hisat2} ){
                         if ( bowtie2MultiMapRead($r_read) ){     #Don't included multi-mapping reads
@@ -910,12 +911,12 @@ sub pair {
                         }
                     }
 
-                    print STDERR "preview read to format";
-                    print STDERR "\n";
-                    print STDERR $f_read;
-                    print STDERR "\n";
-                    print STDERR $r_read;
-                    print STDERR "\n";
+#                    print STDERR "preview read to format";
+#                    print STDERR "\n";
+#                    print STDERR $f_read;
+#                    print STDERR "\n";
+#                    print STDERR $r_read;
+#                    print STDERR "\n";
 
                     # if ( $f_read_id == $r_read_id ) {
                     if ( $f_read_id eq $r_read_id ) {           ##
@@ -928,12 +929,12 @@ sub pair {
                             $r_read =~ s/^(\d+)_//; #Remove numbering labels
                         }
 
-                    print STDERR "final read to format input";
-                    print STDERR "\n";
-                    print STDERR $f_read;
-                    print STDERR "\n";
-                    print STDERR $r_read;
-                    print STDERR "\n";
+#                    print STDERR "final read to format input";
+#                    print STDERR "\n";
+#                    print STDERR $f_read;
+#                    print STDERR "\n";
+#                    print STDERR $r_read;
+#                    print STDERR "\n";
 
                         ( $f_read, $r_read ) = sam_formatter( $f_read, $r_read );
 
