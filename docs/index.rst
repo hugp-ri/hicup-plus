@@ -951,6 +951,6 @@ Wingett S, *et al.* (2015) HiCUP: pipeline for mapping and processing Hi-C data.
 
 Please cite the original version in addition to the updated software release:
 
-Kelly, ST, *et al.* (2022) HiCUP+: a fast open-source pipeline for accurately processing large scale Hi-C sequence data. Software release v1.0.0 URL: `https://github.com/hugp-ri/hicup-plus/
+Kelly, ST, *et al.* (2022) HiCUP+: a fast open-source pipeline for accurately processing large scale Hi-C sequence data. Software release v1.0.1 URL: `https://github.com/hugp-ri/hicup-plus/
 <https://github.com/hugp-ri/hicup-plus/>`_
 
