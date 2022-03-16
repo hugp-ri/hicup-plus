@@ -808,7 +808,7 @@ This is all that is additionally required to process an Arima Hi-C dataset.
 
 
 ###############
-Miscellaneous Functioality
+Miscellaneous Functionality
 ###############
 The main HiCUP+ folder contains a folder named 'Misc' which contains several useful scripts.
 
