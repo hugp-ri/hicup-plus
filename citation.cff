@@ -1,0 +1,43 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- given-names: "S. Thomas"
+  family-names: "Kelly"
+  email: "simonthomas.kelly@hugp.com"
+  affiliation: "H.U. Group Research Institute, G.K., Fuchigami 50, Akiruno, Tokyo, Japan"
+  affiliation: "SRL, Inc., Fuchigami 50, Akiruno, Tokyo, Japan"
+  orcid: "https://orcid.org/0000-0003-3904-6690"
+- family-names: "Yuhara"
+  given-names: "Satoshi"
+  email: "satoshi.yuhara@hugp.com"
+  affiliation: "H.U. Group Research Institute, G.K., Fuchigami 50, Akiruno, Tokyo, Japan"
+  affiliation: "SRL, Inc., Fuchigami 50, Akiruno, Tokyo, Japan"
+  orcid: "http://orcid.org/0000-0003-1375-3848"
+version: 1.0.1
+doi: 10.1101/2022.05.18.492393
+date-released: 2022-03-11
+url: "https://github.com/hugp-ri/hicup-plus"
+preferred-citation:
+  type: article
+  authors:
+  - given-names: "S. Thomas"
+    family-names: "Kelly"
+    email: "simonthomas.kelly@hugp.com"
+    affiliation: "H.U. Group Research Institute, G.K., Fuchigami 50, Akiruno, Tokyo, Japan"
+    affiliation: "SRL, Inc., Fuchigami 50, Akiruno, Tokyo, Japan"
+    orcid: "https://orcid.org/0000-0003-3904-6690"
+  - family-names: "Yuhara"
+    given-names: "Satoshi"
+    email: "satoshi.yuhara@hugp.com"
+    affiliation: "H.U. Group Research Institute, G.K., Fuchigami 50, Akiruno, Tokyo, Japan"
+    affiliation: "SRL, Inc., Fuchigami 50, Akiruno, Tokyo, Japan"
+    orcid: "http://orcid.org/0000-0003-1375-3848"
+  doi: "10.1101/2022.05.18.492393"
+  title: "HiCUP+: a fast open-source pipeline for accurately processing large scale Hi-C sequence data"
+  year: "2022"
+  journal: "bioRxiv"
+  start: 2022.5.18.492393
+  volume:
+  issue:
+  month: 5
+  year: 2022
