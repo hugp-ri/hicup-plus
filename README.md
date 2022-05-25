@@ -21,7 +21,7 @@ Contact:
 Contact the software author to discuss the software, report bugs or suggest enhancements at:
 https://github.com/StevenWingett/HiCUP/issues
 
-HiCUP+ (v1.0.0) maintainer: S. Thomas Kelly
+HiCUP+ (v1.0.1) maintainer: S. Thomas Kelly
 
 Contact:
 simonthomas.kelly@hugp.com

@@ -1,4 +1,21 @@
+RELEASE NOTES FOR HICUP-Plus v1.0.1 (11 MARCH 2022)
+
+-------------------------------------------------
+
+HiCUP+ v1.0.1 is a mnior update incorporating the changes described below:
+
+- implements built-in timing reported to stdout
+
+- bug fixes to post-processing in pairing step of hicup_mapper:
+ensures that reads are not sorted in intermeidiate SAM files
+and that reads are correctly paired in order. Index numbers
+are used for Bowtie, Bowtie2, and HiSAT2 in stream inputs.
+Matching strings in Dragen output is implemented without
+assuming FASTQ header format.
+
+
 RELEASE NOTES FOR HICUP-Plus v1.0.0 (15 FEBRUARY 2022)
+
 -------------------------------------------------
 
 HiCUP+ v1.0.0 is a major update incorporating the changes described below:

@@ -950,7 +950,8 @@ How to cite HiCUP+
 Please cite the following preprint:
 
     Kelly, S. T. & Yuhara, S. (2022) HiCUP-Plus: a fast open-source pipeline for accurately processing large scale Hi-C sequence data.
-    *bioRxiv* 2022.05.18.492393; doi: [10.1101/2022.05.18.492393](https://doi.org/10.1101/2022.05.18.492393)
+    *bioRxiv* 2022.05.18.492393; doi: `10.1101/2022.05.18.492393
+    <https://doi.org/10.1101/2022.05.18.492393>`_
 
 BibTeX version:
 
@@ -972,7 +973,7 @@ BibTeX version:
 The software release can be cited as follows:
 
     Kelly, S. T. & Yuhara, S. (2022) HiCUP+: a fast open-source pipeline for accurately processing large scale Hi-C sequence data.
-    Software release v1.0.0 URL: `https://githu$
+    Software release v1.0.0 URL: `https://github.com/hugp-ri/hicup-plus/
     <https://github.com/hugp-ri/hicup-plus/>`_
 
 BibTex version:
