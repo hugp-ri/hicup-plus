@@ -7,14 +7,14 @@
 ![GitHub top language](https://img.shields.io/github/languages/top/hugp-ri/hicup-plus)
 [![HiCUP+_Test](https://github.com/hugp-ri/hicup-plus/actions/workflows/main.yml/badge.svg)](https://github.com/hugp-ri/hicup-plus/actions/workflows/main.yml)
 
-![GitHub Release Date](https://img.shields.io/github/release-date/minoda-lab/universc)
-![GitHub last commit (branch)](https://img.shields.io/github/last-commit/minoda-lab/universc/master)
-![GitHub issues](https://img.shields.io/github/issues/minoda-lab/universc)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/minoda-lab/universc)
+![GitHub Release Date](https://img.shields.io/github/release-date/hugp-ri/hicup-plus)
+![GitHub last commit (branch)](https://img.shields.io/github/last-commit/hugp-ri/hicup-plus/master)
+![GitHub issues](https://img.shields.io/github/issues/hugp-ri/hicup-plus)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/hugp-ri/hicup-plus)
 
-![GitHub forks](https://img.shields.io/github/forks/minoda-lab/universc?style=social)
-![GitHub Repo stars](https://img.shields.io/github/stars/minoda-lab/universc?style=social)
-![GitHub watchers](https://img.shields.io/github/watchers/minoda-lab/universc?style=social)
+![GitHub forks](https://img.shields.io/github/forks/hugp-ri/hicup-plus?style=social)
+![GitHub Repo stars](https://img.shields.io/github/stars/hugp-ri/hicup-plus?style=social)
+![GitHub watchers](https://img.shields.io/github/watchers/hugp-ri/hicup-plus?style=social)
 
 HiCUP+ (HiCUP-plus) is a bioinformatics pipeline for processing Hi-C data. 
 
