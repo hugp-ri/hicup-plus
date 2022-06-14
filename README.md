@@ -5,7 +5,7 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/hugp-ri/hicup-plus)
 ![GitHub repo size](https://img.shields.io/github/repo-size/hugp-ri/hicup-plus)
 ![GitHub top language](https://img.shields.io/github/languages/top/hugp-ri/hicup-plus)
-![HiCUP+_Test](https://github.com/hugp-ri/hicup-plus/actions/workflows/main.yml/badge.svg)
+![HiCUP+ Test (Bowtie2)](https://github.com/hugp-ri/hicup-plus/actions/workflows/main.yml/badge.svg)
 
 ![GitHub Release Date](https://img.shields.io/github/release-date/hugp-ri/hicup-plus)
 ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/hugp-ri/hicup-plus/master)
