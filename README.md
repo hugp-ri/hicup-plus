@@ -5,7 +5,7 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/hugp-ri/hicup-plus)
 ![GitHub repo size](https://img.shields.io/github/repo-size/hugp-ri/hicup-plus)
 ![GitHub top language](https://img.shields.io/github/languages/top/hugp-ri/hicup-plus)
-![HiCUP+_Test](https://github.com/hugp-ri/hicup-plus/actions/workflows/main.yml/badge.svg)](https://github.com/hugp-ri/hicup-plus/actions/workflows/main.yml)
+![HiCUP+_Test](https://github.com/hugp-ri/hicup-plus/actions/workflows/main.yml/badge.svg)
 
 ![GitHub Release Date](https://img.shields.io/github/release-date/minoda-lab/universc)
 ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/minoda-lab/universc/master)
