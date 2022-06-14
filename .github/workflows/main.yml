@@ -41,10 +41,40 @@ jobs:
       run: |
         wget -nv https://www.bioinformatics.babraham.ac.uk/projects/hicup/test_dataset.tar.gz
         tar xvzf test_dataset.tar.gz
-        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/Homo_sapiens.GRCh38_Bowtie2_Index_HiCUP.tar
-        tar xvf Homo_sapiens.GRCh38_Bowtie2_Index_HiCUP.tar
-        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/Homo_sapiens.GRCh38_FASTA_HiCUP.tar
-        tar xvf Homo_sapiens.GRCh38_FASTA_HiCUP.tar
+        mkdir -p Homo_sapiens.GRCh38_Bowtie2_Index_HiCUP
+        cd Homo_sapiens.GRCh38_Bowtie2_Index_HiCUP
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes/Human/Homo_sapiens.GRCh38.1.bt2
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes/Human/Homo_sapiens.GRCh38.2.bt2
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes/Human/Homo_sapiens.GRCh38.3.bt2
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes/Human/Homo_sapiens.GRCh38.4.bt2
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes/Human/Homo_sapiens.GRCh38.rev.1.bt2
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes/Human/Homo_sapiens.GRCh38.rev.2.bt2
+        cd ..
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.1.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.2.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.3.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.4.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.5.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.6.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.7.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.8.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.9.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.10.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.11.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.12.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.13.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.14.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.15.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.16.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.17.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.18.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.19.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.20.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.21.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.22.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.MT.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.X.fa.gz
+        wget -nv http://ftp1.babraham.ac.uk/ftpusr46/FastQ_Screen_Genomes_Bisulfite/Human/GRCh38/Homo_sapiens.GRCh38.dna.chromosome.Y.fa.gz
         
     - name: Run HiCUP
       run: |
