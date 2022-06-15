@@ -31,14 +31,14 @@
 
 input=$1
 echo $input
-in_prefix=$(echo $input | sed -E "s/(.*)R1_2(.*)/\1/g")
+in_prefix=$(echo $input | sed -E "s/(.*)_R1_2(.*)/\1/g")
 echo $in_prefix
 if [[ ! -z $2 ]]; then
     r1=$2
-    r1_prefix=$(echo $r1 | sed -E "s/(.*)R1_2(.*)/\1/g")
+    r1_prefix=$(echo $r1 | sed -E "s/(.*)_R1(.*)/\1/g")
     if [[ ! -z $3 ]]; then
         r2=$3
-        r2_prefix=$(echo $r2 | sed -E "s/(.*)R1_2(.*)/\1/g")
+        r2_prefix=$(echo $r2 | sed -E "s/(.*)_R2(.*)/\1/g")
     else
         r2_prefix=$r1_prefix
     fi
