@@ -7,7 +7,29 @@
 ## defaults to input_R1_001.hicup.bam input_R2_001.hicup.bam output names if not given
 ## bash build_matrix.sh input_R1_2_001.hicup.bam
 
-conda actiate /home/kelly-t/.conda/envs/mamba/envs/hicexplorer
+###################################################################################
+###################################################################################
+##This file is Copyright (C) 2022, S. Thomas Kelly                               ##
+##                                                                               ##
+##                                                                               ##
+##This file is part of HiCUP-Plus.                                               ##
+##                                                                               ##
+##HiCUP+ is free software: you can redistribute it and/or modify                 ##
+##it under the terms of the GNU General Public License as published by           ##
+##the Free Software Foundation, either version 3 of the License, or              ##
+##(at your option) any later version.                                            ##
+##                                                                               ##
+##HiCUP is distributed in the hope that it will be useful,                       ##
+##but WITHOUT ANY WARRANTY; without even the implied warranty of                 ##
+##MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                  ##
+##GNU General Public License for more details.                                   ##
+##                                                                               ##
+##You should have received a copy of the GNU General Public License              ##
+##along with HiCUP+.  If not, see <http://www.gnu.org/licenses/>.                ##
+###################################################################################
+###################################################################################
+
+conda activate hicexplorer
 
 input=$1
 echo $input
