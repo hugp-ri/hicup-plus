@@ -42,7 +42,7 @@ aligners to HiSAT2 or Dragen
 - updates R graphical devices to PDF (removing need for Cairo graphics in SVG format)
 
 - updates Maintainer of this fork to S. Thomas Kelly
- **simonthomas.kelly@hugp.com**  (Bioinformatics Team, 
+ **simonthomas.kelly [at] hugp [dot] com**  (Bioinformatics Team, 
 H.U. Group Research Institute G.K., Tokyo, Japan; SRL Inc., Tokyo, Japan)
 
 This release is a fork of the original HiCUP pipline. See the release notes
