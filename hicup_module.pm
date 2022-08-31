@@ -45,7 +45,7 @@ use lib $Bin;
 ##   This file has been modified to support Dragen and HiSAT2 configurations     ##
 ##                                                                               ##
 ##                           HiCUP+ (HiCUP-Plus)                                 ##
-##      Maintained by S. Thomas Kelly (simonthomas.kelly@hugp.com)               ##
+##   Maintained by S. Thomas Kelly (simonthomas.kelly [at] hugp [dot] com)       ##
 ##                                                                               ##
 ##     Changes: additional input parameters for additional aligners              ##
 ##              check for reference index for respective aligners                ##

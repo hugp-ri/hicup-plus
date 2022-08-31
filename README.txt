@@ -39,7 +39,7 @@ https://github.com/StevenWingett/HiCUP/issues
 HiCUP+ (v1.0.1) maintainer: S. Thomas Kelly
 
 Contact:
-simonthomas.kelly@hugp.com
+simonthomas.kelly [at] hugp [dot] com
 
 Source code:
 https://github.com/hugp-ri/hicup-plus/

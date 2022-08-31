@@ -934,7 +934,7 @@ HiCUP+ is distributed under a "GNU General Public License", a copy of which is d
 ################
 Report problems
 ################
-This modified version is maintained separately by S. Thomas Kelly (**simonthomas.kelly@hugp.com**).
+This modified version is maintained separately by S. Thomas Kelly (**simonthomas.kelly [at] hugp [dot] com**).
 If you have problems specific to new features in this version reports are welcome.
 Filing an issue on GitHub is the preferred contact method:
 https://github.com/hugp-ri/hicup-plus/issues/new/
