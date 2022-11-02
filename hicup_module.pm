@@ -8,7 +8,7 @@ our @EXPORT = qw(VERSION hasval deduplicate_array checkR process_config check_fi
 our @EXPORT_OK = qw(hashVal outdirFileNamer check_no_duplicate_filename check_filenames_ok 
     checkAligner checkAlignerIndices newopen quality_checker determineAlignerFormat get_csome_position);
 
-our $VERSION = "1.0.1";
+our $VERSION = "1.0.2";
 
 use Data::Dumper;
 use strict;

@@ -984,7 +984,7 @@ BibTex version:
         author = {Kelly, S. Thomas and Yuhara, Satoshi},
         title = {{H}i{C}{U}{P}-{P}lus: a fast open-source pipeline for accurately processing large scale {H}i-{C} sequence data}},
         year = {2022},
-        note = {Software release version v1.0.1},
+        note = {Software release version v1.0.2},
         url = {https://github.com/hugp-ri/hicup-plus/},
     }
 

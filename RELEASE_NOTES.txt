@@ -1,4 +1,11 @@
-RELEASE NOTES FOR HICUP-Plus v1.0.1 (11 MARCH 2022)
+
+RELEASE NOTES FOR HICUP-Plus v1.0.2 (2 NOVEMBER 2022)
+
+HiCUP+ v1.0.2 is a mnior update incorporating the changes described below:
+
+- updated checks in the HiCUP modules to check for SSH connections
+
+- updated Dragen call to run via SSH if hostname does not include "dragen"
 
 -------------------------------------------------
 
