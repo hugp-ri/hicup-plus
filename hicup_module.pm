@@ -16,6 +16,7 @@ use warnings;
 use File::Basename;
 use FindBin '$Bin';
 use lib $Bin;
+use Sys::Hostname;
 
 ###################################################################################
 ###################################################################################
@@ -340,8 +341,8 @@ sub checkAligner {
     }
     
     #Correct number (i.e. one) of aligners specified, check path correct
-   my $aligner_name = $$configRef{aligner};
-   my $aligner_path = $$configRef{$aligner_name};
+    my $aligner_name = $$configRef{aligner};
+    my $aligner_path = $$configRef{$aligner_name};
 
     if(-e $aligner_path){         #Check file present at this path
        $found_aligner_flag = 1;
@@ -349,13 +350,49 @@ sub checkAligner {
        warn "Aligner not found at '$aligner_path'\n";
        $aligner_path =~ s/\/$//;    #Remove final '/' from path, if present
        $aligner_path = $aligner_path . '/' . $aligner_name;
-       warn "Looking for aligner at '$aligner_path'\n";
-       if(-e $aligner_path){
-          warn "Aligner found at '$aligner_path'\n";
-          $$configRef{$aligner_name} = $aligner_path;    #Adjust config hash accordingly
-          $found_aligner_flag = 1
-       }else{
-          warn "Aligner not found at '$aligner_path'\n";
+
+       #check hostname has partial match to dragen
+       my $host;
+       $host = hostname;
+       print "\nhost: ";
+       printf ${host};
+       print "\n";
+       if ($host =~ /[Dd]ragen/ ) {
+           warn "Looking for aligner at '$aligner_path'\n";
+           if(-e $aligner_path){
+               warn "Aligner found at '$aligner_path'\n";
+               $$configRef{$aligner_name} = $aligner_path;    #Adjust config hash accordingly
+               $found_aligner_flag = 1;
+           }else{
+               warn "Aligner not found at '$aligner_path'\n";
+           }
+       } else {
+             print "check SSH call required to call dragen";
+             my $username;
+             $username = $ENV{LOGNAME} || $ENV{USER} || getpwuid($<);
+             print "\nuser: ";
+             printf ${username};
+             print "\n";
+             my $dragenhost;
+             $dragenhost = "dragen";
+             print "attempting to login to node ";
+             printf ${dragenhost};
+             print " as ";
+             printf ${username};
+             print "\n";
+             printf "\$ ssh " . $username . "@" . $dragenhost . " hostname" . "\n";
+             my @args = ("ssh", $username . "@" . $dragenhost, "hostname");
+             system(@args) == 0
+                 or die "system @args failed: $?";
+             print "\nsuccessful login to dragen node!\n";
+
+             printf "\$ ssh " . $username . "@" . $dragenhost . " ls" . $aligner_path . "\n";
+             @args = ("ssh", $username . "@" . $dragenhost, "ls", $aligner_path);
+             system(@args) == 0
+                 or die "system @args failed: $?";
+             warn "Aligner found at '$aligner_path'\n";
+               $$configRef{$aligner_name} = $aligner_path;    #Adjust config hash accordingly
+               $found_aligner_flag = 1;
        }
     }
 
@@ -373,7 +410,8 @@ sub checkAligner {
     }
     
     #Perform other checks
-    if($found_aligner_flag) {
+    if($found_aligner_flag and not $aligner_path =~ /[Dd]ragen/) {
+       #check executable for aligners except for Dragen
        unless(-x $aligner_path){    #Check executable
           warn "Aligner at '$aligner_path' is not executable\n";
           $parameters_ok = 0;
