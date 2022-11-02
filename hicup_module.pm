@@ -348,8 +348,6 @@ sub checkAligner {
        $found_aligner_flag = 1;
     }else{
        warn "Aligner not found at '$aligner_path'\n";
-       $aligner_path =~ s/\/$//;    #Remove final '/' from path, if present
-       $aligner_path = $aligner_path . '/' . $aligner_name;
 
        #check hostname has partial match to dragen
        my $host;
@@ -365,6 +363,9 @@ sub checkAligner {
                $found_aligner_flag = 1;
            }else{
                warn "Aligner not found at '$aligner_path'\n";
+               # check if directory given
+               $aligner_path =~ s/\/$//;    #Remove final '/' from path, if present
+               $aligner_path = $aligner_path . '/' . $aligner_name;
            }
        } else {
              print "check SSH call required to call dragen";
@@ -410,19 +411,23 @@ sub checkAligner {
     }
     
     #Perform other checks
-    if($found_aligner_flag and not $aligner_path =~ /[Dd]ragen/) {
-       #check executable for aligners except for Dragen
-       unless(-x $aligner_path){    #Check executable
-          warn "Aligner at '$aligner_path' is not executable\n";
-          $parameters_ok = 0;
-       }
+    if($found_aligner_flag) {
+        if(not $aligner_path =~ /[Dd]ragen/){
+            #check executable for aligners except for Dragen
+            unless(-x $aligner_path){    #Check executable
+                warn "Aligner at '$aligner_path' is not executable\n";
+                $parameters_ok = 0;
+            }
+        }
+        print($aligner_path); 
 
-       my $deduced_name = basename($aligner_path);
-       unless( (lc $deduced_name) eq (lc $aligner_name) ){
-          warn "Expecting aligner '$aligner_name', but path is to '$aligner_path'\n";
-          warn "Which is correct '$aligner_name' or '$deduced_name'?\n";
-          $parameters_ok = 0;
-       }
+        my $deduced_name = basename($aligner_path);
+        print($deduced_name);
+        unless( (lc $deduced_name) eq (lc $aligner_name) ){
+           warn "Expecting aligner '$aligner_name', but path is to '$aligner_path'\n";
+           warn "Which is correct '$aligner_name' or '$deduced_name'?\n";
+           $parameters_ok = 0;
+        }
 
     }else{    #No aligners found
         warn "Please specify a link to one valid aligner\n";
