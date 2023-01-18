@@ -36,8 +36,6 @@ RUN R -e 'install.packages(c("httr", "rvest", "xml2", "plotly"))'
 
 RUN R -e 'install.packages(c("tidyverse"))'
 
-RUN git clone "https://github.com/hugp-ri/hicup-plus.git"
-
 RUN apt-get install -y bowtie bowtie2 hisat2
 
 RUN ln -s /usr/bin/bowtie /bowtie \
@@ -57,5 +55,7 @@ RUN git clone https://github.com/Illumina/DRAGMAP.git \
 &&  cd /DRAGMAP \
 &&  HAS_GTEST=0 make \
 &&  HAS_GTEST=0 make install
+
+RUN git clone "https://github.com/hugp-ri/hicup-plus.git" && cd hicup-plus && git checkout $(./hicup --version|cut -d " " -f2)
 
 ENTRYPOINT ["/usr/bin/perl", "/hicup-plus/hicup-plus"]
