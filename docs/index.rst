@@ -97,7 +97,7 @@ Memory requirements depend on the size of the input files, but as a rough guide 
 Docker image
 ************
 
-We provide a Docker image on DockerHub as 'kellysthri/hicup-plus:latest <https://hub.docker.com/r/kellysthri/hicup-plus>'_. This contains all dependencies to run Bowtie, Bowtie2, or HiSAT2 aligners in a Linux environment.
+We provide a Docker image on DockerHub as `kellysthri/hicup-plus:latest <https://hub.docker.com/r/kellysthri/hicup-plus>`_. This contains all dependencies to run Bowtie, Bowtie2, or HiSAT2 aligners in a Linux environment.
 
 The software can also be installed locally as described below.
 
