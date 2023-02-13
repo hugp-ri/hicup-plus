@@ -31,6 +31,9 @@ HiCUP+ (HiCUP-plus) is a bioinformatics pipeline for processing Hi-C data.
 HiCUP+ is released open-source:
 https://github.com/hugp-ri/hicup-plus/
 
+A Docker image is available:
+https://hub.docker.com/r/kellysthri/hicup-plus
+
 ## Bug Reports
 
 Report issues to the following repository:
@@ -48,12 +51,6 @@ HiCUP+ (v1.0.2) maintainer: S. Thomas Kelly
 
 Contact:
 simonthomas.kelly [at] hugp [dot] com
-
-Source code:
-https://github.com/hugp-ri/hicup-plus/
-
-Docker image:
-https://hub.docker.com/r/kellysthri/hicup-plus
 
 ## Documentation
 
