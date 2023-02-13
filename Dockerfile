@@ -56,6 +56,9 @@ RUN git clone https://github.com/Illumina/DRAGMAP.git \
 &&  HAS_GTEST=0 make \
 &&  HAS_GTEST=0 make install
 
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
+
 RUN git clone "https://github.com/hugp-ri/hicup-plus.git" && cd hicup-plus && git checkout $(./hicup --version|cut -d " " -f2)
 
 ENTRYPOINT ["/usr/bin/perl", "/hicup-plus/hicup-plus"]

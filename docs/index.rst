@@ -22,7 +22,9 @@ HiCUP+ Overview
 General Information
 *******************
 
-This documentation describes HiCUP+, a bioinformatics pipeline produced by the Babraham Institute for processing Hi-C data.  The documentation has three sections:
+This documentation describes HiCUP+, a fork of the HiCUP bioinformatics pipeline produced by the Babraham Institute for processing Hi-C data.
+This version is maintained by H.U. Group Research Institute, G.K. in Tokyo, Japan.
+The documentation has three sections:
 
 1. Overview - an explanation of Hi-C and how HiCUP+ helps analyse this kind of data
 
@@ -91,6 +93,13 @@ HiCUP+ should work on most Linux-based operating systems. It requires a working 
 Full functionality requires `R <http://www.r-project.org>`_ (tested using version 3.1.2), with the R modules Tidyverse and Plotly installed.  If you experience problems generating HTML summary reports using R, then you may also need to install `Pandoc <https://pandoc.org>`_ on your system.  `SAM tools <http://sourceforge.net/projects/samtools>`_ (version 0.1.18 or later) also needs to be installed.
 
 Memory requirements depend on the size of the input files, but as a rough guide allocating 2Gb of RAM per file processed simultaneously (defined by --threads argument) should suffice.
+
+Docker image
+************
+
+We provide a Docker image on DockerHub as 'kellysthri/hicup-plus:latest <https://hub.docker.com/r/kellysthri/hicup-plus>'_. This contains all dependencies to run Bowtie, Bowtie2, or HiSAT2 aligners in a Linux environment.
+
+The software can also be installed locally as described below.
 
 Installation
 ************

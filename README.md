@@ -1,6 +1,14 @@
 # HiCUP+ (Hi-C User Pipeline Plus)
 --------------------------
 
+![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/kellysthri/hicup-plus/latest?label="latest")
+![Docker Image Version (latest by date)](https://img.shields.io/docker/v/kellysthri/hicup-plus/latest)
+![Docker Image Size (latest)](https://img.shields.io/docker/image-size/kellysthri/hicup-plus/latest)
+![Docker Manual build](https://img.shields.io/docker/automated/kellysthri/hicup-plus?label=docker%20local%20build)
+![Docker Cloud Status](https://img.shields.io/docker/cloud/build/kellysthri/hicup-plus?label=cloud%20build)
+![Docker Stars](https://img.shields.io/docker/stars/kellysthri/hicup-plus)
+![Docker Pulls](https://img.shields.io/docker/pulls/kellysthri/hicup-plus)
+
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/hugp-ri/hicup-plus?label=GitHub%20release)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/hugp-ri/hicup-plus)
 ![GitHub repo size](https://img.shields.io/github/repo-size/hugp-ri/hicup-plus)
@@ -44,6 +52,8 @@ simonthomas.kelly [at] hugp [dot] com
 Source code:
 https://github.com/hugp-ri/hicup-plus/
 
+Docker image:
+https://hub.docker.com/r/kellysthri/hicup-plus
 
 ## Documentation
 
