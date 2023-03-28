@@ -358,7 +358,7 @@ if ( $config{zip} ) {
 
 #report timing results
 my $diff1 = Time::HiRes::tv_interval($start_time1);
-print STDOUT "\completed HiCUP truncater\n";
+print STDOUT "\ncompleted HiCUP truncater\n";
 print STDOUT "\n\ntruncater time: $diff1\n";
 
 #Map and pair sequences
@@ -395,7 +395,7 @@ if ( $config{zip} ) {
 
 #report timing results
 my $diff2 = Time::HiRes::tv_interval($start_time2);
-print STDOUT "\completed HiCUP mapper\n";
+print STDOUT "\ncompleted HiCUP mapper\n";
 print STDOUT "\n\nmapper time: $diff2\n";
 
 #Delete truncated intermediates
@@ -427,7 +427,7 @@ if ( $config{zip} ) {
 
 #report timing results
 my $diff3 = Time::HiRes::tv_interval($start_time3);
-print STDOUT "\completed HiCUP filter\n";
+print STDOUT "\ncompleted HiCUP filter\n";
 print STDOUT "\n\nfilter time: $diff3\n";
 
 #Delete paired intermediates
@@ -466,7 +466,7 @@ if ( $config{zip} ) {                                                           
 
 #report timing results
 my $diff4 = Time::HiRes::tv_interval($start_time4);
-print STDOUT "\completed HiCUP deduplicator\n";
+print STDOUT "\ncompleted HiCUP deduplicator\n";
 print STDOUT "\n\ndeduplicator time: $diff4\n";
 
 #Delete filtered files
@@ -524,7 +524,7 @@ print "HiCUP+ processing complete.\n" unless $config{quiet};
 
 #report timing results
 my $diff5 = Time::HiRes::tv_interval($start_time5);
-print STDOUT "\completed HiCUP reporter\n";
+print STDOUT "\ncompleted HiCUP reporter\n";
 print STDOUT "\n\nreporter time: $diff5\n";
 print STDOUT "\n\ntotal run time: $diff1\n";
 exit(0);

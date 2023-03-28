@@ -565,7 +565,7 @@ sub map_file {
 
     #report timing results
     my $end = Time::HiRes::tv_interval($start_aligner);
-    print STDOUT "\completed HiCUP aligner call\n";
+    print STDOUT "\ncompleted HiCUP aligner call\n";
     print STDOUT "\n\naligner run time: $end\n";
 
     if ( $config{dragen} ) {
@@ -629,7 +629,7 @@ sub map_file {
 
     # reporting timing results   
     my $end2 = Time::HiRes::tv_interval($start_aligner);
-    print STDOUT "\completed HiCUP aligner summary\n";
+    print STDOUT "\ncompleted HiCUP aligner summary\n";
     print STDOUT "\n\naligner total time: $end2\n";
 
     print SUMMARYTEMP "$inputfile\t$reads_processed\t$too_short_to_map\t$percent_too_short_to_map\t$unique_map\t$percent_unique\t$multi_mapped\t$percent_multi\t$unmapped\t$percent_unmapped\t\n";
