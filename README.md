@@ -30,7 +30,7 @@ HiCUP+ (HiCUP-plus) is a bioinformatics pipeline for processing Hi-C data.
 with additional functionality. Please note that this is a maintained separately, a
 lthough efforts have been made to ensure compatibility with configurations with prior versions.
 
-This version is maintained by H.U. Group Research Institute, G.K. (Akiruno-shi, Tokyo, Japan). 
+This version is maintained by [H.U. Group Research Institute, G.K.](https://www.hugp.com/research/en) (Akiruno-shi, Tokyo, Japan).
 We acknowledge the original developers at Babraham Institute (Cambridge, English, United Kingdom). 
 
 ## Source
