@@ -70,6 +70,7 @@ my %config = (
     bowtie    => '',
     bowtie2   => '',
     bwa       => '',
+    bwa-mem   => '',
     bwa-mem2  => '',
     dragen    => '',
     hisat2    => '',
@@ -95,6 +96,7 @@ my $config_result = GetOptions(
     "bowtie=s"    => \$config{bowtie},
     "bowtie2=s"   => \$config{bowtie2},
     "bwa=s"       => \$config{bwa},
+    "bwa-mem=s"   => \$config{bwa-mem}
     "bwa-mem2=s"  => \$config{bwa-mem2},
     "dragen=s"    => \$config{dragen},
     "hisat2=s"    => \$config{hisat2},
@@ -403,10 +405,13 @@ sub map_file {
       }
     } elsif ( $config{bwa} ne '' ) {
         print "n\ running bwa...\n" unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} aln -t $bowtie2_threads --$config{format} $config{index} -| samtools view -hS -F 4 > $outputfile" );
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} aln -t $bowtie2_threads --$config{format} $config{index} -| --$config{samtools} view -hS -F 4 > $outputfile" );
     } elsif ( $config{bwa-mem} ne '' ) {
         print "n\ running bwa...\n" unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} mem -t $bowtie2_threads $config{index} -| samtools view -hS -F 4 > $outputfile" );
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa-mem} mem -t $bowtie2_threads $config{index} -| --$config{samtools} view -hS -F 4 > $outputfile" );
+    } elsif ( $config{bwa-mem2} ne '' ) {
+        print "n\ running bwa...\n" unless $config{quiet};
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa-mem2} mem -t $bowtie2_threads $config{index} -| --$config{samtools} view -hS -F 4 > $outputfile" )
     } elsif ( $config{dragen} ne '' ) {
          print "\n running dragen...\n" unless $config{quiet};
          #check hostname has partial match to dragen
@@ -1259,7 +1264,8 @@ COMMAND LINE OPTIONS
 
 --bowtie         Specify the path to Bowtie
 --bowtie2        Specify the path to Bowtie 2
---bwa            Specify the path to BWA
+--bwa            Specify the path to BWA aln
+--bwa-mem2        Specify the path to BWA-MEM
 --bwa-mem2        Specify the path to BWA-MEM2
 --dragen         Specify the path to DRAGEN
 --config         Specify the configuration file

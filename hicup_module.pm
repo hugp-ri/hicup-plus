@@ -303,7 +303,7 @@ sub check_no_duplicate_filename {
 sub checkAligner {
 
     my $configRef     = $_[0];
-    my @aligners      = ( 'dragen', 'hisat2', 'bowtie2', 'bowtie', 'minimap2', 'bwa-mem2', 'bwa', 'star');    #List of aligners used by HiCUP (in order of priority)
+    my @aligners      = ( 'dragen', 'hisat2', 'bowtie2', 'bowtie', 'minimap2', 'bwa-mem2', 'bwa-mem', 'bwa', 'star');    #List of aligners used by HiCUP (in order of priority)
     my $parameters_ok = 1;
 
     #Check which aligner specified
@@ -319,7 +319,7 @@ sub checkAligner {
 
     #Validate user input
     if ( $aligner_count > 1 ) {    #Too many aligners specified (i.e. more than 1)
-        warn "Please only specify only one aligner: either --bowtie --bowtie2 --bwa --bwa-mem2 --dragen --hisat2 --minimap2 or --star.\n";
+        warn "Please only specify only one aligner: either --bowtie --bowtie2 --bwa --bwa-mem --bwa-mem2 --dragen --hisat2 --minimap2 or --star.\n";
         $parameters_ok = 0;
     }
 
@@ -459,6 +459,8 @@ sub checkAlignerIndices {
         } elsif ( $$configRef{aligner} eq 'bowtie2' ) {
             @index_suffixes = ( '.1.bt2', '.2.bt2', '.3.bt2', '.4.bt2', '.rev.1.bt2', '.rev.2.bt2' );
         } elsif ( $$configRef{aligner} eq 'bwa' ) {
+            @index_suffixes = ( '.fa.amb', '.fa.ann', '.fa.bwt', '.fa.pac', '.fa.sa' );
+        } elsif ( $$configRef{aligner} eq 'bwa-mem' ) {
             @index_suffixes = ( '.fa.amb', '.fa.ann', '.fa.bwt', '.fa.pac', '.fa.sa' );
         } elsif ( $$configRef{aligner} eq 'bwa-mem2' ) {
             @index_suffixes = ( '.fa.amb', '.fa.ann', '.fa.bwt.2bit.64', '.fa.0123' )
