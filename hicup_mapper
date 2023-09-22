@@ -401,7 +401,10 @@ sub map_file {
       } else {
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
       }
-   } elsif ( $config{dragen} ne '' ) {
+    } elsif ( $config{bwa} ne '' ) {
+        print "n\ running bwa...\n" unless $config{quiet};
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} mem -t $bowtie2_threads $config{index} -| samtools view -hS -F 4 > $outputfile" );
+    } elsif ( $config{dragen} ne '' ) {
          print "\n running dragen...\n" unless $config{quiet};
          #check hostname has partial match to dragen
          my $host;
