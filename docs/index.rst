@@ -491,7 +491,11 @@ Command Line Options
 ====================
     --bowtie            Specify the path to Bowtie
     --bowtie2           Specify the path to Bowtie 2
+    --bwa               Specify the path to BWA
+    --bwa-mem2          Specify the path to BWA-MEM2
     --dragen            Specify the path to DRAGEN
+    --minimap2          Specify the path to minimap2
+    --star              Specify the path to STAR
     --config            Specify the configuration file
     --format            Specify FASTQ format
                         Options: Sanger, Solexa_Illumina_1.0, Illumina_1.3, Illumina_1.5
@@ -771,9 +775,17 @@ Example commands:
 
 ``bowtie2-build 1.fa,2.fa,...,MT.fa human_GRCh37``
 
+``bwa index 1.fa,2.fa,...,MT.fa``
+
+``bwa-mem2 index 1.fa,2.fa,...,MT.fa``
+
 ``dragen --build-hash-table true --output-directory human_GRCh37 --ht-reference 1.fa,2.fa,...,MT.fa``
 
 ``hisat2-build 1.fa,2.fa,...,MT.fa human_GRCh37``
+
+``minimap2 -d human_GRCh37.mmi 1.fa,2.fa,...,MT.fa`
+
+``STAR --runThreadN 1 --runMode genomeGenerate --genomeDir ./human_GRCh37/STAR --genomeFastaFiles 1.fa,2.fa,...,MT.fa --sjdbGTFfile ./human_GRCh37/human_GRCh37.gtf``
 
 **3) Using HiCUP+ Digester create a reference genome of Homo sapiens GRCh37 all chromosomes (1,...,22, X, Y and MT) digested with HindIII (A^AGCTT).**
 
