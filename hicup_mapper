@@ -404,13 +404,13 @@ sub map_file {
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
       }
     } elsif ( $config{bwa} ne '' ) {
-        print "n\ running bwa...\n" unless $config{quiet};
+        print "n\ running bwa aln...\n" unless $config{quiet};
         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} aln -t $bowtie2_threads --$config{format} $config{index} -| --$config{samtools} view -hS -F 4 > $outputfile" );
     } elsif ( $config{bwa-mem} ne '' ) {
-        print "n\ running bwa...\n" unless $config{quiet};
+        print "n\ running bwamem...\n" unless $config{quiet};
         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa-mem} mem -t $bowtie2_threads $config{index} -| --$config{samtools} view -hS -F 4 > $outputfile" );
     } elsif ( $config{bwa-mem2} ne '' ) {
-        print "n\ running bwa...\n" unless $config{quiet};
+        print "n\ running bwa-mem2...\n" unless $config{quiet};
         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa-mem2} mem -t $bowtie2_threads $config{index} -| --$config{samtools} view -hS -F 4 > $outputfile" )
     } elsif ( $config{dragen} ne '' ) {
          print "\n running dragen...\n" unless $config{quiet};
@@ -448,6 +448,10 @@ sub map_file {
          print "\n running hisat2...\n" unless $config{quiet};
          print ( "$config{hisat2} -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" ) unless $config{quiet};
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{hisat2} -x $config{index} --$config{format} -k 1 --no-unal --no-spliced-alignment --no-softclip --threads $bowtie2_threads --reorder - -S $outputfile" );
+    } elsif ( $config{minimap2} ne '' ) {
+         print "\n running minimap2...\n" unless $config{quiet};
+         print ( "$config{minimap2} -a -N 1 -t $bowtie2_threads -G 0  $config{index}" ) unless $config{quiet};
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{minimap2} -a -N 1 -t $bowtie2_threads -G 0 $config{index} - | --$config{samtools} view -hS -F 4 > $outputfile" );
     } else {
         print("Must path for specify at least one aligner: bowtie, bowtie2, dragen, or hisat2 in configuration");
         exit(1);
