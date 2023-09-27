@@ -452,8 +452,12 @@ sub map_file {
          print "\n running minimap2...\n" unless $config{quiet};
          print ( "$config{minimap2} -a -N 1 -t $bowtie2_threads -G 0  $config{index}" ) unless $config{quiet};
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{minimap2} -a -N 1 -t $bowtie2_threads -G 0 $config{index} - | --$config{samtools} view -hS -F 4 > $outputfile" );
-    } else {
-        print("Must path for specify at least one aligner: bowtie, bowtie2, dragen, or hisat2 in configuration");
+    } elsif ( $config{star} ne '' ) {
+         print "\n running STAR...\n" unless $config{quiet};
+         print ( "$config{star} --runMode alignReads --genomeDir $config{index} --readQualityScoreBase $config{format} --readFilesIn /dev/stdin --runThreadN $bowtie2_threads --outSAMtype SAM --chimMainSegmentMultNmax 1 --chimSegmentMin 0 --outSJtype 0 --outFilterIntronMotifs  RemoveNoncanonical --outFilterIntronStrands RemoveInconsistentStrands --outFilterMismatchNmax 1 outFilterMultimap 1 --bamRemoveDuplicatesType UniqueIdentical --outSAMmultNmax 1 --outSAMunmapped None --outReadsUnmapped None --readFilesCommand cat --outStd SAM > $outputfile" );
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{star} --runMode alignReads --genomeDir $config{index} --readQualityScoreBase $config{format} --readFilesIn /dev/stdin --runThreadN $bowtie2_threads --outSAMtype SAM --chimMainSegmentMultNmax 1 --chimSegmentMin 0 --outSJtype 0 --outFilterIntronMotifs  RemoveNoncanonical --outFilterIntronStrands RemoveInconsistentStrands --outFilterMismatchNmax 1 outFilterMultimap 1 --bamRemoveDuplicatesType UniqueIdentical --outSAMmultNmax 1 --outSAMunmapped None --outReadsUnmapped None --readFilesCommand cat --outStd SAM > $outputfile" );
+   } else {
+        print("Must path for specify at least one aligner: bowtie, bowtie2, bwa, bwa-mem, bwa-mem2, dragen, hisat2, minimap2, or star in configuration");
         exit(1);
     }
 
