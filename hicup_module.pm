@@ -422,6 +422,16 @@ sub checkAligner {
         print($aligner_path); 
 
         my $deduced_name = basename($aligner_path);
+        # add exception for bwa-mem tool name
+        if ($deduced_name eq "bwa" and $aligner_name eq "bwamem"){
+           $deduced_name = $aligner_name;
+        }
+        if ($deduced_name eq "run-bwamem" and $aligner_name eq "bwamem"){
+            $deduced_name = $aligner_name;
+        }
+        if ($deduced_name eq "bwa-mem2" and $aligner_name eq "bwamem2"){
+            $aligner_name = $deduced_name;
+        }
         print($deduced_name);
         unless( (lc $deduced_name) eq (lc $aligner_name) ){
            warn "Expecting aligner '$aligner_name', but path is to '$aligner_path'\n";
