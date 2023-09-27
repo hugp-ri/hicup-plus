@@ -387,37 +387,39 @@ sub map_file {
 
     local ( *READER, *WRITER, *ERROR );
     my $oid;
+    print( "$inputfile \n" );
+
 
     if ( $config{bowtie} ne '' ) {
-        print "n\ running bowtie...\n" unless $config{quiet};
-        print( "$config{bowtie} -m 1 -n 1 --best --$config{format} -p 1 --chunkmbs 512 $config{index} --sam - $outputfile" );
+        print "\n running bowtie...\n" unless $config{quiet};
+        print( "\n $config{bowtie} -m 1 -n 1 --best --$config{format} -p 1 --chunkmbs 512 $config{index} --sam - $outputfile \n" )  unless $config{quiet};
         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie} -m 1 -n 1 --best --$config{format} -p 1 --chunkmbs 512 $config{index} --sam - $outputfile" );
     } elsif ( $config{bowtie2} ne '' ) {
         print "\n running bowtie2...\n" unless $config{quiet};
       #TODO
       if ( $config{zip} and $config{samtools} ) {
-         print(  "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
+         print(  "\n $config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile \n" )  unless $config{quiet};
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
       # "| samtools view -bSh 2>/dev/null - > $paired_filename" 
       } elsif ( $config{zip} ) {
-         print( "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
+         print( "\n $config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile \n" ) unless $config{quiet};
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
       # "| gzip -c - > $paired_filename"
       } else {
-         print( "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
+         print( "\n $config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile \n" )  unless $config{quiet};
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
       }
     } elsif ( $config{bwa} ne '' ) {
-        print "n\ running bwa aln...\n" unless $config{quiet};
-        print( "$config{bwa} aln -t $bowtie2_threads --$config{format} $config{index} -| $config{samtools} view -hS -F 4 > $outputfile" );
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} aln -t $bowtie2_threads --$config{format} $config{index} -| $config{samtools} view -hS -F 4 > $outputfile" );
+        print "\n running bwa aln...\n" unless $config{quiet};
+        print( "\n $config{bwa} aln -t $bowtie2_threads --$config{format} $config{index} -| $config{samtools} view -hS -F 4 > $outputfile \n" ) unless $config{quiet};
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} aln -t $bowtie2_threads --$config{format} $config{index} /dev/stdin | $config{samtools} view -hS -F 4 > $outputfile" );
     } elsif ( $config{bwamem} ne '' ) {
-        print "n\ running bwamem...\n" unless $config{quiet};
-        print( "$config{bwamem} mem -t $bowtie2_threads $config{index} -| $config{samtools} view -hS -F 4 > $outputfile" );
+        print "\n running bwamem...\n" unless $config{quiet};
+        print( "\n $config{bwamem} mem -t $bowtie2_threads $config{index} -| $config{samtools} view -hS -F 4 > $outputfile \n" )  unless $config{quiet};
         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem} mem -t $bowtie2_threads $config{index} -| $config{samtools} view -hS -F 4 > $outputfile" );
     } elsif ( $config{bwamem2} ne '' ) {
-        print "n\ running bwamem2...\n" unless $config{quiet};
-        print( "$config{bwamem2} mem -t $bowtie2_threads $config{index} -| $config{samtools} view -hS -F 4 > $outputfile" )
+        print "\n running bwamem2...\n" unless $config{quiet};
+        print( "\n $config{bwamem2} mem -t $bowtie2_threads $config{index} -| $config{samtools} view -hS -F 4 > $outputfile \n" )  unless $config{quiet};
         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem2} mem -t $bowtie2_threads $config{index} -| $config{samtools} view -hS -F 4 > $outputfile" )
     } elsif ( $config{dragen} ne '' ) {
          print "\n running dragen...\n" unless $config{quiet};
@@ -428,7 +430,7 @@ sub map_file {
          printf ${host} unless $config{quiet};
          print "\n" unless $config{quiet};
          if ($host =~ /[Dd]ragen/ ) {
-             print "run installed dragen via bash call..." unless $config{quiet};
+             print "\n run installed dragen via bash call..." unless $config{quiet};
              print "\n$config{dragen} -r $index_directory -1 $inputfile --output-format SAM  --enable-sort false --Aligner.supp-aligns 0 --Aligner.sec-aligns 0 --Aligner.hard-clips 0 --soft-read-trimmers none --read-trimmers none --Aligner.global 1 --enable-map-align true --preserve-map-align-order true --ref-sequence-filter false --Mapper.min-intron-bases 255 --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory > $output_directory/dragen.out 2> $output_directory/dragen.err \n" unless $config{quiet};
              $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{dragen} -1 $inputfile -r $index_directory --output-format SAM  --enable-sort false  --Aligner.supp-aligns 0 --Aligner.sec-aligns 0 --Aligner.hard-clips 0 --soft-read-trimmers none --read-trimmers none --Aligner.global 1 --enable-map-align true --preserve-map-align-order true --ref-sequence-filter false --Mapper.min-intron-bases 255 --fastq-offset $config{format} --enable-map-align-output true --num-threads $bowtie2_threads --RGID $output_prefix --RGSM $output_prefix --output-file-prefix $output_prefix --output-directory $output_directory > $output_directory/dragen.out 2> $output_directory/dragen.err" );
          } else {
@@ -453,15 +455,15 @@ sub map_file {
          };
     } elsif ( $config{hisat2} ne '' ) {
          print "\n running hisat2...\n" unless $config{quiet};
-         print ( "$config{hisat2} -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" ) unless $config{quiet};
+         print ( "\n $config{hisat2} -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile \n" ) unless $config{quiet};
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{hisat2} -x $config{index} --$config{format} -k 1 --no-unal --no-spliced-alignment --no-softclip --threads $bowtie2_threads --reorder - -S $outputfile" );
     } elsif ( $config{minimap2} ne '' ) {
          print "\n running minimap2...\n" unless $config{quiet};
-         print ( "$config{minimap2} -a -N 1 -t $bowtie2_threads -G 0  $config{index}" ) unless $config{quiet};
+         print ( "\n $config{minimap2} -a -N 1 -t $bowtie2_threads -G 0  $config{index} \n" ) unless $config{quiet};
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{minimap2} -a -N 1 -t $bowtie2_threads -G 0 $config{index} - | $config{samtools} view -hS -F 4 > $outputfile" );
     } elsif ( $config{star} ne '' ) {
          print "\n running STAR...\n" unless $config{quiet};
-         print ( "$config{star} --runMode alignReads --genomeDir $config{index} --readQualityScoreBase $config{format} --readFilesIn /dev/stdin --runThreadN $bowtie2_threads --outSAMtype SAM --chimMainSegmentMultNmax 1 --chimSegmentMin 0 --outSJtype 0 --outFilterIntronMotifs  RemoveNoncanonical --outFilterIntronStrands RemoveInconsistentStrands --outFilterMismatchNmax 1 outFilterMultimap 1 --bamRemoveDuplicatesType UniqueIdentical --outSAMmultNmax 1 --outSAMunmapped None --outReadsUnmapped None --readFilesCommand cat --outStd SAM > $outputfile" );
+         print ( "\n $config{star} --runMode alignReads --genomeDir $config{index} --readQualityScoreBase $config{format} --readFilesIn /dev/stdin --runThreadN $bowtie2_threads --outSAMtype SAM --chimMainSegmentMultNmax 1 --chimSegmentMin 0 --outSJtype 0 --outFilterIntronMotifs  RemoveNoncanonical --outFilterIntronStrands RemoveInconsistentStrands --outFilterMismatchNmax 1 outFilterMultimap 1 --bamRemoveDuplicatesType UniqueIdentical --outSAMmultNmax 1 --outSAMunmapped None --outReadsUnmapped None --readFilesCommand cat --outStd SAM > $outputfile \n" )  unless $config{quiet};
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{star} --runMode alignReads --genomeDir $config{index} --readQualityScoreBase $config{format} --readFilesIn /dev/stdin --runThreadN $bowtie2_threads --outSAMtype SAM --chimMainSegmentMultNmax 1 --chimSegmentMin 0 --outSJtype 0 --outFilterIntronMotifs  RemoveNoncanonical --outFilterIntronStrands RemoveInconsistentStrands --outFilterMismatchNmax 1 outFilterMultimap 1 --bamRemoveDuplicatesType UniqueIdentical --outSAMmultNmax 1 --outSAMunmapped None --outReadsUnmapped None --readFilesCommand cat --outStd SAM > $outputfile" );
    } else {
         print("Must path for specify at least one aligner: bowtie, bowtie2, bwa, bwamem, bwamem2, dragen, hisat2, minimap2, or star in configuration");
