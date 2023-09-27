@@ -492,8 +492,8 @@ Command Line Options
     --bowtie            Specify the path to Bowtie
     --bowtie2           Specify the path to Bowtie 2
     --bwa               Specify the path to BWA aln
-    --bwa-mem           Specify the path to BWA-MEM
-    --bwa-mem2          Specify the path to BWA-MEM2
+    --bwamem           Specify the path to BWA-MEM
+    --bwamem2          Specify the path to BWA-MEM2
     --dragen            Specify the path to DRAGEN
     --minimap2          Specify the path to minimap2
     --star              Specify the path to STAR

@@ -70,8 +70,8 @@ my %config = (
     bowtie    => '',
     bowtie2   => '',
     bwa       => '',
-    bwa-mem   => '',
-    bwa-mem2  => '',
+    bwamem   => '',
+    bwamem2  => '',
     digest    => '',
     dragen    => '',
     format    => '',
@@ -106,8 +106,8 @@ my $config_result = GetOptions(    #Stores parameters
     "bowtie=s"   => \$config{bowtie},
     "bowtie2=s"  => \$config{bowtie2},
     "bwa=s"      => \$config{bwa},
-    "bwa-mem=s"  => \$config{bwa-mem},
-    "bwa-mem2=s" => \$config{bwa-mem2},
+    "bwamem=s"  => \$config{bwamem},
+    "bwamem2=s" => \$config{bwamem2},
     "digest=s"   => \$config{digest},
     "dragen=s"   => \$config{dragen},
     "format=s"   => \$config{format},
@@ -319,8 +319,8 @@ $config{ambiguous} = "--ambiguous"                if ( $config{ambiguous} ne '' 
 $config{bowtie}    = "--bowtie $config{bowtie}"   if ( $config{bowtie} ne '' );
 $config{bowtie2}   = "--bowtie2 $config{bowtie2}" if ( $config{bowtie2} ne '' );
 $config{bwa}       = "--bwa $config{bwa}"         if ( $config{bwa} ne '' );
-$config{bwa-mem}   = "--bwa-mem $config{bwa-mem}" if ( $config{bwa-mem} ne '' );
-$config{bwa-mem2}  = "--bwa-mem2 $config{bwa-mem2}" if ( $config{bwa-mem2} ne '' );
+$config{bwamem}   = "--bwamem $config{bwamem}" if ( $config{bwamem} ne '' );
+$config{bwamem2}  = "--bwamem2 $config{bwamem2}" if ( $config{bwamem2} ne '' );
 $config{dragen}    = "--dragen $config{dragen}"   if ( $config{dragen} ne '' );
 $config{hisat2}    = "--hisat2 $config{hisat2}"   if ( $config{hisat2} ne '' );
 $config{minimap2}  = "--minimap2 $config{minimap2}" if ( $config{minimap2} ne '' );
@@ -400,11 +400,11 @@ my $start_time2 = [Time::HiRes::gettimeofday()];
 
 if ( $config{zip} ) {
     !system(
-"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{bwa} $config{bwa-mem} $config{bwa-mem2} $config{dragen} $config{hisat2} $config{minimap2} $config{star} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $config{zip} $filenames_string"
+"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{bwa} $config{bwamem} $config{bwamem2} $config{dragen} $config{hisat2} $config{minimap2} $config{star} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $config{zip} $filenames_string"
     ) or die "Can't run hicup_mapper\n.";
 } else {
     !system(
-"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{bwa} $config{bwa-mem} $config{bwa-mem2} $config{dragen} $config{hisat2} $config{minimap2} $config{star} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{samtools} $config{samtools} $config{threads} $filenames_string"
+"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{bwa} $config{bwamem} $config{bwamem2} $config{dragen} $config{hisat2} $config{minimap2} $config{star} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{samtools} $config{samtools} $config{threads} $filenames_string"
     ) or die "Can't run hicup_mapper\n.";
 }
 
@@ -850,8 +850,8 @@ COMMAND LINE OPTIONS
 --bowtie       Specify the path to Bowtie
 --bowtie2      Specify the path to Bowtie 2
 --bwa          Specify the path to BWA aln
---bwa-mem      Specify the path to BWA-MEM
---bwa-mem2     Specify the path to BWA-MEM2
+--bwamem      Specify the path to BWA-MEM
+--bwamem2     Specify the path to BWA-MEM2
 --dragen       Specify the path to DRAGEN
 --config       Specify the configuration file
 --digest       Specify the digest file listing restriction fragment co-ordinates

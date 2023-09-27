@@ -70,8 +70,8 @@ my %config = (
     bowtie    => '',
     bowtie2   => '',
     bwa       => '',
-    bwa-mem   => '',
-    bwa-mem2  => '',
+    bwamem   => '',
+    bwamem2  => '',
     dragen    => '',
     hisat2    => '',
     minimap2  => '',
@@ -96,8 +96,8 @@ my $config_result = GetOptions(
     "bowtie=s"    => \$config{bowtie},
     "bowtie2=s"   => \$config{bowtie2},
     "bwa=s"       => \$config{bwa},
-    "bwa-mem=s"   => \$config{bwa-mem}
-    "bwa-mem2=s"  => \$config{bwa-mem2},
+    "bwamem=s"   => \$config{bwamem},
+    "bwamem2=s"  => \$config{bwamem2},
     "dragen=s"    => \$config{dragen},
     "hisat2=s"    => \$config{hisat2},
     "minimap2=s"  => \$config{minimap2},
@@ -406,12 +406,12 @@ sub map_file {
     } elsif ( $config{bwa} ne '' ) {
         print "n\ running bwa aln...\n" unless $config{quiet};
         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} aln -t $bowtie2_threads --$config{format} $config{index} -| --$config{samtools} view -hS -F 4 > $outputfile" );
-    } elsif ( $config{bwa-mem} ne '' ) {
+    } elsif ( $config{bwamem} ne '' ) {
         print "n\ running bwamem...\n" unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa-mem} mem -t $bowtie2_threads $config{index} -| --$config{samtools} view -hS -F 4 > $outputfile" );
-    } elsif ( $config{bwa-mem2} ne '' ) {
-        print "n\ running bwa-mem2...\n" unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa-mem2} mem -t $bowtie2_threads $config{index} -| --$config{samtools} view -hS -F 4 > $outputfile" )
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem} mem -t $bowtie2_threads $config{index} -| --$config{samtools} view -hS -F 4 > $outputfile" );
+    } elsif ( $config{bwamem2} ne '' ) {
+        print "n\ running bwamem2...\n" unless $config{quiet};
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem2} mem -t $bowtie2_threads $config{index} -| --$config{samtools} view -hS -F 4 > $outputfile" )
     } elsif ( $config{dragen} ne '' ) {
          print "\n running dragen...\n" unless $config{quiet};
          #check hostname has partial match to dragen
@@ -457,7 +457,7 @@ sub map_file {
          print ( "$config{star} --runMode alignReads --genomeDir $config{index} --readQualityScoreBase $config{format} --readFilesIn /dev/stdin --runThreadN $bowtie2_threads --outSAMtype SAM --chimMainSegmentMultNmax 1 --chimSegmentMin 0 --outSJtype 0 --outFilterIntronMotifs  RemoveNoncanonical --outFilterIntronStrands RemoveInconsistentStrands --outFilterMismatchNmax 1 outFilterMultimap 1 --bamRemoveDuplicatesType UniqueIdentical --outSAMmultNmax 1 --outSAMunmapped None --outReadsUnmapped None --readFilesCommand cat --outStd SAM > $outputfile" );
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{star} --runMode alignReads --genomeDir $config{index} --readQualityScoreBase $config{format} --readFilesIn /dev/stdin --runThreadN $bowtie2_threads --outSAMtype SAM --chimMainSegmentMultNmax 1 --chimSegmentMin 0 --outSJtype 0 --outFilterIntronMotifs  RemoveNoncanonical --outFilterIntronStrands RemoveInconsistentStrands --outFilterMismatchNmax 1 outFilterMultimap 1 --bamRemoveDuplicatesType UniqueIdentical --outSAMmultNmax 1 --outSAMunmapped None --outReadsUnmapped None --readFilesCommand cat --outStd SAM > $outputfile" );
    } else {
-        print("Must path for specify at least one aligner: bowtie, bowtie2, bwa, bwa-mem, bwa-mem2, dragen, hisat2, minimap2, or star in configuration");
+        print("Must path for specify at least one aligner: bowtie, bowtie2, bwa, bwamem, bwamem2, dragen, hisat2, minimap2, or star in configuration");
         exit(1);
     }
 
@@ -1273,8 +1273,8 @@ COMMAND LINE OPTIONS
 --bowtie         Specify the path to Bowtie
 --bowtie2        Specify the path to Bowtie 2
 --bwa            Specify the path to BWA aln
---bwa-mem2        Specify the path to BWA-MEM
---bwa-mem2        Specify the path to BWA-MEM2
+--bwamem2        Specify the path to BWA-MEM
+--bwamem2        Specify the path to BWA-MEM2
 --dragen         Specify the path to DRAGEN
 --config         Specify the configuration file
 --format         Specify FASTQ format
