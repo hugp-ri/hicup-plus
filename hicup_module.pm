@@ -466,6 +466,9 @@ sub checkAlignerIndices {
         if ( ($$configRef{aligner} eq 'bwa' or $$configRef{aligner} eq 'bwamem' or $$configRef{aligner} eq 'bwamem2') and substr($$configRef{index}, -3) ne ".fa" ) {
             $$configRef{index} = "$$configRef{index}.fa";
         }
+        if (substr($$configRef{index}, -6) eq ".fa.fa" ) {
+            $$configRef{index} = substr($$configRef{index}, -3);
+        }
 
         my @index_suffixes;
         if ( $$configRef{aligner} eq 'bowtie' ) {
@@ -483,7 +486,7 @@ sub checkAlignerIndices {
         } elsif ( $$configRef{aligner} eq 'minimap2' ) {
             @index_suffixes = ( '.mmi' )
         } elsif ( $$configRef{aligner} eq 'star' ) {
-            @index_suffixes = ( 'SA', 'SAindex', 'Genome', 'genomeParameters.txt', 'chrName.txt', 'chrLength.txt', 'chrStart.txt', 'chrNameLength,txt' )
+            @index_suffixes = ( 'SA', 'SAindex', 'Genome', 'genomeParameters.txt', 'chrName.txt', 'chrLength.txt', 'chrStart.txt', 'chrNameLength.txt' )
         }
 
         print "\nindex reference: $$configRef{index} \n" unless $$configRef{quiet};
