@@ -419,7 +419,7 @@ sub checkAligner {
                 $parameters_ok = 0;
             }
         }
-        print($aligner_path); 
+        print( "\n $aligner_path \n" ); 
 
         my $deduced_name = basename($aligner_path);
         # add exception for bwa-mem tool name
@@ -432,7 +432,7 @@ sub checkAligner {
         if ($deduced_name eq "bwa-mem2" and $aligner_name eq "bwamem2"){
             $aligner_name = $deduced_name;
         }
-        print($deduced_name);
+        print( "\n $deduced_name) \n" );
         unless( (lc $deduced_name) eq (lc $aligner_name) ){
            warn "Expecting aligner '$aligner_name', but path is to '$aligner_path'\n";
            warn "Which is correct '$aligner_name' or '$deduced_name'?\n";
@@ -463,17 +463,21 @@ sub checkAlignerIndices {
 
     #Check the index files exist
     if ( hasval $$configRef{index} ) {
+        if ( $$configRef{aligner} eq 'bwamem2' and substr($$configRef{index}, -3) ne ".fa" ) {
+            $$configRef{index} = "$$configRef{index}.fa";
+        }
+
         my @index_suffixes;
         if ( $$configRef{aligner} eq 'bowtie' ) {
             @index_suffixes = ( '.1.ebwt', '.2.ebwt', '.3.ebwt', '.4.ebwt', '.rev.1.ebwt', '.rev.2.ebwt' );
         } elsif ( $$configRef{aligner} eq 'bowtie2' ) {
             @index_suffixes = ( '.1.bt2', '.2.bt2', '.3.bt2', '.4.bt2', '.rev.1.bt2', '.rev.2.bt2' );
         } elsif ( $$configRef{aligner} eq 'bwa' ) {
-            @index_suffixes = ( '.fa.amb', '.fa.ann', '.fa.bwt', '.fa.pac', '.fa.sa' );
+            @index_suffixes = ( '.amb', '.ann', '.bwt', '.pac', '.sa' );
         } elsif ( $$configRef{aligner} eq 'bwamem' ) {
-            @index_suffixes = ( '.fa.amb', '.fa.ann', '.fa.bwt', '.fa.pac', '.fa.sa' );
+            @index_suffixes = ( '.amb', '.ann', '.bwt', '.pac', '.sa' );
         } elsif ( $$configRef{aligner} eq 'bwamem2' ) {
-            @index_suffixes = ( '.fa.amb', '.fa.ann', '.fa.bwt.2bit.64', '.fa.0123' )
+            @index_suffixes = ( '.amb', '.ann', '.bwt.2bit.64', '.0123' )
         } elsif ( $$configRef{aligner} eq 'dragen' ) {
             @index_suffixes = ( '.cfg', '.cfg.bin', '_stats.txt' );
         } elsif ( $$configRef{aligner} eq 'hisat2' ) {
@@ -482,7 +486,9 @@ sub checkAlignerIndices {
             @index_suffixes = ( '.mmi' )
         } elsif ( $$configRef{aligner} eq 'star' ) {
             @index_suffixes = ( 'SA', 'SAindex', 'Genome', 'genomeParameters.txt', 'chrName.txt', 'chrLength.txt', 'chrStart.txt', 'chrNameLength,txt' )
-       }
+        }
+
+        print "\nindex reference: $$configRef{index} \n" unless $$configRef{quiet};
 
         foreach my $suffix (@index_suffixes) {
             my $indexFilename = $$configRef{index} . $suffix;
