@@ -411,16 +411,16 @@ sub map_file {
       }
     } elsif ( $config{bwa} ne '' ) {
         print "\n running bwa aln...\n" unless $config{quiet};
-        print( "\n $config{bwa} aln -t $bowtie2_threads --$config{format} $config{index} -| $config{samtools} view -hS -F 4 > $outputfile \n" ) unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} aln -t $bowtie2_threads --$config{format} $config{index} /dev/stdin | $config{samtools} view -hS -F 4 > $outputfile" );
+        print( "\n $config{bwa} aln -t $bowtie2_threads $config{format} $config{index}.fa /dev/stdin | $config{samtools} view -hS -F 4 > $outputfile \n" ) unless $config{quiet};
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} aln -t $bowtie2_threads --$config{format} $config{index}.fa /dev/stdin > $outputfile" );
     } elsif ( $config{bwamem} ne '' ) {
         print "\n running bwamem...\n" unless $config{quiet};
-        print( "\n $config{bwamem} mem -t $bowtie2_threads $config{index} -| $config{samtools} view -hS -F 4 > $outputfile \n" )  unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem} mem -t $bowtie2_threads $config{index} -| $config{samtools} view -hS -F 4 > $outputfile" );
+        print( "\n $config{bwamem} mem -t $bowtie2_threads $config{index}.fa -| $config{samtools} view -hS -F 4 > $outputfile \n" )  unless $config{quiet};
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem} mem -t $bowtie2_threads $config{index}.fa /dev/stdin > $outputfile" );
     } elsif ( $config{bwamem2} ne '' ) {
         print "\n running bwamem2...\n" unless $config{quiet};
-        print( "\n $config{bwamem2} mem -t $bowtie2_threads $config{index} -| $config{samtools} view -hS -F 4 > $outputfile \n" )  unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem2} mem -t $bowtie2_threads $config{index} -| $config{samtools} view -hS -F 4 > $outputfile" )
+        print( "\n $config{bwamem2} mem -t $bowtie2_threads $config{index}.fa /dev/stdin| $config{samtools} view -hS -F 4 > $outputfile \n" )  unless $config{quiet};
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem2} mem -t $bowtie2_threads $config{index}.fa /dev/stdin| $config{samtools} view -hS -F 4 > $outputfile" )
     } elsif ( $config{dragen} ne '' ) {
          print "\n running dragen...\n" unless $config{quiet};
          #check hostname has partial match to dragen
