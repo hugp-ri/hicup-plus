@@ -432,7 +432,7 @@ sub checkAligner {
         if ($deduced_name eq "bwa-mem2" and $aligner_name eq "bwamem2"){
             $aligner_name = $deduced_name;
         }
-        print( "\n $deduced_name) \n" );
+        print( "\n $deduced_name \n" );
         unless( (lc $deduced_name) eq (lc $aligner_name) ){
            warn "Expecting aligner '$aligner_name', but path is to '$aligner_path'\n";
            warn "Which is correct '$aligner_name' or '$deduced_name'?\n";
@@ -463,7 +463,7 @@ sub checkAlignerIndices {
 
     #Check the index files exist
     if ( hasval $$configRef{index} ) {
-        if ( $$configRef{aligner} eq 'bwamem2' and substr($$configRef{index}, -3) ne ".fa" ) {
+        if ( ($$configRef{aligner} eq 'bwa' or $$configRef{aligner} eq 'bwamem' or $$configRef{aligner} eq 'bwamem2') and substr($$configRef{index}, -3) ne ".fa" ) {
             $$configRef{index} = "$$configRef{index}.fa";
         }
 
@@ -472,9 +472,7 @@ sub checkAlignerIndices {
             @index_suffixes = ( '.1.ebwt', '.2.ebwt', '.3.ebwt', '.4.ebwt', '.rev.1.ebwt', '.rev.2.ebwt' );
         } elsif ( $$configRef{aligner} eq 'bowtie2' ) {
             @index_suffixes = ( '.1.bt2', '.2.bt2', '.3.bt2', '.4.bt2', '.rev.1.bt2', '.rev.2.bt2' );
-        } elsif ( $$configRef{aligner} eq 'bwa' ) {
-            @index_suffixes = ( '.amb', '.ann', '.bwt', '.pac', '.sa' );
-        } elsif ( $$configRef{aligner} eq 'bwamem' ) {
+        } elsif ( $$configRef{aligner} eq 'bwa' or $$configRef{aligner} eq 'bwamem') {
             @index_suffixes = ( '.amb', '.ann', '.bwt', '.pac', '.sa' );
         } elsif ( $$configRef{aligner} eq 'bwamem2' ) {
             @index_suffixes = ( '.amb', '.ann', '.bwt.2bit.64', '.0123' )

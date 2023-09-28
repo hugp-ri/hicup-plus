@@ -416,7 +416,7 @@ sub map_file {
         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} aln -t $bowtie2_threads -L 9999,9999 --$config{format} $config{index} /dev/stdin > $outputfile" );
     } elsif ( $config{bwamem} ne '' ) {
         print "\n running bwamem...\n" unless $config{quiet};
-        print( "\n $config{bwamem} mem -t $bowtie2_threads -L 9999,9999 $config{index} -| $config{samtools} view -hS -F 4 > $outputfile \n" )  unless $config{quiet};
+        print( "\n $config{bwamem} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin| $config{samtools} view -hS -F 4 > $outputfile \n" )  unless $config{quiet};
         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin > $outputfile" );
     } elsif ( $config{bwamem2} ne '' ) {
         print "\n running bwamem2...\n" unless $config{quiet};
