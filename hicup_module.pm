@@ -467,7 +467,7 @@ sub checkAlignerIndices {
             $$configRef{index} = "$$configRef{index}.fa";
         }
         if (substr($$configRef{index}, -6) eq ".fa.fa" ) {
-            $$configRef{index} = substr($$configRef{index}, -3);
+            $$configRef{index} = substr($$configRef{index}, 0, -3);
         }
 
         my @index_suffixes;
@@ -792,20 +792,21 @@ sub determineAlignerFormat {
         }
     }
 
-    #--readQualityScoreBase
+    #not --readQualityScoreBase
+    #--outQSconversionAdd
     if ( $aligner eq 'star' ) {
         if ( $fastqFormat eq 'SANGER' ) {
-            return '33';
+            return '0';
         } elsif ( $fastqFormat eq 'SOLEXA_ILLUMINA_1.0' ) {
-            return '64';
+            return '31';
         } elsif ( $fastqFormat eq 'ILLUMINA_1.3' ) {
-            return '64';
+            return '31';
         } elsif ( $fastqFormat eq 'ILLUMINA_1.5' ) {
-            return '64';
+            return '31';
         } elsif ( $fastqFormat eq 'ILLUMINA_1.6' ) {
-            return '64';
+            return '31';
         } elsif ( $fastqFormat eq 'ILLUMINA_1.8' ) {
-            return '33';
+            return '0';
         }
     }
 
