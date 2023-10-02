@@ -630,15 +630,18 @@ sub map_file {
             if (/Number of reads unmapped\: too many mismatches \| (\d+)/) {           #STAR output
                 $unmapped = $1;
             }
-            #if (/Number of reads unmapped: too short \| (\d+)/) {           #STAR output
-            #    $too_short_to_map = $1 + $too_short_to_map;
-            #}
-            #if (/Number of reads unmapped: other \| (\d+)/) {           #STAR output
-            #    $unmapped = $1 + $unmapped;
-            #}
+            if (/Number of reads unmapped: too short \| (\d+)/) {           #STAR output
+                $too_short_to_map = $1 + $too_short_to_map;
+            }
+            if (/Number of reads unmapped: other \| (\d+)/) {           #STAR output
+                $unmapped = $1 +$unmapped;
+            }
 
             if (/Number of reads mapped to multiple loci \| (\d+)/) {          #STAR output
                 $multi_mapped = $1;    #Will be overwritten later owing to new definition of multi-mapping
+            }
+            if (/Number of reads mapped to too many loci \| (\d+)/) {          #STAR output
+                $multi_mapped = $1 + $multi_mapped;    #Will be overwritten later owing to new definition of multi-mapping
             }
         } elsif ( $config{dragen} ) {
             # show all warnings
@@ -1075,7 +1078,7 @@ sub pair {
    
     #Add the results to the summary_results hash
     my @results_to_edit = ( $sequencefileF, $sequencefileR );
-   my $reverse_file_flag = 0;
+    my $reverse_file_flag = 0;
    
     foreach my $key (@results_to_edit) {
 
@@ -1088,12 +1091,14 @@ sub pair {
       if( $config{bowtie2} or $config{hisat2} or $config{star} ){    #Custom edit the multi_mapped reads
          my ($reads_processed, $too_short_to_map, $percent_too_short_to_map, $unique_map, $percent_unique, $multi_mapped, $percent_multi, $unmapped, $percent_unmapped) = split(/\t/, $result);
          
-         if($reverse_file_flag){
-            $multi_mapped = $r_read_bowtie2_multimap;
-         } else {
-            $multi_mapped = $f_read_bowtie2_multimap;
+         if( $config{bowtie2} or $config{hisat2} ){
+             if($reverse_file_flag){
+                 $multi_mapped = $r_read_bowtie2_multimap;
+             } else {
+                 $multi_mapped = $f_read_bowtie2_multimap;
+             }
          }
-         
+
          $unique_map = $reads_processed - $too_short_to_map - $multi_mapped - $unmapped;
                
          if ($reads_processed) {
