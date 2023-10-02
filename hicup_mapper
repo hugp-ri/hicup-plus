@@ -464,8 +464,8 @@ sub map_file {
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{minimap2} -a -N 1 -t $bowtie2_threads -G 0 $config{index} - | $config{samtools} view -hS -F 4 > $outputfile" );
     } elsif ( $config{star} ne '' ) {
          print "\n running STAR...\n" unless $config{quiet};
-         print ( "\n $config{star} --runMode alignReads --genomeDir $config{index} --outQSconversionAdd $config{format} --readFilesIn /dev/stdin --runThreadN $bowtie2_threads --outSAMtype SAM --chimMainSegmentMultNmax 1 --chimSegmentMin 0 --outSJtype None --outFilterIntronMotifs  RemoveNoncanonical --outFilterIntronStrands RemoveInconsistentStrands --outFilterMismatchNmax 1 --outFilterMultimapNmax 1 --bamRemoveDuplicatesType UniqueIdentical --outSAMmultNmax 1 --alignSoftClipAtReferenceEnds No --alignEndsType EndToEnd --outSAMunmapped None --outReadsUnmapped None --readFilesCommand cat --outFileNamePrefix $inputprefix --outStd SAM > $outputfile &&  \n" )  unless $config{quiet};
-         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{star} --runMode alignReads --genomeDir $config{index} --outQSconversionAdd $config{format} --readFilesIn /dev/stdin --runThreadN $bowtie2_threads --outSAMtype SAM --chimMainSegmentMultNmax 1 --chimSegmentMin 0 --outSJtype None --outFilterIntronMotifs  RemoveNoncanonical --outFilterIntronStrands RemoveInconsistentStrands --outFilterMismatchNmax 1 --outFilterMultimapNmax 1 --bamRemoveDuplicatesType UniqueIdentical --outSAMmultNmax 1 --alignSoftClipAtReferenceEnds No --alignEndsType EndToEnd --outSAMunmapped None --outReadsUnmapped None --readFilesCommand cat --outFileNamePrefix $inputprefix --outStd SAM > $outputfile && cat ${inputprefix}Log.final.out | tr '\t' ' ' 1>2" );
+         print ( "\n $config{star} --runMode alignReads --genomeDir $config{index} --outQSconversionAdd $config{format} --readFilesIn /dev/stdin --runThreadN $bowtie2_threads --outSAMtype SAM --chimMainSegmentMultNmax 1 --chimSegmentMin 0 --outSJtype None --outFilterIntronMotifs  RemoveNoncanonical --outFilterIntronStrands RemoveInconsistentStrands --outFilterMismatchNmax 1 --outFilterMultimapNmax 1 --bamRemoveDuplicatesType UniqueIdentical --outSAMmultNmax 1 --alignSoftClipAtReferenceEnds No --alignEndsType EndToEnd --alignIntronMax 0  --alignIntronMin 999999999999 --outSAMunmapped None --outReadsUnmapped None --readFilesCommand cat --outFileNamePrefix $inputprefix --outStd SAM > $outputfile &&  \n" )  unless $config{quiet};
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{star} --runMode alignReads --genomeDir $config{index} --outQSconversionAdd $config{format} --readFilesIn /dev/stdin --runThreadN $bowtie2_threads --outSAMtype SAM --chimMainSegmentMultNmax 1 --chimSegmentMin 0 --outSJtype None --outFilterIntronMotifs  RemoveNoncanonical --outFilterIntronStrands RemoveInconsistentStrands --outFilterMismatchNmax 1 --outFilterMultimapNmax 1 --bamRemoveDuplicatesType UniqueIdentical --outSAMmultNmax 1 --alignSoftClipAtReferenceEnds No --alignEndsType EndToEnd --alignIntronMax 0 --alignIntronMin 999999999999 --outSAMunmapped None --outReadsUnmapped None --readFilesCommand cat --outFileNamePrefix $inputprefix --outStd SAM > $outputfile && cat ${inputprefix}Log.final.out | tr '\t' ' ' 1>&2" );
    } else {
         print("Must path for specify at least one aligner: bowtie, bowtie2, bwa, bwamem, bwamem2, dragen, hisat2, minimap2, or star in configuration");
         exit(1);
@@ -620,24 +620,24 @@ sub map_file {
             #    warn $_;
             #}
 
-            if (/Number of input reads | (\d+)/) {                 #STAR output
+            if (/Number of input reads \| (\d+)/) {                 #STAR output
                 $reads_processed = $1;
             }
-            if (/Uniquely mapped reads number | (\d+) \(.+\)/) {  #STAR output
+            if (/Uniquely mapped reads number \| (\d+) \(.+\)/) {  #STAR output
                 $unique_map = $1;    #Will be overwritten later owing to new definition of multi-mapping
             }
 
-            if (/Number of reads unmapped: too many mismatches | (\d+)/) {           #STAR output
+            if (/Number of reads unmapped\: too many mismatches \| (\d+)/) {           #STAR output
                 $unmapped = $1;
             }
-            if (/Number of reads unmapped: too short | (\d+)/) {           #STAR output
-                $too_short_to_map = $1 + $too_short_to_map;
-            }
-            if (/Number of reads unmapped: other | (\d+)/) {           #STAR output
-                $unmapped = $1 + $unmapped;
-            }
+            #if (/Number of reads unmapped: too short \| (\d+)/) {           #STAR output
+            #    $too_short_to_map = $1 + $too_short_to_map;
+            #}
+            #if (/Number of reads unmapped: other \| (\d+)/) {           #STAR output
+            #    $unmapped = $1 + $unmapped;
+            #}
 
-            if (/Number of reads mapped to multiple loci | (\d+)/) {          #STAR output
+            if (/Number of reads mapped to multiple loci \| (\d+)/) {          #STAR output
                 $multi_mapped = $1;    #Will be overwritten later owing to new definition of multi-mapping
             }
         } elsif ( $config{dragen} ) {
@@ -1085,7 +1085,7 @@ sub pair {
 
         my $result = $summary_results{$key};
       
-      if( $config{bowtie2} or $config{hisat2} ){    #Custom edit the multi_mapped reads
+      if( $config{bowtie2} or $config{hisat2} or $config{star} ){    #Custom edit the multi_mapped reads
          my ($reads_processed, $too_short_to_map, $percent_too_short_to_map, $unique_map, $percent_unique, $multi_mapped, $percent_multi, $unmapped, $percent_unmapped) = split(/\t/, $result);
          
          if($reverse_file_flag){
