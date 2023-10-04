@@ -469,6 +469,9 @@ sub checkAlignerIndices {
         if (substr($$configRef{index}, -6) eq ".fa.fa" ) {
             $$configRef{index} = substr($$configRef{index}, 0, -3);
         }
+        if ($$configRef{aligner} eq 'minimap2' and substr($$configRef{index}, -3) eq ".mmi" ) {
+            $$configRef{index} = substr($$configRef{index}, 0, -3);
+        }
 
         my @index_suffixes;
         if ( $$configRef{aligner} eq 'bowtie' ) {
