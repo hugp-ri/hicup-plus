@@ -412,16 +412,16 @@ sub map_file {
       }
     } elsif ( $config{bwa} ne '' ) {
         print "\n running bwa aln...\n" unless $config{quiet};
-        print( "\n $config{bwa} aln -t $bowtie2_threads -L 9999,9999 $config{format} $config{index} /dev/stdin | $config{samtools} view -hS -F 4 > $outputfile \n" ) unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} aln -t $bowtie2_threads -L 9999,9999 --$config{format} $config{index} /dev/stdin > $outputfile" );
+        print( "\n $config{bwa} aln -t $bowtie2_threads -L 9999,9999 $config{format} $config{index} /dev/stdin | $config{samtools} view -h -F 4 > $outputfile \n" ) unless $config{quiet};
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} aln -t $bowtie2_threads -L 9999,9999 --$config{format} $config{index} /dev/stdin | grep -v '\*' > $outputfile" );
     } elsif ( $config{bwamem} ne '' ) {
         print "\n running bwamem...\n" unless $config{quiet};
         print( "\n $config{bwamem} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin| $config{samtools} view -hS -F 4 > $outputfile \n" )  unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin > $outputfile" );
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin | grep -v '\*' > $outputfile" );
     } elsif ( $config{bwamem2} ne '' ) {
         print "\n running bwamem2...\n" unless $config{quiet};
         print( "\n $config{bwamem2} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin| $config{samtools} view -hS -F 4 > $outputfile \n" )  unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem2} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin  > $outputfile" )
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem2} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin | $config{samtools} view -h -F 4 | grep -v '\*' > $outputfile" )
     } elsif ( $config{dragen} ne '' ) {
          print "\n running dragen...\n" unless $config{quiet};
          #check hostname has partial match to dragen
@@ -460,8 +460,8 @@ sub map_file {
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{hisat2} -x $config{index} --$config{format} -k 1 --no-unal --no-spliced-alignment --no-softclip --threads $bowtie2_threads --reorder - -S $outputfile" );
     } elsif ( $config{minimap2} ne '' ) {
          print "\n running minimap2...\n" unless $config{quiet};
-         print ( "\n $config{minimap2} -a -N 1 -t $bowtie2_threads -G 0  $config{index} \n" ) unless $config{quiet};
-         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{minimap2} -a -N 1 -t $bowtie2_threads -G 0 $config{index} - | $config{samtools} view -hS -F 4 > $outputfile" );
+         print ( "\n $config{minimap2} -a -N 1 -t $bowtie2_threads -G 0  $config{index}.mmi /dev/stdin  | $config{samtools} view -hS -F 4 > $outputfile\n" ) unless $config{quiet};
+         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{minimap2} -a -N 1 -t $bowtie2_threads -G 0 $config{index}.mmi /dev/stdin | $config{samtools} view -hS -F 256,8,2 | sed -r 's/([0-9]+)S/\1I/g' > $outputfile" );
     } elsif ( $config{star} ne '' ) {
          print "\n running STAR...\n" unless $config{quiet};
          print ( "\n $config{star} --runMode alignReads --genomeDir $config{index} --outQSconversionAdd $config{format} --readFilesIn /dev/stdin --runThreadN $bowtie2_threads --outSAMtype SAM --chimMainSegmentMultNmax 1 --chimSegmentMin 0 --outSJtype None --outFilterIntronMotifs  RemoveNoncanonical --outFilterIntronStrands RemoveInconsistentStrands --outFilterMismatchNmax 1 --outFilterMultimapNmax 1 --bamRemoveDuplicatesType UniqueIdentical --outSAMmultNmax 1 --alignSoftClipAtReferenceEnds No --alignEndsType EndToEnd --alignIntronMax 0  --alignIntronMin 999999999999 --outSAMunmapped None --outReadsUnmapped None --readFilesCommand cat --outFileNamePrefix $inputprefix --outStd SAM > $outputfile &&  \n" )  unless $config{quiet};
@@ -590,6 +590,28 @@ sub map_file {
             if (/(\d+) \(.+\) aligned >1 times/) {          #Bowtie2 or HiSAT2 output
                 $multi_mapped = $1;    #Will be overwritten later owing to new definition of multi-mapping
             }
+        } elsif ( $config{bwa} ) {
+
+            # Don't show expected messages from bowtie2, but
+            # warn about anything else
+            #unless ( /\d* reads; of these:/ or /were unpaired; of these:/ or /aligned.+time/ or /overall alignment rate/ ) {
+            #    warn $_;
+            #}
+
+            if (/(\d+) sequences have been processed/) {                 #BWA aln output
+                $reads_processed = $1;
+            }
+            #if (/(\d+) \(.+\) aligned exactly 1 time/) {    #Bowtie2 or HiSAT2 output
+            #    $unique_map = $1;    #Will be overwritten later owing to new definition of multi-mapping
+            #}
+
+            #if (/(\d+) \(.+\) aligned 0 times/) {           #Bowtie2 or HiSAT2 output
+            #    $unmapped = $1;
+            #}
+
+            #if (/(\d+) \(.+\) aligned >1 times/) {          #Bowtie2 or HiSAT2 output
+            #    $multi_mapped = $1;    #Will be overwritten later owing to new definition of multi-mapping
+            #}
         } elsif ( $config{bwamem} or $config{bwamem2} ) {
 
             # Don't show expected messages from bowtie2, but
@@ -602,15 +624,15 @@ sub map_file {
                 $reads_processed = $1;
             }
             #if (/(\d+) \(.+\) aligned exactly 1 time/) {    #Bowtie2 or HiSAT2 output
-                $unique_map = $1;    #Will be overwritten later owing to new definition of multi-mapping
+            #    $unique_map = $1;    #Will be overwritten later owing to new definition of multi-mapping
             #}
 
             #if (/(\d+) \(.+\) aligned 0 times/) {           #Bowtie2 or HiSAT2 output
-                $unmapped = $1;
+            #    $unmapped = $1;
             #}
 
             #if (/(\d+) \(.+\) aligned >1 times/) {          #Bowtie2 or HiSAT2 output
-                $multi_mapped = $1;    #Will be overwritten later owing to new definition of multi-mapping
+            #    $multi_mapped = $1;    #Will be overwritten later owing to new definition of multi-mapping
             #}
         } elsif ( $config{star} ) {
 
@@ -1088,7 +1110,7 @@ sub pair {
 
         my $result = $summary_results{$key};
       
-      if( $config{bowtie2} or $config{hisat2} or $config{star} ){    #Custom edit the multi_mapped reads
+       if( $config{bwa} or $config{bwamem} or $config{bwamem2} or $config{minimap2} or $config{bowtie2} or $config{hisat2} or $config{star} ){    #Custom edit the multi_mapped reads
          my ($reads_processed, $too_short_to_map, $percent_too_short_to_map, $unique_map, $percent_unique, $multi_mapped, $percent_multi, $unmapped, $percent_unmapped) = split(/\t/, $result);
          
          if( $config{bowtie2} or $config{hisat2} ){
