@@ -412,12 +412,12 @@ sub map_file {
       }
     } elsif ( $config{bwa} ne '' ) {
         print "\n running bwa aln...\n" unless $config{quiet};
-        print( "\n $config{bwa} aln -t $bowtie2_threads -L 9999,9999 $config{format} $config{index} /dev/stdin | $config{samtools} view -h -F 4 > $outputfile \n" ) unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} aln -t $bowtie2_threads -L 9999,9999 --$config{format} $config{index} /dev/stdin | grep -v '\*' > $outputfile" );
+        print( "\n $config{bwa} aln -t $bowtie2_threads $config{format} $config{index} /dev/stdin | $config{samtools} view -h -F 4 | grep -v '\\\*' > $outputfile \n" ) unless $config{quiet};
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} aln -t $bowtie2_threads --$config{format} $config{index} /dev/stdin > $outputfile" );
     } elsif ( $config{bwamem} ne '' ) {
         print "\n running bwamem...\n" unless $config{quiet};
         print( "\n $config{bwamem} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin| $config{samtools} view -hS -F 4 > $outputfile \n" )  unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin | grep -v '\*' > $outputfile" );
+        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin | grep -v '\\*' > $outputfile" );
     } elsif ( $config{bwamem2} ne '' ) {
         print "\n running bwamem2...\n" unless $config{quiet};
         print( "\n $config{bwamem2} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin| $config{samtools} view -hS -F 4 > $outputfile \n" )  unless $config{quiet};
@@ -518,7 +518,7 @@ sub map_file {
                 next;
             }
         }
-        if ( $config{dragen} or $config{bwa} or $config{minimap2} ) {
+        if ( $config{dragen} or $config{bwa} or $config{bwamem} or $config{bwamem2} or $config{minimap2} ) {
            print "";
         } else {
            print WRITER $read; ## <- dragen fails on this line
