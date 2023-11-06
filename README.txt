@@ -75,6 +75,20 @@ http://www.bioinformatics.babraham.ac.uk/projects/hicup
 HiCUP Documentation:
 https://www.bioinformatics.babraham.ac.uk/projects/hicup/read_the_docs/html/index.html
 
+## Supported aligners
+
+HiCUP+ supports aligner configuration for several algorithms.
+
+- Bowtie (Langmead et al., 2009)
+
+- Bowtie2 (Langmead and Salzberg, 2012)
+
+- HiSAT2 (Kim et al., 2019)
+
+- Dragen Bio-IT platform v3.8.4 (Illumina, 2019)
+
+- STAR (Dobin et al., 2013)
+
 ## Citation
 
 Please cite the following preprint:
