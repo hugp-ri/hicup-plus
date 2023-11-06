@@ -39,7 +39,7 @@ use Data::Dumper;
 ###################################################################################
 ##                                                                               ##
 ##       This file has been modified to support the following aligners           ##
-##                Dragen, HiSAT2, BWA-MEM2, minimap2, STAR                       ##
+##                           Dragen, HiSAT2, STAR                                ##
 ##                                                                               ##
 ##                           HiCUP+ (HiCUP-Plus)                                 ##
 ##   Maintained by S. Thomas Kelly (simonthomas.kelly [at] hugp [dot] com)       ##

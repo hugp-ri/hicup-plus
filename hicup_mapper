@@ -45,7 +45,7 @@ use Data::Dumper;
 ###################################################################################
 ##                                                                               ##
 ##       This file has been modified to support the following aligners           ##
-##                Dragen, HiSAT2, BWA-MEM2, minimap2, STAR                       ##
+##                           Dragen, HiSAT2, STAR                                ##
 ##                                                                               ##
 ##                           HiCUP+ (HiCUP-Plus)                                 ##
 ##   Maintained by S. Thomas Kelly (simonthomas.kelly [at] hugp [dot] com)       ##
@@ -69,12 +69,8 @@ use Data::Dumper;
 my %config = (
     bowtie    => '',
     bowtie2   => '',
-    bwa       => '',
-    bwamem   => '',
-    bwamem2  => '',
     dragen    => '',
     hisat2    => '',
-    minimap2  => '',
     star      => '',
     config    => '',
     datestamp => '',
@@ -95,12 +91,8 @@ my %config = (
 my $config_result = GetOptions(
     "bowtie=s"    => \$config{bowtie},
     "bowtie2=s"   => \$config{bowtie2},
-    "bwa=s"       => \$config{bwa},
-    "bwamem=s"   => \$config{bwamem},
-    "bwamem2=s"  => \$config{bwamem2},
     "dragen=s"    => \$config{dragen},
     "hisat2=s"    => \$config{hisat2},
-    "minimap2=s"  => \$config{minimap2},
     "star=s"      => \$config{star},
     "config=s"    => \$config{config},
     "datestamp=s" => \$config{datestamp},
@@ -410,18 +402,6 @@ sub map_file {
          print( "\n $config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile \n" )  unless $config{quiet};
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bowtie2} --very-sensitive  -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile" );
       }
-    } elsif ( $config{bwa} ne '' ) {
-        print "\n running bwa aln...\n" unless $config{quiet};
-        print( "\n $config{bwa} aln -t $bowtie2_threads $config{format} $config{index} /dev/stdin | $config{samtools} view -h -F 4 | grep -v '\\\*' > $outputfile \n" ) unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwa} aln -t $bowtie2_threads --$config{format} $config{index} /dev/stdin > $outputfile" );
-    } elsif ( $config{bwamem} ne '' ) {
-        print "\n running bwamem...\n" unless $config{quiet};
-        print( "\n $config{bwamem} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin| $config{samtools} view -hS -F 4 > $outputfile \n" )  unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin | grep -v '\\*' > $outputfile" );
-    } elsif ( $config{bwamem2} ne '' ) {
-        print "\n running bwamem2...\n" unless $config{quiet};
-        print( "\n $config{bwamem2} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin| $config{samtools} view -hS -F 4 > $outputfile \n" )  unless $config{quiet};
-        $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{bwamem2} mem -t $bowtie2_threads -L 9999,9999 $config{index} /dev/stdin | $config{samtools} view -h -F 4 | grep -v '\*' > $outputfile" )
     } elsif ( $config{dragen} ne '' ) {
          print "\n running dragen...\n" unless $config{quiet};
          #check hostname has partial match to dragen
@@ -458,16 +438,12 @@ sub map_file {
          print "\n running hisat2...\n" unless $config{quiet};
          print ( "\n $config{hisat2} -x $config{index} --$config{format} --no-unal --threads $bowtie2_threads --reorder - -S $outputfile \n" ) unless $config{quiet};
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{hisat2} -x $config{index} --$config{format} -k 1 --no-unal --no-spliced-alignment --no-softclip --threads $bowtie2_threads --reorder - -S $outputfile" );
-    } elsif ( $config{minimap2} ne '' ) {
-         print "\n running minimap2...\n" unless $config{quiet};
-         print ( "\n $config{minimap2} -a -N 1 -t $bowtie2_threads -G 0  $config{index}.mmi /dev/stdin  | $config{samtools} view -hS -F 4 > $outputfile\n" ) unless $config{quiet};
-         $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{minimap2} -a -N 1 -t $bowtie2_threads -G 0 $config{index}.mmi /dev/stdin | $config{samtools} view -hS -F 256,8,2 | sed -r 's/([0-9]+)S/\1I/g' > $outputfile" );
     } elsif ( $config{star} ne '' ) {
          print "\n running STAR...\n" unless $config{quiet};
          print ( "\n $config{star} --runMode alignReads --genomeDir $config{index} --outQSconversionAdd $config{format} --readFilesIn /dev/stdin --runThreadN $bowtie2_threads --outSAMtype SAM --chimMainSegmentMultNmax 1 --chimSegmentMin 0 --outSJtype None --outFilterIntronMotifs  RemoveNoncanonical --outFilterIntronStrands RemoveInconsistentStrands --outFilterMismatchNmax 1 --outFilterMultimapNmax 1 --bamRemoveDuplicatesType UniqueIdentical --outSAMmultNmax 1 --alignSoftClipAtReferenceEnds No --alignEndsType EndToEnd --alignIntronMax 0  --alignIntronMin 999999999999 --outSAMunmapped None --outReadsUnmapped None --readFilesCommand cat --outFileNamePrefix $inputprefix --outStd SAM > $outputfile &&  \n" )  unless $config{quiet};
          $oid = open3( \*WRITER, \*READER, \*ERROR, "$config{star} --runMode alignReads --genomeDir $config{index} --outQSconversionAdd $config{format} --readFilesIn /dev/stdin --runThreadN $bowtie2_threads --outSAMtype SAM --chimMainSegmentMultNmax 1 --chimSegmentMin 0 --outSJtype None --outFilterIntronMotifs  RemoveNoncanonical --outFilterIntronStrands RemoveInconsistentStrands --outFilterMismatchNmax 1 --outFilterMultimapNmax 1 --bamRemoveDuplicatesType UniqueIdentical --outSAMmultNmax 1 --alignSoftClipAtReferenceEnds No --alignEndsType EndToEnd --alignIntronMax 0 --alignIntronMin 999999999999 --outSAMunmapped None --outReadsUnmapped None --readFilesCommand cat --outFileNamePrefix $inputprefix --outStd SAM > $outputfile && cat ${inputprefix}Log.final.out | tr '\t' ' ' 1>&2" );
     } else {
-        print("Must path for specify at least one aligner: bowtie, bowtie2, bwa, bwamem, bwamem2, dragen, hisat2, minimap2, or star in configuration");
+        print("Must path for specify at least one aligner: bowtie, bowtie2, dragen, hisat2, or star in configuration");
         exit(1);
     }
 
@@ -518,7 +494,7 @@ sub map_file {
                 next;
             }
         }
-        if ( $config{dragen} or $config{bwa} or $config{bwamem} or $config{bwamem2} or $config{minimap2} ) {
+        if ( $config{dragen} ) {
            print "";
         } else {
            print WRITER $read; ## <- dragen fails on this line
@@ -535,7 +511,7 @@ sub map_file {
 
     if ( $config{dragen} ) {
            print WRITER "";
-    } elsif ( $config{bwa} or $config{bwam2m} or $config{bwamem2} or $config{minimap2} or $config{star} ) {
+    } elsif ( $config{star} ) {
            print ERROR "";
     } else {
         while ( $select->can_read(0.01) ) {
@@ -592,50 +568,6 @@ sub map_file {
             if (/(\d+) \(.+\) aligned >1 times/) {          #Bowtie2 or HiSAT2 output
                 $multi_mapped = $1;    #Will be overwritten later owing to new definition of multi-mapping
             }
-        } elsif ( $config{bwa} ) {
-
-            # Don't show expected messages from bowtie2, but
-            # warn about anything else
-            #unless ( /\d* reads; of these:/ or /were unpaired; of these:/ or /aligned.+time/ or /overall alignment rate/ ) {
-            #    warn $_;
-            #}
-
-            if (/(\d+) sequences have been processed/) {                 #BWA aln output
-                $reads_processed = $1;
-            }
-            #if (/(\d+) \(.+\) aligned exactly 1 time/) {    #Bowtie2 or HiSAT2 output
-            #    $unique_map = $1;    #Will be overwritten later owing to new definition of multi-mapping
-            #}
-
-            #if (/(\d+) \(.+\) aligned 0 times/) {           #Bowtie2 or HiSAT2 output
-            #    $unmapped = $1;
-            #}
-
-            #if (/(\d+) \(.+\) aligned >1 times/) {          #Bowtie2 or HiSAT2 output
-            #    $multi_mapped = $1;    #Will be overwritten later owing to new definition of multi-mapping
-            #}
-        } elsif ( $config{bwamem} or $config{bwamem2} ) {
-
-            # Don't show expected messages from bowtie2, but
-            # warn about anything else
-            #unless ( /\d* reads; of these:/ or /were unpaired; of these:/ or /aligned.+time/ or /overall alignment rate/ ) {
-            #    warn $_;
-            #}
-
-            if (/Processed (\d+) reads in/) {                 #BWA-MEM2 output
-                $reads_processed = $1;
-            }
-            #if (/(\d+) \(.+\) aligned exactly 1 time/) {    #Bowtie2 or HiSAT2 output
-            #    $unique_map = $1;    #Will be overwritten later owing to new definition of multi-mapping
-            #}
-
-            #if (/(\d+) \(.+\) aligned 0 times/) {           #Bowtie2 or HiSAT2 output
-            #    $unmapped = $1;
-            #}
-
-            #if (/(\d+) \(.+\) aligned >1 times/) {          #Bowtie2 or HiSAT2 output
-            #    $multi_mapped = $1;    #Will be overwritten later owing to new definition of multi-mapping
-            #}
         } elsif ( $config{star} ) {
 
             # Don't show expected messages from bowtie2, but
@@ -1112,7 +1044,7 @@ sub pair {
 
         my $result = $summary_results{$key};
       
-       if( $config{bwa} or $config{bwamem} or $config{bwamem2} or $config{minimap2} or $config{bowtie2} or $config{hisat2} or $config{star} ){    #Custom edit the multi_mapped reads
+       if( $config{bowtie2} or $config{hisat2} or $config{star} ){    #Custom edit the multi_mapped reads
          my ($reads_processed, $too_short_to_map, $percent_too_short_to_map, $unique_map, $percent_unique, $multi_mapped, $percent_multi, $unmapped, $percent_unmapped) = split(/\t/, $result);
          
          if( $config{bowtie2} or $config{hisat2} ){
@@ -1361,9 +1293,6 @@ COMMAND LINE OPTIONS
 
 --bowtie         Specify the path to Bowtie
 --bowtie2        Specify the path to Bowtie 2
---bwa            Specify the path to BWA aln
---bwamem2        Specify the path to BWA-MEM
---bwamem2        Specify the path to BWA-MEM2
 --dragen         Specify the path to DRAGEN
 --config         Specify the configuration file
 --format         Specify FASTQ format
@@ -1371,7 +1300,6 @@ COMMAND LINE OPTIONS
 --help           Print help message and exit
 --hisat2         Specify the path to HISAT 2
 --index          Path to the relevant reference genome Bowtie/Bowtie2 indices
---minimap2       Specify the path to minimap2
 --outdir         Directory to write output files
 --quiet          Suppress progress reports (except warnings)
 --samtools       Specify the path to samtools

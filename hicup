@@ -42,7 +42,7 @@ use Data::Dumper;
 ###################################################################################
 ##                                                                               ##
 ##       This file has been modified to support the following aligners           ##
-##                Dragen, HiSAT2, BWA-MEM2, minimap2, STAR                       ##
+##                           Dragen, HiSAT2, STAR                                ##
 ##                                                                               ##
 ##                           HiCUP+ (HiCUP-Plus)                                 ##
 ##   Maintained by S. Thomas Kelly (simonthomas.kelly [at] hugp [dot] com)       ##
@@ -69,15 +69,11 @@ my %config = (
     zip       => '',
     bowtie    => '',
     bowtie2   => '',
-    bwa       => '',
-    bwamem   => '',
-    bwamem2  => '',
     digest    => '',
     dragen    => '',
     format    => '',
     hisat2    => '',
     index     => '',
-    minimap2  => '',
     longest   => '',
     re1       => '',
     shortest  => '',
@@ -105,15 +101,11 @@ my $config_result = GetOptions(    #Stores parameters
     "zip"        => \$config{zip},
     "bowtie=s"   => \$config{bowtie},
     "bowtie2=s"  => \$config{bowtie2},
-    "bwa=s"      => \$config{bwa},
-    "bwamem=s"  => \$config{bwamem},
-    "bwamem2=s" => \$config{bwamem2},
     "digest=s"   => \$config{digest},
     "dragen=s"   => \$config{dragen},
     "format=s"   => \$config{format},
     "hisat2=s"   => \$config{hisat2},
     "index=s"    => \$config{index},
-    "minimap2=s" => \$config{minimap2},
     "longest=s"  => \$config{longest},
     "re1=s"      => \$config{re1},
     "shortest=s" => \$config{shortest},
@@ -318,12 +310,8 @@ close DIGEST;
 $config{ambiguous} = "--ambiguous"                if ( $config{ambiguous} ne '' );
 $config{bowtie}    = "--bowtie $config{bowtie}"   if ( $config{bowtie} ne '' );
 $config{bowtie2}   = "--bowtie2 $config{bowtie2}" if ( $config{bowtie2} ne '' );
-$config{bwa}       = "--bwa $config{bwa}"         if ( $config{bwa} ne '' );
-$config{bwamem}   = "--bwamem $config{bwamem}" if ( $config{bwamem} ne '' );
-$config{bwamem2}  = "--bwamem2 $config{bwamem2}" if ( $config{bwamem2} ne '' );
 $config{dragen}    = "--dragen $config{dragen}"   if ( $config{dragen} ne '' );
 $config{hisat2}    = "--hisat2 $config{hisat2}"   if ( $config{hisat2} ne '' );
-$config{minimap2}  = "--minimap2 $config{minimap2}" if ( $config{minimap2} ne '' );
 $config{star}      = "--star $config{star}"       if ( $config{star} ne '' );
 my $datestamp_flag = "--datestamp $config{datestamp}";    #Enables all summary files to have same datestamp
 $config{digest} = "--digest $config{digest}" if ( $config{digest} ne '' );
@@ -399,15 +387,15 @@ print STDOUT "\nstarting HiCUP mapper\n";
 my $start_time2 = [Time::HiRes::gettimeofday()];
 
 print "\nindex file: $config{index} \n" unless $config{quiet};
-print "\n$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{bwa} $config{bwamem} $config{bwamem2} $config{dragen} $config{hisat2} $config{minimap2} $config{star} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $config{zip} $filenames_string \n"  unless $config{quiet};
+print "\n$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{hisat2} $config{star} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $config{zip} $filenames_string \n"  unless $config{quiet};
 
 if ( $config{zip} ) {
     !system(
-"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{bwa} $config{bwamem} $config{bwamem2} $config{dragen} $config{hisat2} $config{minimap2} $config{star} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $config{zip} $filenames_string"
+"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{hisat2} $config{star} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{threads} $config{zip} $filenames_string"
     ) or die "Can't run hicup_mapper\n.";
 } else {
     !system(
-"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{bwa} $config{bwamem} $config{bwamem2} $config{dragen} $config{hisat2} $config{minimap2} $config{star} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{samtools} $config{samtools} $config{threads} $filenames_string"
+"$Bin/hicup_mapper $config{r} $config{bowtie} $config{bowtie2} $config{dragen} $config{hisat2} $config{star} $config{ambiguous} $datestamp_flag $config{format} $outdir_flag $config{index} $ligation $config{quiet} $config{samtools} $config{samtools} $config{threads} $filenames_string"
     ) or die "Can't run hicup_mapper\n.";
 }
 
@@ -852,9 +840,6 @@ COMMAND LINE OPTIONS
 
 --bowtie       Specify the path to Bowtie
 --bowtie2      Specify the path to Bowtie 2
---bwa          Specify the path to BWA aln
---bwamem      Specify the path to BWA-MEM
---bwamem2     Specify the path to BWA-MEM2
 --dragen       Specify the path to DRAGEN
 --config       Specify the configuration file
 --digest       Specify the digest file listing restriction fragment co-ordinates
@@ -865,7 +850,6 @@ COMMAND LINE OPTIONS
 --hisat2       Specify the path to HISAT 2
 --index        Path to the relevant reference genome Bowtie/Bowtie2 indices
 --keep         Keep intermediate pipeline files
---minimap2     Specify the path to minimap2
 --longest      Maximum allowable insert size (bps)
 --nofill       Hi-C protocol did NOT include a fill-in of sticky ends prior to 
                ligation step and therefore FASTQ reads shall be truncated at the 
