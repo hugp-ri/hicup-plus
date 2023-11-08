@@ -1,3 +1,15 @@
+RELEASE NOTES FOR HICUP-Plus v1.0.3 (8 NOVEMBER 2023)
+
+HiCUP+ v1.0.3 is a mnior update incorporating the changes described below:
+
+- adds support for the STAR aligner
+
+- updated logs for reporting results
+
+- updated documentation to describe supported aligners and Docker images
+
+-------------------------------------------------
+
 
 RELEASE NOTES FOR HICUP-Plus v1.0.2 (2 NOVEMBER 2022)
 

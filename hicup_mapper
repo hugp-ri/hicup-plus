@@ -662,17 +662,17 @@ sub map_file {
         $reads_processed += $too_short_to_map unless $config{dragen};
     }
 
-    #if ($reads_processed) {
-    #    $percent_too_short_to_map = sprintf( "%.1f", ( $too_short_to_map / $reads_processed * 100 ) );
-    #    $percent_unique           = sprintf( "%.1f", ( $unique_map / $reads_processed * 100 ) );
-    #    $percent_unmapped         = sprintf( "%.1f", ( $unmapped / $reads_processed * 100 ) );
-    #    $percent_multi            = sprintf( "%.1f", ( $multi_mapped / $reads_processed * 100 ) );
-    #} else {
+    if ($reads_processed) {
+        $percent_too_short_to_map = sprintf( "%.1f", ( $too_short_to_map / $reads_processed * 100 ) );
+        $percent_unique           = sprintf( "%.1f", ( $unique_map / $reads_processed * 100 ) );
+        $percent_unmapped         = sprintf( "%.1f", ( $unmapped / $reads_processed * 100 ) );
+        $percent_multi            = sprintf( "%.1f", ( $multi_mapped / $reads_processed * 100 ) );
+    } else {
         $percent_too_short_to_map = 'N/A';
         $percent_unique   = 'N/A';
         $percent_unmapped = 'N/A';
         $percent_multi    = 'N/A';
-    #}
+    }
 
     # reporting timing results   
     my $end2 = Time::HiRes::tv_interval($start_aligner);

@@ -54,7 +54,7 @@ Contact:
 Contact the software author to discuss the software, report bugs or suggest enhancements at:
 https://github.com/StevenWingett/HiCUP/issues
 
-HiCUP+ (v1.0.2) maintainer: S. Thomas Kelly
+HiCUP+ (v1.0.3) maintainer: S. Thomas Kelly
 
 Contact:
 simonthomas.kelly [at] hugp [dot] com
@@ -116,7 +116,7 @@ BibTeX version:
 The software release can be cited as follows:
 
 > Kelly, S. T. & Yuhara, S. (2022) HiCUP+: a fast open-source pipeline for accurately processing large scale Hi-C sequence data.
-> Software release v1.0.2 URL: [https://github.com/hugp-ri/hicup-plus/](https://github.com/hugp-ri/hicup-plus/)
+> Software release v1.0.3 URL: [https://github.com/hugp-ri/hicup-plus/](https://github.com/hugp-ri/hicup-plus/)
 
 BibTex version:
 
@@ -125,7 +125,7 @@ BibTex version:
     author = {Kelly, S. Thomas and Yuhara, Satoshi},
     title = {{H}i{C}{U}{P}-{P}lus: a fast open-source pipeline for accurately processing large scale {H}i-{C} sequence data}},
     year = {2022},
-    note = {Software release version v1.0.2},
+    note = {Software release version v1.0.3},
     url = {[https://github.com/hugp-ri/hicup-plus/](https://github.com/hugp-ri/hicup-plus/)},
 }
 ```
