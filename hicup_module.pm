@@ -358,11 +358,11 @@ sub checkAligner {
        if ($host =~ /[Dd]ragen/ ) {
            warn "Looking for aligner at '$aligner_path'\n";
            if(-e $aligner_path){
-               warn "Aligner found at '$aligner_path'\n";
+               warn "Aligner found at '$aligner_path' on ${host}\n";
                $$configRef{$aligner_name} = $aligner_path;    #Adjust config hash accordingly
                $found_aligner_flag = 1;
            }else{
-               warn "Aligner not found at '$aligner_path'\n";
+               warn "Aligner not found at '$aligner_path' on ${host}\n";
                # check if directory given
                $aligner_path =~ s/\/$//;    #Remove final '/' from path, if present
                $aligner_path = $aligner_path . '/' . $aligner_name;
@@ -387,11 +387,11 @@ sub checkAligner {
                  or die "system @args failed: $?";
              print "\nsuccessful login to dragen node!\n";
 
-             printf "\$ ssh " . $username . "@" . $dragenhost . " ls" . $aligner_path . "\n";
+             printf "\$ ssh " . $username . "@" . $dragenhost . " ls " . $aligner_path . "\n";
              @args = ("ssh", $username . "@" . $dragenhost, "ls", $aligner_path);
              system(@args) == 0
                  or die "system @args failed: $?";
-             warn "Aligner found at '$aligner_path'\n";
+             warn "Aligner found at '$aligner_path' on dragen\n";
                $$configRef{$aligner_name} = $aligner_path;    #Adjust config hash accordingly
                $found_aligner_flag = 1;
        }
